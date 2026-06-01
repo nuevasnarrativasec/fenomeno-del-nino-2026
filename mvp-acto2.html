@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>El Niño — Mapa de Anomalías de Temperatura en Perú</title>
+  <script src="https://unpkg.com/maplibre-gl@4.1.3/dist/maplibre-gl.js"></script>
+  <link href="https://unpkg.com/maplibre-gl@4.1.3/dist/maplibre-gl.css" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Georgia', serif;
+      background: #0d1117;
+      color: #e8e0d5;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      padding: 20px 32px 12px;
+      border-bottom: 1px solid #2a2a3a;
+    }
+
+    header h1 {
+      font-size: 1.4rem;
+      font-weight: normal;
+      letter-spacing: 0.03em;
+      color: #f0e8df;
+    }
+
+    header p {
+      font-size: 0.82rem;
+      color: #8a8090;
+      margin-top: 4px;
+      font-family: sans-serif;
+    }
+
+    .main {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    #map {
+      flex: 1;
+    }
+
+    .sidebar {
+      width: 280px;
+      padding: 28px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      background: #0d1117;
+      border-left: 1px solid #2a2a3a;
+      overflow-y: auto;
+    }
+
+    .section-label {
+      font-size: 0.7rem;
+      font-family: sans-serif;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #6a6070;
+      margin-bottom: 10px;
+    }
+
+    /* Botonera de escenarios */
+    .scenario-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .scenario-btn {
+      padding: 10px 14px;
+      border: 1px solid #2a2a3a;
+      background: transparent;
+      color: #c0b8c8;
+      font-family: sans-serif;
+      font-size: 0.82rem;
+      cursor: pointer;
+      border-radius: 6px;
+      text-align: left;
+      transition: all 0.2s;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .scenario-btn:hover {
+      border-color: #5a4a6a;
+      background: #1a1525;
+    }
+
+    .scenario-btn.active {
+      border-color: #e05c2a;
+      background: #1a1020;
+      color: #f0e8df;
+    }
+
+    .scenario-btn .badge {
+      font-size: 0.7rem;
+      padding: 2px 7px;
+      border-radius: 12px;
+      background: #2a2030;
+      color: #8a8090;
+    }
+
+    .scenario-btn.active .badge {
+      background: #e05c2a22;
+      color: #e09070;
+    }
+
+    /* Leyenda de colores */
+    .legend {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .legend-bar {
+      height: 12px;
+      border-radius: 4px;
+      background: linear-gradient(to right,
+        #2166ac, #4393c3, #92c5de, #d1e5f0,
+        #f7f7f7, #fddbc7, #f4a582, #d6604d, #b2182b, #67001f
+      );
+    }
+
+    .legend-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.68rem;
+      font-family: sans-serif;
+      color: #7a7080;
+    }
+
+    /* Tooltip del departamento */
+    .dept-info {
+      background: #141020;
+      border: 1px solid #2a2a3a;
+      border-radius: 8px;
+      padding: 14px;
+      min-height: 80px;
+    }
+
+    .dept-info .dept-name {
+      font-size: 1rem;
+      color: #f0e8df;
+      margin-bottom: 4px;
+    }
+
+    .dept-info .dept-anomaly {
+      font-size: 1.6rem;
+      font-family: sans-serif;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .dept-info .dept-desc {
+      font-size: 0.75rem;
+      font-family: sans-serif;
+      color: #8a8090;
+      line-height: 1.4;
+    }
+
+    .dept-info.empty .dept-name {
+      color: #5a5060;
+      font-style: italic;
+      font-size: 0.82rem;
+    }
+
+    /* Nota de datos */
+    .data-note {
+      font-size: 0.7rem;
+      font-family: sans-serif;
+      color: #5a5060;
+      line-height: 1.5;
+    }
+
+    /* Spinner de carga */
+    #loading {
+      position: absolute;
+      inset: 0;
+      background: #0d1117;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      font-family: sans-serif;
+      font-size: 0.9rem;
+      color: #6a6070;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .spinner {
+      width: 28px;
+      height: 28px;
+      border: 2px solid #2a2a3a;
+      border-top-color: #e05c2a;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+<div id="loading">
+  <div class="spinner"></div>
+  Cargando mapa…
+</div>
+
+<header>
+  <h1>Fenómeno El Niño — Anomalías de Temperatura en Perú</h1>
+  <p>Variación estimada de temperatura (°C) respecto al promedio histórico por departamento</p>
+</header>
+
+<div class="main">
+  <div id="map"></div>
+
+  <div class="sidebar">
+
+    <div>
+      <div class="section-label">Intensidad del Fenómeno</div>
+      <div class="scenario-buttons" id="scenarioBtns"></div>
+    </div>
+
+    <div>
+      <div class="section-label">Departamento seleccionado</div>
+      <div class="dept-info empty" id="deptInfo">
+        <div class="dept-name">Pasa el cursor sobre el mapa</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label">Escala de temperatura (°C)</div>
+      <div class="legend">
+        <div class="legend-bar"></div>
+        <div class="legend-labels">
+          <span>−1</span>
+          <span>0</span>
+          <span>+2</span>
+          <span>+4</span>
+          <span>+5</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="data-note">
+      ⚠ Datos simulados con base en patrones históricos de eventos El Niño en Perú (1982–83, 1997–98, 2017). Las anomalías reales varían según la estación del año y la magnitud exacta del evento.
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+// DATOS SIMULADOS
+// Anomalía de temperatura en °C respecto al promedio
+// para cada departamento según intensidad del fenómeno
+// ─────────────────────────────────────────────
+const SCENARIOS = [
+  { id: 'normal',       label: 'Normal',        badge: '0°C' },
+  { id: 'debil',        label: 'Débil',         badge: '≤ +1°C' },
+  { id: 'moderado',     label: 'Moderado',      badge: '≤ +2°C' },
+  { id: 'fuerte',       label: 'Fuerte',        badge: '≤ +3.5°C' },
+  { id: 'extraordinario', label: 'Extraordinario', badge: '≤ +5°C' },
+];
+
+// Departamentos del Perú — clave debe coincidir con propiedad GeoJSON
+// El Niño afecta más a la costa norte; provoca sequías en el sur andino
+const TEMP_DATA = {
+  // dept name (uppercase) : { normal, debil, moderado, fuerte, extraordinario }
+  'TUMBES':        { normal: 0,    debil: 1.1,  moderado: 2.2,  fuerte: 3.8,  extraordinario: 5.1 },
+  'PIURA':         { normal: 0,    debil: 1.0,  moderado: 2.0,  fuerte: 3.5,  extraordinario: 4.8 },
+  'LAMBAYEQUE':    { normal: 0,    debil: 0.8,  moderado: 1.7,  fuerte: 3.0,  extraordinario: 4.2 },
+  'LA LIBERTAD':   { normal: 0,    debil: 0.7,  moderado: 1.5,  fuerte: 2.7,  extraordinario: 3.9 },
+  'ANCASH':        { normal: 0,    debil: 0.6,  moderado: 1.3,  fuerte: 2.3,  extraordinario: 3.2 },
+  'LIMA':          { normal: 0,    debil: 0.5,  moderado: 1.1,  fuerte: 2.0,  extraordinario: 2.8 },
+  'CALLAO':        { normal: 0,    debil: 0.5,  moderado: 1.1,  fuerte: 2.0,  extraordinario: 2.8 },
+  'ICA':           { normal: 0,    debil: 0.4,  moderado: 0.9,  fuerte: 1.7,  extraordinario: 2.4 },
+  'AREQUIPA':      { normal: 0,    debil: 0.2,  moderado: 0.5,  fuerte: 1.0,  extraordinario: 1.5 },
+  'MOQUEGUA':      { normal: 0,    debil: 0.2,  moderado: 0.4,  fuerte: 0.8,  extraordinario: 1.2 },
+  'TACNA':         { normal: 0,    debil: 0.1,  moderado: 0.3,  fuerte: 0.6,  extraordinario: 1.0 },
+  'CAJAMARCA':     { normal: 0,    debil: 0.6,  moderado: 1.2,  fuerte: 2.1,  extraordinario: 3.0 },
+  'AMAZONAS':      { normal: 0,    debil: 0.5,  moderado: 1.0,  fuerte: 1.8,  extraordinario: 2.5 },
+  'SAN MARTIN':    { normal: 0,    debil: 0.4,  moderado: 0.9,  fuerte: 1.6,  extraordinario: 2.3 },
+  'LORETO':        { normal: 0,    debil: 0.3,  moderado: 0.7,  fuerte: 1.3,  extraordinario: 1.8 },
+  'UCAYALI':       { normal: 0,    debil: 0.3,  moderado: 0.6,  fuerte: 1.1,  extraordinario: 1.6 },
+  'HUANUCO':       { normal: 0,    debil: 0.4,  moderado: 0.8,  fuerte: 1.5,  extraordinario: 2.1 },
+  'PASCO':         { normal: 0,    debil: 0.3,  moderado: 0.7,  fuerte: 1.2,  extraordinario: 1.7 },
+  'JUNIN':         { normal: 0,    debil: 0.3,  moderado: 0.6,  fuerte: 1.1,  extraordinario: 1.6 },
+  'HUANCAVELICA':  { normal: 0,    debil: 0.2,  moderado: 0.5,  fuerte: 0.9,  extraordinario: 1.3 },
+  'AYACUCHO':      { normal: 0,    debil: 0.1,  moderado: 0.3,  fuerte: 0.6,  extraordinario: 0.9 },
+  'APURIMAC':      { normal: 0,    debil: 0.1,  moderado: 0.3,  fuerte: 0.5,  extraordinario: 0.8 },
+  'CUSCO':         { normal: 0,    debil: -0.1, moderado: -0.2, fuerte: -0.4, extraordinario: -0.7 },
+  'PUNO':          { normal: 0,    debil: -0.2, moderado: -0.4, fuerte: -0.7, extraordinario: -1.0 },
+  'MADRE DE DIOS': { normal: 0,    debil: 0.2,  moderado: 0.5,  fuerte: 0.9,  extraordinario: 1.3 },
+};
+
+const DESCRIPTIONS = {
+  normal:        'Sin anomalía. Temperaturas dentro del rango histórico esperado.',
+  debil:         'Ligero calentamiento. Pocas variaciones perceptibles en la vida diaria.',
+  moderado:      'Calentamiento notable. Aumento de lluvias en la costa norte, inicio de impactos agrícolas.',
+  fuerte:        'Calentamiento significativo. Inundaciones en el norte, sequías en el sur andino.',
+  extraordinario:'Calentamiento extremo. Daños masivos en infraestructura, emergencias nacionales.',
+};
+
+// ─────────────────────────────────────────────
+// ESCALA DE COLORES (divergente azul–blanco–rojo)
+// ─────────────────────────────────────────────
+function anomalyToColor(val) {
+  // Mapea −1 a +5 en una escala de color
+  const stops = [
+    [-1.0, [33, 102, 172]],
+    [-0.5, [67, 147, 195]],
+    [ 0.0, [247, 247, 247]],
+    [ 1.0, [253, 219, 199]],
+    [ 2.0, [244, 165, 130]],
+    [ 3.0, [214,  96,  77]],
+    [ 4.0, [178,  24,  43]],
+    [ 5.0, [103,   0,  31]],
+  ];
+
+  for (let i = 1; i < stops.length; i++) {
+    if (val <= stops[i][0]) {
+      const t = (val - stops[i-1][0]) / (stops[i][0] - stops[i-1][0]);
+      const c0 = stops[i-1][1], c1 = stops[i][1];
+      const r = Math.round(c0[0] + t * (c1[0] - c0[0]));
+      const g = Math.round(c0[1] + t * (c1[1] - c0[1]));
+      const b = Math.round(c0[2] + t * (c1[2] - c0[2]));
+      return `rgb(${r},${g},${b})`;
+    }
+  }
+  return `rgb(103,0,31)`;
+}
+
+function anomalyToHex(val) {
+  const stops = [
+    [-1.0, [33, 102, 172]],
+    [-0.5, [67, 147, 195]],
+    [ 0.0, [247, 247, 247]],
+    [ 1.0, [253, 219, 199]],
+    [ 2.0, [244, 165, 130]],
+    [ 3.0, [214,  96,  77]],
+    [ 4.0, [178,  24,  43]],
+    [ 5.0, [103,   0,  31]],
+  ];
+  for (let i = 1; i < stops.length; i++) {
+    if (val <= stops[i][0]) {
+      const t = Math.max(0, Math.min(1, (val - stops[i-1][0]) / (stops[i][0] - stops[i-1][0])));
+      const c0 = stops[i-1][1], c1 = stops[i][1];
+      const r = Math.round(c0[0] + t * (c1[0] - c0[0]));
+      const g = Math.round(c0[1] + t * (c1[1] - c0[1]));
+      const b = Math.round(c0[2] + t * (c1[2] - c0[2]));
+      return '#' + [r,g,b].map(x => x.toString(16).padStart(2,'0')).join('');
+    }
+  }
+  return '#67001f';
+}
+
+// ─────────────────────────────────────────────
+// ESTADO GLOBAL
+// ─────────────────────────────────────────────
+let currentScenario = 'normal';
+let hoveredId = null;
+let geojson = null;
+let deptKey = null; // se detecta automáticamente
+
+// ─────────────────────────────────────────────
+// NORMALIZACIÓN DE NOMBRES
+// ─────────────────────────────────────────────
+function normalize(str) {
+  return String(str).toUpperCase().normalize('NFD').replace(/[̀-ͯ]/g, '').trim();
+}
+
+// Detecta qué propiedad del GeoJSON contiene el nombre del departamento
+function detectDeptKey(feature) {
+  const known = ['TUMBES','PIURA','LORETO','LIMA','CUSCO','PUNO','ANCASH','ICA','TACNA'];
+  for (const key of Object.keys(feature.properties)) {
+    if (known.includes(normalize(feature.properties[key]))) return key;
+  }
+  return Object.keys(feature.properties)[0]; // fallback: primera propiedad
+}
+
+// ─────────────────────────────────────────────
+// COLORIZAR FEATURES SEGÚN ESCENARIO
+// Añade la propiedad fillColor directamente al GeoJSON
+// ─────────────────────────────────────────────
+function colorizeFeatures(scenario) {
+  return {
+    ...geojson,
+    features: geojson.features.map(f => {
+      const rawName = f.properties[deptKey] || '';
+      const name = normalize(rawName);
+      const vals = TEMP_DATA[name];
+      const color = vals ? anomalyToHex(vals[scenario]) : '#888888';
+      return {
+        ...f,
+        properties: { ...f.properties, fillColor: color, _normName: name, _rawName: rawName }
+      };
+    })
+  };
+}
+
+// ─────────────────────────────────────────────
+// MAPA
+// ─────────────────────────────────────────────
+const map = new maplibregl.Map({
+  container: 'map',
+  style: {
+    version: 8,
+    sources: {
+      'carto-dark': {
+        type: 'raster',
+        tiles: ['https://basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}.png'],
+        tileSize: 256,
+        attribution: '© OpenStreetMap contributors, © CARTO'
+      }
+    },
+    layers: [{ id: 'background', type: 'raster', source: 'carto-dark' }]
+  },
+  center: [-75.5, -9.5],
+  zoom: 4.8,
+  minZoom: 3,
+  maxZoom: 10,
+});
+
+// ─────────────────────────────────────────────
+// BOTONERA
+// ─────────────────────────────────────────────
+const btnsContainer = document.getElementById('scenarioBtns');
+SCENARIOS.forEach(s => {
+  const btn = document.createElement('button');
+  btn.className = 'scenario-btn' + (s.id === 'normal' ? ' active' : '');
+  btn.dataset.id = s.id;
+  btn.innerHTML = `<span>${s.label}</span><span class="badge">${s.badge}</span>`;
+  btn.addEventListener('click', () => setScenario(s.id));
+  btnsContainer.appendChild(btn);
+});
+
+function setScenario(id) {
+  currentScenario = id;
+  document.querySelectorAll('.scenario-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.id === id);
+  });
+  if (geojson) {
+    map.getSource('peru').setData(colorizeFeatures(id));
+  }
+}
+
+// ─────────────────────────────────────────────
+// CARGA DEL GEOJSON Y CAPAS
+// ─────────────────────────────────────────────
+map.on('load', async () => {
+  try {
+    const res = await fetch(
+      'https://raw.githubusercontent.com/juaneladio/peru-geojson/master/peru_departamental_simple.geojson'
+    );
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    geojson = await res.json();
+
+    // Auto-detectar la clave de nombre de departamento
+    deptKey = detectDeptKey(geojson.features[0]);
+
+    // Colorizar y cargar source
+    map.addSource('peru', {
+      type: 'geojson',
+      data: colorizeFeatures(currentScenario),
+      generateId: true,
+    });
+
+    // Capa de relleno — usa fillColor que pusimos en cada feature
+    map.addLayer({
+      id: 'peru-fill',
+      type: 'fill',
+      source: 'peru',
+      paint: {
+        'fill-color': ['get', 'fillColor'],
+        'fill-opacity': [
+          'case',
+          ['boolean', ['feature-state', 'hovered'], false], 0.95,
+          0.82
+        ]
+      }
+    });
+
+    // Bordes
+    map.addLayer({
+      id: 'peru-outline',
+      type: 'line',
+      source: 'peru',
+      paint: { 'line-color': '#0d1117', 'line-width': 1 }
+    });
+
+    // Borde destacado al hacer hover
+    map.addLayer({
+      id: 'peru-outline-hover',
+      type: 'line',
+      source: 'peru',
+      paint: {
+        'line-color': '#ffffff',
+        'line-width': ['case', ['boolean', ['feature-state', 'hovered'], false], 2, 0]
+      }
+    });
+
+    document.getElementById('loading').style.display = 'none';
+    setupHover();
+
+  } catch (err) {
+    document.getElementById('loading').innerHTML = `
+      <div style="color:#e05c2a;text-align:center;padding:20px;font-family:sans-serif;">
+        Error al cargar el GeoJSON.<br>
+        <small style="color:#6a6070">${err.message}<br>Verifica tu conexión a internet.</small>
+      </div>`;
+    console.error(err);
+  }
+});
+
+// ─────────────────────────────────────────────
+// HOVER
+// ─────────────────────────────────────────────
+function setupHover() {
+  const infoEl = document.getElementById('deptInfo');
+
+  map.on('mousemove', 'peru-fill', (e) => {
+    if (!e.features.length) return;
+    map.getCanvas().style.cursor = 'pointer';
+
+    const feat = e.features[0];
+    const id = feat.id;
+
+    if (hoveredId !== null && hoveredId !== id) {
+      map.setFeatureState({ source: 'peru', id: hoveredId }, { hovered: false });
+    }
+    hoveredId = id;
+    map.setFeatureState({ source: 'peru', id }, { hovered: true });
+
+    const rawName = feat.properties._rawName || feat.properties[deptKey] || 'Desconocido';
+    const normName = feat.properties._normName || normalize(rawName);
+    const vals = TEMP_DATA[normName];
+    const anomaly = vals ? vals[currentScenario] : null;
+    const sign = (anomaly !== null && anomaly > 0) ? '+' : '';
+    const color = anomaly !== null ? anomalyToColor(anomaly) : '#aaa';
+
+    infoEl.className = 'dept-info';
+    infoEl.innerHTML = `
+      <div class="dept-name">${capitalize(rawName.toLowerCase())}</div>
+      <div class="dept-anomaly" style="color:${color}">${anomaly !== null ? sign + anomaly.toFixed(1) + '°C' : '—'}</div>
+      <div class="dept-desc">${DESCRIPTIONS[currentScenario]}</div>
+    `;
+  });
+
+  map.on('mouseleave', 'peru-fill', () => {
+    map.getCanvas().style.cursor = '';
+    if (hoveredId !== null) {
+      map.setFeatureState({ source: 'peru', id: hoveredId }, { hovered: false });
+      hoveredId = null;
+    }
+    infoEl.className = 'dept-info empty';
+    infoEl.innerHTML = `<div class="dept-name">Pasa el cursor sobre el mapa</div>`;
+  });
+}
+
+function capitalize(str) {
+  return str.replace(/(?:^|\s)\S/g, c => c.toUpperCase());
+}
+</script>
+</body>
+</html>
