@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>El Niño — Globo Terráqueo 3D</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Georgia', serif;
+      background: #04080f;
+      color: #e8e0d5;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ── HEADER ── */
+    header {
+      padding: 16px 40px 14px;
+      border-bottom: 1px solid #141c2e;
+      background: rgba(4, 8, 15, 0.96);
+      z-index: 10;
+      flex-shrink: 0;
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 13px;
+    }
+
+    header h1 {
+      font-size: 1.1rem;
+      font-weight: normal;
+      letter-spacing: 0.02em;
+      color: #f0e8df;
+    }
+
+    .intensity-badge {
+      font-family: sans-serif;
+      font-size: 0.78rem;
+      color: #e09070;
+      background: #1a1020;
+      border: 1px solid #3a2030;
+      padding: 3px 10px;
+      border-radius: 12px;
+      letter-spacing: 0.05em;
+    }
+
+    .slider-wrap { display: flex; flex-direction: column; gap: 6px; }
+
+    .slider-track-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .slider-label {
+      font-family: sans-serif;
+      font-size: 0.72rem;
+      color: #5a5060;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      flex: 1;
+      height: 4px;
+      border-radius: 2px;
+      background: linear-gradient(to right,
+        #003cc8 0%, #148ce6 15%,
+        #f5f5f5 35%,
+        #ffd21e 52%, #ff8200 65%, #fa1e0a 80%, #780050 100%
+      );
+      outline: none;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: #fff;
+      border: 2px solid #e05c2a;
+      box-shadow: 0 0 8px rgba(224,92,42,0.6);
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      box-shadow: 0 0 16px rgba(224,92,42,0.9);
+    }
+
+    .slider-ticks {
+      display: flex;
+      padding: 0 30px 0 110px;
+      justify-content: space-between;
+    }
+
+    .slider-tick {
+      font-family: sans-serif;
+      font-size: 0.65rem;
+      color: #2a2535;
+      text-align: center;
+      flex: 1;
+      transition: color 0.2s;
+    }
+
+    .slider-tick.active { color: #b09080; }
+
+    /* ── ESCENA ── */
+    #scene {
+      flex: 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    canvas#globe {
+      cursor: grab;
+      display: block;
+    }
+
+    canvas#globe:active { cursor: grabbing; }
+
+    /* ── CONTROLES ── */
+    .controls {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 10px;
+      z-index: 10;
+    }
+
+    .ctrl-btn {
+      background: rgba(4,8,15,0.85);
+      border: 1px solid #1e2a3e;
+      border-radius: 6px;
+      padding: 7px 14px;
+      font-family: sans-serif;
+      font-size: 0.72rem;
+      color: #7a8090;
+      cursor: pointer;
+      transition: all 0.2s;
+      backdrop-filter: blur(6px);
+    }
+
+    .ctrl-btn:hover { color: #f0e8df; border-color: #3a4a6a; }
+    .ctrl-btn.active { color: #e09070; border-color: #e05c2a; }
+
+    /* ── TOOLTIP ── */
+    #tooltip {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(4, 8, 15, 0.92);
+      border: 1px solid #1e2a3e;
+      border-radius: 8px;
+      padding: 12px 16px;
+      z-index: 20;
+      min-width: 185px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+
+    #tooltip.visible { opacity: 1; }
+
+    #tooltip .t-name    { font-size: 0.9rem; color: #f0e8df; margin-bottom: 2px; }
+    #tooltip .t-anomaly { font-size: 1.5rem; font-family: sans-serif; font-weight: 700; }
+    #tooltip .t-note    { font-size: 0.7rem; font-family: sans-serif; color: #6a7080; margin-top: 3px; line-height: 1.4; }
+
+    /* ── LEYENDA ── */
+    #legend {
+      position: absolute;
+      bottom: 24px;
+      right: 20px;
+      background: rgba(4,8,15,0.88);
+      border: 1px solid #1e2a3e;
+      border-radius: 8px;
+      padding: 11px 13px;
+      z-index: 10;
+      width: 190px;
+    }
+
+    #legend .leg-title {
+      font-family: sans-serif;
+      font-size: 0.63rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #5a6070;
+      margin-bottom: 7px;
+    }
+
+    .leg-bar {
+      height: 9px;
+      border-radius: 3px;
+      background: linear-gradient(to right,
+        #003cc8, #148ce6, #6ec8fa,
+        #f5f5f5,
+        #fffaa0, #ffd21e, #ff8200, #fa1e0a, #c80028, #780050
+      );
+      margin-bottom: 4px;
+    }
+
+    .leg-labels {
+      display: flex;
+      justify-content: space-between;
+      font-family: sans-serif;
+      font-size: 0.6rem;
+      color: #5a6070;
+    }
+
+    /* ── SPINNER ── */
+    #loading {
+      position: absolute;
+      inset: 0;
+      background: #04080f;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      font-family: sans-serif;
+      font-size: 0.85rem;
+      color: #5a6070;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .spinner {
+      width: 26px; height: 26px;
+      border: 2px solid #141c2e;
+      border-top-color: #e05c2a;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <h1>Fenómeno El Niño — Impacto Global de Temperatura</h1>
+    <span class="intensity-badge" id="intensityBadge">Normal — sin anomalía</span>
+  </div>
+  <div class="slider-wrap">
+    <div class="slider-track-wrap">
+      <span class="slider-label">Temperatura normal</span>
+      <input type="range" id="intensitySlider" min="0" max="100" value="0" step="1" />
+      <span class="slider-label">El Niño extraordinario</span>
+    </div>
+    <div class="slider-ticks" id="sliderTicks"></div>
+  </div>
+</header>
+
+<div id="scene">
+  <div id="loading"><div class="spinner"></div>Cargando globo…</div>
+  <canvas id="globe"></canvas>
+
+  <div id="tooltip">
+    <div class="t-name"    id="ttName">—</div>
+    <div class="t-anomaly" id="ttAnomaly">—</div>
+    <div class="t-note"    id="ttNote">—</div>
+  </div>
+
+  <div id="legend">
+    <div class="leg-title">Anomalía de temperatura (°C)</div>
+    <div class="leg-bar"></div>
+    <div class="leg-labels">
+      <span>−2</span><span>0</span><span>+2</span><span>+4</span><span>+5</span>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="ctrl-btn active" id="rotateBtn">⟳ Rotando</button>
+    <button class="ctrl-btn" id="resetBtn">↺ Centrar</button>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+// DATOS
+// ─────────────────────────────────────────────
+const BASE_ANOMALY = {
+  PER:  4.5, ECU:  3.5, COL:  2.0, CHL:  1.5,
+  BOL:  0.8, VEN:  1.0, BRA:  1.8, ARG:  0.8,
+  URY:  0.6, PRY:  0.5, GUY:  0.7, SUR:  0.7,
+  MEX:  1.2, GTM:  1.0, BLZ:  0.8, HND:  1.0,
+  SLV:  1.0, NIC:  1.0, CRI:  0.8, PAN:  0.8,
+  CUB:  0.5, DOM:  0.5, JAM:  0.5, HTI:  0.5,
+  TTO:  0.6, BRB:  0.5,
+  USA:  0.8, CAN:  0.5, GRL:  0.3,
+  GBR:  0.4, IRL:  0.4, FRA:  0.3, ESP:  0.5,
+  PRT:  0.6, DEU:  0.3, NLD:  0.3, BEL:  0.3,
+  CHE:  0.3, AUT:  0.3, ITA:  0.4, GRC:  0.4,
+  NOR:  0.4, SWE:  0.3, FIN:  0.3, DNK:  0.3,
+  POL:  0.3, CZE:  0.3, HUN:  0.3, ROU:  0.3,
+  UKR:  0.2, BLR:  0.2, RUS:  0.3,
+  TUR:  0.3, IRQ:  0.4, IRN:  0.3, SAU:  0.6,
+  YEM:  0.6, OMN:  0.5, ARE:  0.5, QAT:  0.5,
+  KWT:  0.5, JOR:  0.4, ISR:  0.3, PAK: -0.2,
+  IND: -0.4, BGD: -0.3, LKA: -0.4, NPL: -0.2,
+  CHN:  0.3, JPN:  0.2, KOR:  0.2, MNG:  0.2,
+  MMR: -0.4, THA: -0.5, VNM: -0.5, KHM: -0.5,
+  LAO: -0.4, MYS: -0.8, SGP: -0.6, IDN: -1.2,
+  PHL: -1.0, TLS: -1.0,
+  AUS: -1.5, PNG: -1.2, NZL: -0.3, FJI: -0.5,
+  MAR:  0.4, DZA:  0.3, EGY:  0.4, SDN:  0.8,
+  NGA:  0.5, CMR:  0.4, COD:  0.3, GAB:  0.3,
+  ETH:  1.5, SOM:  1.2, KEN:  1.0, TZA:  0.8,
+  UGA:  0.8, MDG:  0.5, MUS:  0.3,
+  AGO: -0.3, ZMB: -0.4, MOZ: -0.5, ZWE: -0.6,
+  BWA: -0.5, NAM: -0.5, ZAF: -0.8, LSO: -0.5,
+};
+const DEFAULT_ANOMALY = 0.3;
+
+const INTENSITY_LABELS = [
+  { max: 10,  label: 'Normal',         desc: 'Sin anomalía significativa' },
+  { max: 30,  label: 'Débil',          desc: 'Ligeras variaciones en zonas tropicales' },
+  { max: 55,  label: 'Moderado',       desc: 'Impactos visibles en costa pacífica y Oceanía' },
+  { max: 79,  label: 'Fuerte',         desc: 'Inundaciones en América, sequías en Asia-Pacífico' },
+  { max: 100, label: 'Extraordinario', desc: 'Evento extremo con consecuencias globales' },
+];
+
+// ─────────────────────────────────────────────
+// COLORES
+// ─────────────────────────────────────────────
+const COLOR_STOPS = [
+  [-2.0, [  0,  60, 200]],
+  [-1.0, [ 20, 140, 230]],
+  [-0.2, [110, 200, 250]],
+  [ 0.0, [245, 245, 245]],
+  [ 0.4, [255, 250, 160]],
+  [ 1.0, [255, 210,  30]],
+  [ 1.8, [255, 130,   0]],
+  [ 2.8, [250,  30,  10]],
+  [ 3.8, [200,   0,  40]],
+  [ 5.0, [120,   0,  80]],
+];
+
+function anomalyToHex(val) {
+  const s = COLOR_STOPS;
+  if (val <= s[0][0]) return toHex(s[0][1]);
+  for (let i = 1; i < s.length; i++) {
+    if (val <= s[i][0]) {
+      const t = (val - s[i-1][0]) / (s[i][0] - s[i-1][0]);
+      return toHex(s[i-1][1].map((c,j) => Math.round(c + t*(s[i][1][j]-c))));
+    }
+  }
+  return toHex(s.at(-1)[1]);
+}
+
+function toHex([r,g,b]) {
+  return '#' + [r,g,b].map(x => x.toString(16).padStart(2,'0')).join('');
+}
+
+function getAnomaly(iso3, mult) {
+  return (BASE_ANOMALY[iso3] ?? DEFAULT_ANOMALY) * mult;
+}
+
+// ─────────────────────────────────────────────
+// ESTADO
+// ─────────────────────────────────────────────
+let geojson    = null;
+let multiplier = 0;
+let colorCache = {};
+let rotating   = true;
+let rafId      = null;
+let isDragging = false;
+
+function rebuildColors() {
+  colorCache = {};
+  if (!geojson) return;
+  for (const f of geojson.features) {
+    const iso = f.properties.ISO_A3 || f.properties.ADM0_A3 || '';
+    colorCache[iso] = anomalyToHex(getAnomaly(iso, multiplier));
+  }
+}
+
+// ─────────────────────────────────────────────
+// CANVAS + PROYECCIÓN D3
+// ─────────────────────────────────────────────
+const canvas    = document.getElementById('globe');
+const ctx       = canvas.getContext('2d');
+const dpr       = window.devicePixelRatio || 1;
+
+let W, H, R; // se calculan en resize
+
+const projection = d3.geoOrthographic()
+  .clipAngle(90)
+  .precision(0.3);
+
+const pathGen = d3.geoPath(projection, ctx);
+const graticule = d3.geoGraticule()();
+
+// Estrellas de fondo (generadas una vez)
+let stars = [];
+
+function initStars(w, h) {
+  stars = Array.from({ length: 300 }, () => ({
+    x: Math.random() * w,
+    y: Math.random() * h,
+    r: Math.random() * 1.0 + 0.2,
+    a: Math.random() * 0.6 + 0.2,
+  }));
+}
+
+function resize() {
+  const scene = document.getElementById('scene');
+  W = scene.offsetWidth;
+  H = scene.offsetHeight;
+  R = Math.min(W, H) / 2 - 30;
+
+  canvas.width  = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width  = W + 'px';
+  canvas.style.height = H + 'px';
+  ctx.scale(dpr, dpr);
+
+  projection.scale(R).translate([W / 2, H / 2]);
+  baseScale = R;
+  initStars(W, H);
+  draw();
+}
+
+// ─────────────────────────────────────────────
+// RENDER
+// ─────────────────────────────────────────────
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+
+  // Estrellas
+  for (const s of stars) {
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255,255,255,${s.a})`;
+    ctx.fill();
+  }
+
+  // Océano (esfera base)
+  const oceanGrad = ctx.createRadialGradient(
+    W/2 - R*0.25, H/2 - R*0.25, R*0.05,
+    W/2, H/2, R
+  );
+  oceanGrad.addColorStop(0, '#1a3a6a');
+  oceanGrad.addColorStop(1, '#040c1e');
+
+  ctx.beginPath();
+  pathGen({ type: 'Sphere' });
+  ctx.fillStyle = oceanGrad;
+  ctx.fill();
+
+  if (!geojson) return;
+
+  // Graticule (cuadrícula lat/lon)
+  ctx.beginPath();
+  pathGen(graticule);
+  ctx.strokeStyle = 'rgba(100,150,220,0.07)';
+  ctx.lineWidth = 0.6;
+  ctx.stroke();
+
+  // Países
+  for (const f of geojson.features) {
+    const iso   = f.properties.ISO_A3 || f.properties.ADM0_A3 || '';
+    const color = colorCache[iso] || '#0d1828';
+
+    ctx.beginPath();
+    pathGen(f);
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(4,8,15,0.8)';
+    ctx.lineWidth = 0.4;
+    ctx.stroke();
+  }
+
+  // Borde del globo
+  ctx.beginPath();
+  pathGen({ type: 'Sphere' });
+  ctx.strokeStyle = 'rgba(80,130,255,0.25)';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  // Efecto de luz/highlight
+  const lightGrad = ctx.createRadialGradient(
+    W/2 - R*0.3, H/2 - R*0.35, R*0.02,
+    W/2 - R*0.1, H/2 - R*0.1, R*0.9
+  );
+  lightGrad.addColorStop(0, 'rgba(255,255,255,0.10)');
+  lightGrad.addColorStop(0.4, 'rgba(255,255,255,0.02)');
+  lightGrad.addColorStop(1,   'rgba(0,0,0,0.25)');
+
+  ctx.beginPath();
+  pathGen({ type: 'Sphere' });
+  ctx.fillStyle = lightGrad;
+  ctx.fill();
+
+  // Halo exterior
+  const haloGrad = ctx.createRadialGradient(W/2, H/2, R*0.96, W/2, H/2, R*1.12);
+  haloGrad.addColorStop(0, 'rgba(60,120,255,0.18)');
+  haloGrad.addColorStop(1, 'rgba(60,120,255,0)');
+  ctx.beginPath();
+  ctx.arc(W/2, H/2, R*1.12, 0, Math.PI*2);
+  ctx.fillStyle = haloGrad;
+  ctx.fill();
+}
+
+// ─────────────────────────────────────────────
+// ROTACIÓN AUTOMÁTICA
+// ─────────────────────────────────────────────
+let rot = [20, -20, 0]; // [lambda, phi, gamma]
+
+function autoRotate() {
+  if (!rotating || isDragging) {
+    rafId = requestAnimationFrame(autoRotate);
+    return;
+  }
+  rot[0] -= 0.15;
+  projection.rotate(rot);
+  draw();
+  rafId = requestAnimationFrame(autoRotate);
+}
+
+// ─────────────────────────────────────────────
+// DRAG PARA ROTAR MANUALMENTE
+// ─────────────────────────────────────────────
+let dragStart = null;
+let rotStart  = null;
+let baseScale = null; // escala base para el zoom
+
+canvas.addEventListener('mousedown', (e) => {
+  isDragging = true;
+  dragStart  = [e.clientX, e.clientY];
+  rotStart   = [...rot];
+  canvas.style.cursor = 'grabbing';
+});
+
+window.addEventListener('mousemove', (e) => {
+  if (!isDragging) {
+    handleHover(e);
+    return;
+  }
+  const dx = e.clientX - dragStart[0];
+  const dy = e.clientY - dragStart[1];
+  // Fix: dirección natural (drag derecha → globo gira derecha)
+  rot[0] = rotStart[0] + dx * 0.5;
+  rot[1] = Math.max(-85, Math.min(85, rotStart[1] - dy * 0.5));
+  projection.rotate(rot);
+  draw();
+});
+
+window.addEventListener('mouseup', () => {
+  isDragging = false;
+  canvas.style.cursor = 'grab';
+});
+
+// Zoom con rueda del mouse
+canvas.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  if (baseScale === null) baseScale = projection.scale();
+  const factor   = e.deltaY < 0 ? 1.12 : 0.89;
+  const newScale = Math.max(baseScale * 0.4, Math.min(baseScale * 5, projection.scale() * factor));
+  projection.scale(newScale);
+  draw();
+}, { passive: false });
+
+// Touch — arrastre
+canvas.addEventListener('touchstart', (e) => {
+  const t = e.touches[0];
+  isDragging = true;
+  dragStart  = [t.clientX, t.clientY];
+  rotStart   = [...rot];
+}, { passive: true });
+
+canvas.addEventListener('touchmove', (e) => {
+  if (!isDragging) return;
+  e.preventDefault();
+  const t  = e.touches[0];
+  const dx = t.clientX - dragStart[0];
+  const dy = t.clientY - dragStart[1];
+  rot[0] = rotStart[0] + dx * 0.5;
+  rot[1] = Math.max(-85, Math.min(85, rotStart[1] - dy * 0.5));
+  projection.rotate(rot);
+  draw();
+}, { passive: false });
+
+canvas.addEventListener('touchend', () => { isDragging = false; });
+
+// ─────────────────────────────────────────────
+// HOVER → TOOLTIP
+// ─────────────────────────────────────────────
+const tooltip  = document.getElementById('tooltip');
+const ttName   = document.getElementById('ttName');
+const ttAnom   = document.getElementById('ttAnomaly');
+const ttNote   = document.getElementById('ttNote');
+
+function handleHover(e) {
+  if (!geojson) return;
+  const rect  = canvas.getBoundingClientRect();
+  const mx    = e.clientX - rect.left;
+  const my    = e.clientY - rect.top;
+  const coord = projection.invert([mx, my]);
+
+  if (!coord || isNaN(coord[0])) {
+    tooltip.classList.remove('visible');
+    return;
+  }
+
+  const found = geojson.features.find(f => d3.geoContains(f, coord));
+
+  if (!found) {
+    tooltip.classList.remove('visible');
+    return;
+  }
+
+  const name    = found.properties.ADMIN || found.properties.NAME || found.properties.name || '—';
+  const iso     = found.properties.ISO_A3 || found.properties.ADM0_A3 || '';
+  const anomaly = getAnomaly(iso, multiplier);
+  const sign    = anomaly > 0 ? '+' : '';
+  const color   = anomalyToHex(anomaly);
+  const note    = anomaly > 0.2
+    ? 'Temperatura sobre el promedio histórico'
+    : anomaly < -0.2
+      ? 'Temperatura bajo el promedio histórico'
+      : 'Sin variación significativa';
+
+  ttName.textContent   = name;
+  ttAnom.textContent   = multiplier === 0 ? '±0.0°C' : `${sign}${anomaly.toFixed(1)}°C`;
+  ttAnom.style.color   = color;
+  ttNote.textContent   = note;
+  tooltip.classList.add('visible');
+}
+
+canvas.addEventListener('mouseleave', () => tooltip.classList.remove('visible'));
+
+// ─────────────────────────────────────────────
+// BOTONES
+// ─────────────────────────────────────────────
+document.getElementById('rotateBtn').addEventListener('click', function() {
+  rotating = !rotating;
+  this.classList.toggle('active', rotating);
+  this.textContent = rotating ? '⟳ Rotando' : '⏸ Pausado';
+});
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  rot = [20, -20, 0];
+  projection.rotate(rot);
+  draw();
+});
+
+// ─────────────────────────────────────────────
+// SLIDER
+// ─────────────────────────────────────────────
+const TICKS  = ['Normal', 'Débil', 'Moderado', 'Fuerte', 'Extraordinario'];
+const badge  = document.getElementById('intensityBadge');
+const slider = document.getElementById('intensitySlider');
+const ticksEl = document.getElementById('sliderTicks');
+
+TICKS.forEach(t => {
+  const s = document.createElement('span');
+  s.className = 'slider-tick';
+  s.textContent = t;
+  ticksEl.appendChild(s);
+});
+
+function getIntensityInfo(v) {
+  return INTENSITY_LABELS.find(l => v <= l.max) || INTENSITY_LABELS.at(-1);
+}
+
+function updateSlider(v) {
+  const info = getIntensityInfo(v);
+  const idx  = INTENSITY_LABELS.indexOf(info);
+  document.querySelectorAll('.slider-tick').forEach((el, i) => {
+    el.classList.toggle('active', i === idx);
+  });
+  badge.textContent = `${info.label} — ${info.desc}`;
+  multiplier = v / 100;
+  rebuildColors();
+  if (!rotating) draw();
+}
+
+slider.addEventListener('input', () => updateSlider(parseInt(slider.value)));
+updateSlider(0);
+
+// ─────────────────────────────────────────────
+// CARGA
+// ─────────────────────────────────────────────
+fetch('https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson')
+  .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
+  .then(data => {
+    geojson = data;
+    rebuildColors();
+    document.getElementById('loading').style.display = 'none';
+    resize();
+    autoRotate();
+  })
+  .catch(err => {
+    document.getElementById('loading').innerHTML = `
+      <div style="color:#e05c2a;text-align:center;padding:24px;font-family:sans-serif;">
+        Error al cargar datos.<br>
+        <small style="color:#5a6070">${err.message}</small>
+      </div>`;
+  });
+
+window.addEventListener('resize', resize);
+</script>
+</body>
+</html>
