@@ -113,10 +113,16 @@
     .slider-tick.active { color: #b09080; }
 
     /* ── GLOBO ── */
-    #globe-container {
+    #globe-wrapper {
       flex: 1;
       position: relative;
       overflow: hidden;
+    }
+
+    #globe-container {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
     }
 
     /* ── TOOLTIP ── */
@@ -138,14 +144,15 @@
 
     #tooltip.visible { opacity: 1; }
 
-    #tooltip .t-name    { font-size: 0.9rem; color: #f0e8df; margin-bottom: 4px; }
+    #tooltip .t-name    { font-size: 0.9rem; color: #f0e8df; margin-bottom: 2px; }
+    #tooltip .t-country { font-family: sans-serif; font-size: 0.68rem; color: #4a5568; margin-bottom: 6px; }
     #tooltip .t-anomaly { font-size: 1.6rem; font-family: sans-serif; font-weight: 700; }
     #tooltip .t-note    { font-size: 0.72rem; font-family: sans-serif; color: #6a7080; margin-top: 4px; line-height: 1.4; }
 
     /* ── LEYENDA ── */
     #legend {
       position: absolute;
-      bottom: 24px;
+      bottom: 68px;
       right: 20px;
       background: rgba(4, 8, 15, 0.88);
       border: 1px solid #1e2a3e;
@@ -183,46 +190,261 @@
       color: #5a6070;
     }
 
-    /* ── CONTROLES ── */
-    .controls {
+    /* ── BARRA INFERIOR ── */
+    #bottom-bar {
       position: absolute;
-      bottom: 24px;
-      left: 50%;
-      transform: translateX(-50%);
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 52px;
+      background: rgba(4, 8, 15, 0.92);
+      border-top: 1px solid #141c2e;
       display: flex;
-      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
       z-index: 20;
+      backdrop-filter: blur(6px);
+    }
+
+    .bar-section {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .bar-section.center {
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .bar-section.right {
+      justify-content: flex-end;
     }
 
     .ctrl-btn {
-      background: rgba(4,8,15,0.88);
+      background: rgba(4,8,15,0.6);
       border: 1px solid #1e2a3e;
       border-radius: 6px;
-      padding: 7px 15px;
+      padding: 6px 13px;
       font-family: sans-serif;
       font-size: 0.72rem;
       color: #7a8090;
       cursor: pointer;
       transition: all 0.2s;
-      backdrop-filter: blur(6px);
     }
 
     .ctrl-btn:hover { color: #f0e8df; border-color: #3a4a6a; }
     .ctrl-btn.active { color: #e09070; border-color: #e05c2a; }
 
-    /* ── NOTA 3D ── */
-    .note-3d {
-      position: absolute;
-      bottom: 24px;
-      left: 20px;
-      font-family: sans-serif;
-      font-size: 0.65rem;
-      color: #3a4050;
-      line-height: 1.5;
-      z-index: 20;
+    .nav-arrow {
+      font-size: 1.1rem;
+      padding: 4px 11px;
+      line-height: 1;
     }
 
-    /* ── SPINNER ── */
+    .story-dots {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .story-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #1e2a3e;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      border: 1px solid #2a3a4e;
+      flex-shrink: 0;
+    }
+
+    .story-dot:hover { background: #3a4a6a; }
+
+    .story-dot.active {
+      background: #e09070;
+      border-color: #e05c2a;
+      width: 18px;
+      border-radius: 3px;
+    }
+
+    .bar-label {
+      font-family: sans-serif;
+      font-size: 0.68rem;
+      color: #3a4050;
+      white-space: nowrap;
+    }
+
+    /* ── POPUP DE HISTORIA ── */
+    #story-popup {
+      position: absolute;
+      bottom: 68px;
+      left: 20px;
+      width: 295px;
+      background: rgba(4, 8, 15, 0.96);
+      border: 1px solid #1e2a3e;
+      border-radius: 10px;
+      padding: 18px 20px 14px;
+      z-index: 25;
+      backdrop-filter: blur(10px);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(10px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    #story-popup.visible {
+      opacity: 1;
+      pointer-events: all;
+      transform: translateY(0);
+    }
+
+    .popup-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .popup-emoji {
+      font-size: 1.9rem;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .popup-meta { flex: 1; }
+
+    .popup-person {
+      font-size: 0.92rem;
+      color: #f0e8df;
+      line-height: 1.3;
+    }
+
+    .popup-location {
+      font-family: sans-serif;
+      font-size: 0.70rem;
+      color: #5a6070;
+      margin-top: 3px;
+    }
+
+    .popup-close {
+      background: none;
+      border: none;
+      color: #2a3040;
+      font-size: 1.3rem;
+      cursor: pointer;
+      line-height: 1;
+      transition: color 0.2s;
+      padding: 0;
+      flex-shrink: 0;
+    }
+
+    .popup-close:hover { color: #f0e8df; }
+
+    .popup-impact {
+      font-family: sans-serif;
+      font-size: 0.76rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      letter-spacing: 0.02em;
+    }
+
+    .popup-divider {
+      height: 1px;
+      background: #141c2e;
+      margin: 10px 0;
+    }
+
+    .popup-story {
+      font-size: 0.80rem;
+      line-height: 1.6;
+      color: #8a8878;
+      margin-bottom: 14px;
+    }
+
+    .popup-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid #141c2e;
+      padding-top: 11px;
+    }
+
+    .popup-nav-btn {
+      background: none;
+      border: 1px solid #1e2a3e;
+      border-radius: 4px;
+      padding: 4px 10px;
+      font-family: sans-serif;
+      font-size: 0.68rem;
+      color: #5a6070;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .popup-nav-btn:hover { color: #f0e8df; border-color: #3a4a6a; }
+
+    .popup-counter {
+      font-family: sans-serif;
+      font-size: 0.65rem;
+      color: #2a3040;
+    }
+
+    /* ── MARCADORES EN EL GLOBO ── */
+    .story-marker {
+      cursor: pointer;
+      position: relative;
+      width: 24px;
+      height: 24px;
+      transform: translate(-50%, -50%);
+      pointer-events: auto;
+    }
+
+    .marker-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 2;
+      border: 1.5px solid rgba(255,255,255,0.3);
+      box-shadow: 0 0 6px rgba(255,255,255,0.4);
+      transition: transform 0.2s;
+    }
+
+    .story-marker:hover .marker-dot {
+      transform: translate(-50%, -50%) scale(1.4);
+    }
+
+    .marker-pulse {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      position: absolute;
+      top: 0; left: 0;
+      border: 1.5px solid rgba(255,255,255,0.5);
+      animation: mpulse 2.2s ease-out infinite;
+    }
+
+    .marker-pulse2 {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      position: absolute;
+      top: 0; left: 0;
+      border: 1px solid rgba(255,255,255,0.3);
+      animation: mpulse 2.2s ease-out infinite 1.1s;
+    }
+
+    @keyframes mpulse {
+      0%   { transform: scale(0.4); opacity: 0.9; }
+      100% { transform: scale(1.8); opacity: 0; }
+    }
+
+    /* ── SPINNER — hijo de #globe-wrapper, no de #globe-container ── */
     #loading {
       position: absolute;
       inset: 0;
@@ -292,14 +514,6 @@
       transition: width 0.4s ease;
     }
 
-    .spinner {
-      width: 26px; height: 26px;
-      border: 2px solid #141c2e;
-      border-top-color: #e05c2a;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-
     @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
@@ -320,7 +534,11 @@
   </div>
 </header>
 
-<div id="globe-container">
+<div id="globe-wrapper">
+  <!-- Canvas del globo (Globe.gl lo controla exclusivamente) -->
+  <div id="globe-container"></div>
+
+  <!-- Loading -->
   <div id="loading">
     <div class="loading-globe"></div>
     <div class="loading-text">Fenómeno El Niño</div>
@@ -328,12 +546,15 @@
     <div class="loading-step" id="loadingStep">Descargando datos geográficos…</div>
   </div>
 
+  <!-- Tooltip hover provincia/país -->
   <div id="tooltip">
     <div class="t-name"    id="ttName">—</div>
+    <div class="t-country" id="ttCountry">—</div>
     <div class="t-anomaly" id="ttAnomaly">—</div>
     <div class="t-note"    id="ttNote">—</div>
   </div>
 
+  <!-- Leyenda -->
   <div id="legend">
     <div class="leg-title">Anomalía de temperatura (°C)</div>
     <div class="leg-bar"></div>
@@ -342,18 +563,172 @@
     </div>
   </div>
 
-  <div class="controls">
-    <button class="ctrl-btn active" id="rotateBtn">⟳ Rotando</button>
+  <!-- Popup de historia personal -->
+  <div id="story-popup">
+    <div class="popup-header">
+      <div class="popup-emoji" id="popupEmoji">👤</div>
+      <div class="popup-meta">
+        <div class="popup-person"   id="popupPerson">—</div>
+        <div class="popup-location" id="popupLocation">—</div>
+      </div>
+      <button class="popup-close" onclick="closeStory()">×</button>
+    </div>
+    <div class="popup-impact" id="popupImpact">—</div>
+    <div class="popup-divider"></div>
+    <div class="popup-story" id="popupStory">—</div>
+    <div class="popup-nav">
+      <button class="popup-nav-btn" id="popupPrev">← Anterior</button>
+      <span class="popup-counter" id="popupCounter">1 / 6</span>
+      <button class="popup-nav-btn" id="popupNext">Siguiente →</button>
+    </div>
   </div>
 
-  <div class="note-3d">
-    La altura de cada país representa<br>la magnitud de su anomalía
+  <!-- Barra inferior -->
+  <div id="bottom-bar">
+    <div class="bar-section">
+      <button class="ctrl-btn" id="rotateBtn">⟳ Rotar</button>
+      <span class="bar-label">La altura representa la magnitud de la anomalía</span>
+    </div>
+    <div class="bar-section center">
+      <button class="ctrl-btn nav-arrow" id="prevStory">‹</button>
+      <div id="storyDots" class="story-dots"></div>
+      <button class="ctrl-btn nav-arrow" id="nextStory">›</button>
+    </div>
+    <div class="bar-section right">
+      <!-- espacio para balance visual -->
+    </div>
   </div>
 </div>
 
 <script>
 // ─────────────────────────────────────────────
-// DATOS
+// HISTORIAS PERSONALES
+// ─────────────────────────────────────────────
+const STORIES = [
+  {
+    lat: -12.05, lng: -77.03,
+    iso: 'PER',
+    emoji: '🌊',
+    person: 'María, 34 años',
+    location: 'Lima, Perú',
+    impact: '+4.5°C sobre lo normal',
+    story: 'Las lluvias torrenciales desbordaron el río Rímac e inundaron su barrio en Villa El Salvador. María perdió muebles, documentos y un año de ahorros. "Nunca había visto algo así", cuenta. Es la tercera inundación en cinco años.',
+    markerColor: '#fa3010',
+  },
+  {
+    lat: 36.17, lng: -115.14,
+    iso: 'USA',
+    emoji: '🔥',
+    person: 'James, 28 años',
+    location: 'Nevada, EE. UU.',
+    impact: '+0.8°C sobre lo normal',
+    story: 'El patrón atípico de lluvias dejó a Nevada con la temporada de incendios más larga de su historia. James, bombero voluntario, trabajó 22 días seguidos. "El viento cambiaba de dirección cada hora. No podíamos predecir nada."',
+    markerColor: '#ff8200',
+  },
+  {
+    lat: -6.21, lng: 106.85,
+    iso: 'IDN',
+    emoji: '🌾',
+    person: 'Siti, 41 años',
+    location: 'Yakarta, Indonesia',
+    impact: '−1.2°C (sequía extrema)',
+    story: 'La sequía asociada a El Niño redujo en 40 % la cosecha de arroz en Java. Siti no pudo pagar el alquiler de su terreno y tuvo que vender parte del ganado familiar. "El suelo estaba resquebrajado como nunca antes lo había visto."',
+    markerColor: '#148ce6',
+  },
+  {
+    lat: -1.29, lng: 36.82,
+    iso: 'KEN',
+    emoji: '🌧️',
+    person: 'Amara, 55 años',
+    location: 'Nairobi, Kenia',
+    impact: '+1.0°C sobre lo normal',
+    story: 'Las lluvias extremas vinculadas al Niño cubrieron de lodo los campos de Amara. Perdió la totalidad de la cosecha de maíz. Con 55 años, empezó desde cero. "La tierra dio, y luego se lo llevó todo en una sola noche."',
+    markerColor: '#ffd21e',
+  },
+  {
+    lat: -33.87, lng: 151.21,
+    iso: 'AUS',
+    emoji: '☀️',
+    person: 'John, 62 años',
+    location: 'Sídney, Australia',
+    impact: '−1.5°C (sequía histórica)',
+    story: 'El verano australiano de 2026 fue el más seco en 50 años. John, ganadero en Nueva Gales del Sur, vendió el 30 % de su rebaño por falta de pasto y agua. "Esto ya no es solo el clima. Es una nueva realidad permanente."',
+    markerColor: '#6ec8fa',
+  },
+  {
+    lat: 41.39, lng: 2.15,
+    iso: 'ESP',
+    emoji: '🌡️',
+    person: 'Carmen, 47 años',
+    location: 'Barcelona, España',
+    impact: '+0.5°C sobre lo normal',
+    story: 'La ola de calor de julio de 2026 mantuvo a Barcelona por encima de 40°C durante 11 días consecutivos. Carmen, enfermera, atendió a cientos de pacientes con golpe de calor. "El hospital estaba al límite de su capacidad cada noche."',
+    markerColor: '#ffd21e',
+  },
+  {
+    lat: -2.19, lng: -79.88,
+    iso: 'ECU',
+    emoji: '⛵',
+    person: 'Carlos, 52 años',
+    location: 'Guayaquil, Ecuador',
+    impact: '+3.5°C sobre lo normal',
+    story: 'El río Guayas desbordó tres veces en la misma temporada. Carlos, pescador artesanal, perdió su bote y sus redes — todo su sustento. "El mar ya no es el mismo, viene con ira", dice. Lleva seis meses viviendo en casa de su hermano.',
+    markerColor: '#f04010',
+  },
+  {
+    lat: 14.60, lng: 120.98,
+    iso: 'PHL',
+    emoji: '🌾',
+    person: 'Ana, 38 años',
+    location: 'Manila, Filipinas',
+    impact: '−1.0°C (sequía y tifones)',
+    story: 'La sequía arrasó con el 60% de la cosecha de arroz de la familia de Ana en Mindanao. Luego llegó el tifón. Ana migró temporalmente a Manila para enviar dinero a su pueblo. "El campo ya no alcanza para vivir", confía.',
+    markerColor: '#1480d0',
+  },
+  {
+    lat: 19.08, lng: 72.88,
+    iso: 'IND',
+    emoji: '☔',
+    person: 'Priya, 29 años',
+    location: 'Maharashtra, India',
+    impact: '−0.4°C (monzón débil)',
+    story: 'El monzón de 2026 llegó dos semanas tarde y sin la fuerza esperada. Priya plantó en seco y vio morir los cultivos. La deuda con el prestamista creció. "Rogamos por la lluvia todos los días", cuenta desde su aldea en Maharashtra.',
+    markerColor: '#5ab0e0',
+  },
+  {
+    lat: 9.02, lng: 38.74,
+    iso: 'ETH',
+    emoji: '🌵',
+    person: 'Fatima, 44 años',
+    location: 'Etiopía oriental',
+    impact: '+1.5°C (sequía severa)',
+    story: 'La cosecha falló dos años seguidos en el Cuerno de África. Fatima caminaba 9 km diarios para conseguir agua para sus cuatro hijos. Con ayuda de una ONG instaló un sistema de captación pluvial. "Pero no es suficiente para todos los del pueblo."',
+    markerColor: '#e09020',
+  },
+  {
+    lat: 20.66, lng: -103.35,
+    iso: 'MEX',
+    emoji: '🏗️',
+    person: 'Roberto, 45 años',
+    location: 'Guadalajara, México',
+    impact: '+1.2°C sobre lo normal',
+    story: 'El verano de 2026 fue brutal en el occidente de México. Roberto, albañil, empezó a trabajar desde las 4 am para evitar el calor del mediodía. Tres compañeros sufrieron golpes de calor en el mismo mes. "Antes podíamos trabajar hasta el mediodía. Ya no."',
+    markerColor: '#ffb020',
+  },
+  {
+    lat: -33.45, lng: -70.67,
+    iso: 'CHL',
+    emoji: '🔥',
+    person: 'Valentina, 31 años',
+    location: 'Región del Maule, Chile',
+    impact: '+1.5°C sobre lo normal',
+    story: 'La megasequía de Chile se intensificó con El Niño. Valentina, bombera forestal en la Región del Maule, combatió incendios durante 40 días seguidos en el verano de 2026. "Los árboles arden antes, más rápido y con más violencia que hace diez años."',
+    markerColor: '#ff9030',
+  },
+];
+
+// ─────────────────────────────────────────────
+// DATOS DE TEMPERATURA
 // ─────────────────────────────────────────────
 const BASE_ANOMALY = {
   PER:  4.5, ECU:  3.5, COL:  2.0, CHL:  1.5,
@@ -435,14 +810,68 @@ function getAnomaly(iso, mult) {
 // ─────────────────────────────────────────────
 // ESTADO
 // ─────────────────────────────────────────────
-let geojson    = null;
-let multiplier = 0;
-let world      = null;
-let autoRotating = true;
+let geojson         = null;
+let multiplier      = 0;
+let world           = null;
+let autoRotating    = false;
+let currentStoryIdx = -1;
 
-// Natural Earth 110m usa ADM0_A3 y ADMIN
-function isoOf(f)  { return f.properties.ADM0_A3 || f.properties.ISO_A3 || ''; }
-function nameOf(f) { return f.properties.ADMIN   || f.properties.NAME   || '—'; }
+// Natural Earth 50m admin-1 — resolución de código de país ISO
+// Fallback por nombre por si adm0_a3 difiere del estándar ISO
+const NAME_TO_ISO = {
+  'Peru':'PER','Brazil':'BRA','Colombia':'COL','Ecuador':'ECU',
+  'Chile':'CHL','Bolivia':'BOL','Venezuela':'VEN','Argentina':'ARG',
+  'Uruguay':'URY','Paraguay':'PRY','Guyana':'GUY','Suriname':'SUR',
+  'Mexico':'MEX','Guatemala':'GTM','Belize':'BLZ','Honduras':'HND',
+  'El Salvador':'SLV','Nicaragua':'NIC','Costa Rica':'CRI','Panama':'PAN',
+  'Cuba':'CUB','Dominican Republic':'DOM','Jamaica':'JAM','Haiti':'HTI',
+  'Trinidad and Tobago':'TTO','Barbados':'BRB',
+  'United States of America':'USA','Canada':'CAN','Greenland':'GRL',
+  'United Kingdom':'GBR','Ireland':'IRL','France':'FRA','Spain':'ESP',
+  'Portugal':'PRT','Germany':'DEU','Netherlands':'NLD','Belgium':'BEL',
+  'Switzerland':'CHE','Austria':'AUT','Italy':'ITA','Greece':'GRC',
+  'Norway':'NOR','Sweden':'SWE','Finland':'FIN','Denmark':'DNK',
+  'Poland':'POL','Czech Republic':'CZE','Czechia':'CZE','Hungary':'HUN',
+  'Romania':'ROU','Ukraine':'UKR','Belarus':'BLR','Russia':'RUS',
+  'Turkey':'TUR','Iraq':'IRQ','Iran':'IRN','Saudi Arabia':'SAU',
+  'Yemen':'YEM','Oman':'OMN','United Arab Emirates':'ARE','Qatar':'QAT',
+  'Kuwait':'KWT','Jordan':'JOR','Israel':'ISR','Pakistan':'PAK',
+  'India':'IND','Bangladesh':'BGD','Sri Lanka':'LKA','Nepal':'NPL',
+  'China':'CHN','Japan':'JPN','South Korea':'KOR','Mongolia':'MNG',
+  'Myanmar':'MMR','Thailand':'THA','Vietnam':'VNM','Cambodia':'KHM',
+  'Laos':'LAO','Malaysia':'MYS','Singapore':'SGP','Indonesia':'IDN',
+  'Philippines':'PHL','East Timor':'TLS','Timor-Leste':'TLS',
+  'Australia':'AUS','Papua New Guinea':'PNG','New Zealand':'NZL','Fiji':'FJI',
+  'Morocco':'MAR','Algeria':'DZA','Egypt':'EGY','Sudan':'SDN',
+  'Nigeria':'NGA','Cameroon':'CMR',
+  'Democratic Republic of the Congo':'COD','Congo, DRC':'COD',
+  'Gabon':'GAB','Ethiopia':'ETH','Somalia':'SOM','Kenya':'KEN',
+  'Tanzania':'TZA','Uganda':'UGA','Madagascar':'MDG','Angola':'AGO',
+  'Zambia':'ZMB','Mozambique':'MOZ','Zimbabwe':'ZWE','Botswana':'BWA',
+  'Namibia':'NAM','South Africa':'ZAF',
+};
+
+function isoOf(f) {
+  if (!f || !f.properties) return '';
+  const p = f.properties;
+  // Normalizar: trim + uppercase para evitar diferencias de case o espacios
+  const raw = (p.adm0_a3 || p.adm0_a3_is || p.adm0_a3_us ||
+               p.ADM0_A3  || p.gu_a3      || p.sov_a3     || '').trim().toUpperCase();
+  if (raw && raw !== '-99' && raw !== '-9' && BASE_ANOMALY[raw] !== undefined) return raw;
+  // Fallback por nombre de país (campo 'admin' en Natural Earth siempre presente)
+  const admin = (p.admin || p.ADMIN || p.adm0_name || '').trim();
+  return NAME_TO_ISO[admin] || raw || '';
+}
+
+// nameOf y countryOf manejan tanto admin-1 (minúsculas) como admin-0 (mayúsculas)
+function nameOf(f)    {
+  return f.properties.name_en || f.properties.name    ||
+         f.properties.NAME    || f.properties.ADMIN   || '—';
+}
+function countryOf(f) {
+  return f.properties.admin   || f.properties.adm0_name ||
+         f.properties.ADMIN   || f.properties.NAME    || '';
+}
 
 function capColor(f) {
   const a = getAnomaly(isoOf(f), multiplier);
@@ -454,7 +883,9 @@ function altitude(f) {
   return 0.004 + a * 0.012;
 }
 
-// Helpers de carga
+// ─────────────────────────────────────────────
+// LOADING
+// ─────────────────────────────────────────────
 function setLoadingStep(text, pct) {
   const step = document.getElementById('loadingStep');
   const bar  = document.getElementById('loadingBar');
@@ -470,32 +901,85 @@ function hideLoading() {
 }
 
 // ─────────────────────────────────────────────
-// TOOLTIP
+// TOOLTIP HOVER PAÍS
 // ─────────────────────────────────────────────
-const tooltip = document.getElementById('tooltip');
-const ttName  = document.getElementById('ttName');
-const ttAnom  = document.getElementById('ttAnomaly');
-const ttNote  = document.getElementById('ttNote');
+const tooltip   = document.getElementById('tooltip');
+const ttName    = document.getElementById('ttName');
+const ttCountry = document.getElementById('ttCountry');
+const ttAnom    = document.getElementById('ttAnomaly');
+const ttNote    = document.getElementById('ttNote');
 
 function handleHover(f) {
   if (!f) { tooltip.classList.remove('visible'); return; }
-
-  const name    = nameOf(f);
-  const iso     = isoOf(f);
-  const anomaly = getAnomaly(iso, multiplier);
-  const sign    = anomaly > 0 ? '+' : '';
-  const color   = anomalyToHex(anomaly);
-  const note    = anomaly > 0.2
+  const province = nameOf(f);
+  const country  = countryOf(f);
+  const iso      = isoOf(f);
+  const anomaly  = getAnomaly(iso, multiplier);
+  const sign     = anomaly > 0 ? '+' : '';
+  const color    = anomalyToHex(anomaly);
+  const note     = anomaly > 0.2
     ? 'Temperatura sobre el promedio histórico'
     : anomaly < -0.2
       ? 'Temperatura bajo el promedio histórico'
       : 'Sin variación significativa';
-
-  ttName.textContent  = name;
-  ttAnom.textContent  = `${sign}${anomaly.toFixed(1)}°C`;
-  ttAnom.style.color  = color;
-  ttNote.textContent  = note;
+  ttName.textContent    = province;
+  ttCountry.textContent = country;
+  ttAnom.textContent    = `${sign}${anomaly.toFixed(1)}°C`;
+  ttAnom.style.color    = color;
+  ttNote.textContent    = note;
   tooltip.classList.add('visible');
+}
+
+// ─────────────────────────────────────────────
+// HISTORIAS — POPUP + FLY-TO
+// ─────────────────────────────────────────────
+function openStory(idx) {
+  currentStoryIdx = idx;
+  const s = STORIES[idx];
+
+  // Fly-to: pausa rotación y vuela al punto
+  if (world) {
+    autoRotating = false;
+    world.controls().autoRotate = false;
+    const btn = document.getElementById('rotateBtn');
+    btn.classList.remove('active');
+    btn.textContent = '⟳ Rotar';
+    world.pointOfView({ lat: s.lat, lng: s.lng, altitude: 1.6 }, 1400);
+  }
+
+  // Actualiza popup
+  document.getElementById('popupEmoji').textContent    = s.emoji;
+  document.getElementById('popupPerson').textContent   = s.person;
+  document.getElementById('popupLocation').textContent = s.location;
+  const impactEl = document.getElementById('popupImpact');
+  impactEl.textContent  = s.impact;
+  impactEl.style.color  = s.markerColor;
+  document.getElementById('popupStory').textContent    = s.story;
+  document.getElementById('popupCounter').textContent  = `${idx + 1} / ${STORIES.length}`;
+
+  // Actualiza dots
+  document.querySelectorAll('.story-dot').forEach((dot, i) => {
+    dot.classList.toggle('active', i === idx);
+  });
+
+  // Muestra popup
+  document.getElementById('story-popup').classList.add('visible');
+}
+
+function closeStory() {
+  document.getElementById('story-popup').classList.remove('visible');
+  currentStoryIdx = -1;
+  document.querySelectorAll('.story-dot').forEach(d => d.classList.remove('active'));
+}
+
+function prevStory() {
+  const idx = currentStoryIdx < 0 ? 0 : (currentStoryIdx - 1 + STORIES.length) % STORIES.length;
+  openStory(idx);
+}
+
+function nextStory() {
+  const idx = currentStoryIdx < 0 ? 0 : (currentStoryIdx + 1) % STORIES.length;
+  openStory(idx);
 }
 
 // ─────────────────────────────────────────────
@@ -512,20 +996,42 @@ function initGlobe(data) {
     .showAtmosphere(true)
     .atmosphereColor('#1a50c0')
     .atmosphereAltitude(0.14)
+    // Polígonos de países
     .polygonsData(geojson.features)
     .polygonCapColor(capColor)
-    .polygonSideColor(() => 'rgba(4,8,15,0.5)')
-    .polygonStrokeColor(() => '#04080f')
+    .polygonSideColor(() => 'rgba(4,8,15,0.4)')
+    .polygonStrokeColor(() => 'rgba(4,8,15,0.7)')   // bordes suaves entre provincias
     .polygonAltitude(() => 0.004)
     .onPolygonHover(handleHover)
     .polygonsTransitionDuration(500)
+    // Marcadores HTML de historias
+    .htmlElementsData(STORIES)
+    .htmlLat('lat')
+    .htmlLng('lng')
+    .htmlAltitude(0.016)
+    .htmlElement(d => {
+      const el = document.createElement('div');
+      el.className = 'story-marker';
+      el.innerHTML = `
+        <div class="marker-pulse"  style="border-color:${d.markerColor}88"></div>
+        <div class="marker-pulse2" style="border-color:${d.markerColor}55"></div>
+        <div class="marker-dot"   style="background:${d.markerColor}"></div>
+      `;
+      el.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openStory(STORIES.indexOf(d));
+      });
+      return el;
+    })
+    // Listo
     .onGlobeReady(() => {
       setLoadingStep('¡Listo!', 100);
       setTimeout(hideLoading, 300);
+      initStoryNav();
     });
 
   const ctrl = world.controls();
-  ctrl.autoRotate      = true;
+  ctrl.autoRotate      = false;   // Sin rotación por defecto
   ctrl.autoRotateSpeed = 0.5;
   ctrl.enableDamping   = true;
   ctrl.dampingFactor   = 0.08;
@@ -540,6 +1046,26 @@ function updateGlobe() {
     .polygonCapColor(capColor)
     .polygonAltitude(altitude)
     .polygonsTransitionDuration(400);
+}
+
+// ─────────────────────────────────────────────
+// NAV DOTS + BOTONES
+// ─────────────────────────────────────────────
+function initStoryNav() {
+  const dotsEl = document.getElementById('storyDots');
+  STORIES.forEach((s, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'story-dot';
+    dot.title = s.location;
+    dot.style.setProperty('--color', s.markerColor);
+    dot.addEventListener('click', () => openStory(i));
+    dotsEl.appendChild(dot);
+  });
+
+  document.getElementById('prevStory').addEventListener('click', prevStory);
+  document.getElementById('nextStory').addEventListener('click', nextStory);
+  document.getElementById('popupPrev').addEventListener('click', prevStory);
+  document.getElementById('popupNext').addEventListener('click', nextStory);
 }
 
 // ─────────────────────────────────────────────
@@ -582,30 +1108,58 @@ document.getElementById('rotateBtn').addEventListener('click', function () {
   autoRotating = !autoRotating;
   if (world) world.controls().autoRotate = autoRotating;
   this.classList.toggle('active', autoRotating);
-  this.textContent = autoRotating ? '⟳ Rotando' : '⏸ Pausado';
+  this.textContent = autoRotating ? '⟳ Rotando' : '⟳ Rotar';
 });
 
 // ─────────────────────────────────────────────
 // CARGA
 // ─────────────────────────────────────────────
-// Natural Earth 110m — ~25x más pequeño que geo-countries
-const GEO_URL = 'https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_countries.geojson';
+// Carga híbrida:
+//   admin-1 50m → provincias/estados (cobertura parcial, ~5 MB)
+//   admin-0 110m → países completos  (~900 KB, fallback para lo que admin-1 no cubre)
+const GEO_ADM1 = 'https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_50m_admin_1_states_provinces.geojson';
+const GEO_ADM0 = 'https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_countries.geojson';
 
 setLoadingStep('Descargando datos geográficos…', 10);
 
-fetch(GEO_URL)
-  .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
-  .then(data => {
-    setLoadingStep('Procesando países…', 50);
-    setTimeout(() => initGlobe(data), 50); // pequeño delay para que el DOM actualice
-  })
-  .catch(err => {
-    document.getElementById('loading').innerHTML = `
-      <div style="color:#e05c2a;text-align:center;padding:24px;font-family:sans-serif;">
-        Error al cargar datos.<br>
-        <small style="color:#5a6070">${err.message}</small>
-      </div>`;
+Promise.all([
+  fetch(GEO_ADM1).then(r => { if (!r.ok) throw new Error(`ADM1 HTTP ${r.status}`); return r.json(); }),
+  fetch(GEO_ADM0).then(r => { if (!r.ok) throw new Error(`ADM0 HTTP ${r.status}`); return r.json(); }),
+])
+.then(([adm1, adm0]) => {
+  setLoadingStep('Combinando provincias y países…', 55);
+
+  // ISOs cubiertos por admin-1
+  const covered = new Set(
+    adm1.features.map(f => {
+      const p = f.properties;
+      return (p.adm0_a3 || p.ADM0_A3 || p.gu_a3 || '').trim().toUpperCase();
+    }).filter(Boolean)
+  );
+
+  // Admin-0: solo países que NO están cubiertos por admin-1
+  const fallback = adm0.features.filter(f => {
+    const p = f.properties;
+    const iso = (p.ADM0_A3 || p.ISO_A3 || '').trim().toUpperCase();
+    return iso && !covered.has(iso);
   });
+
+  console.log(`[Niño] Provincias admin-1: ${adm1.features.length} | Fallback admin-0: ${fallback.length} países`);
+
+  const combined = {
+    type: 'FeatureCollection',
+    features: [...adm1.features, ...fallback],
+  };
+
+  setTimeout(() => initGlobe(combined), 50);
+})
+.catch(err => {
+  document.getElementById('loading').innerHTML = `
+    <div style="color:#e05c2a;text-align:center;padding:24px;font-family:sans-serif;">
+      Error al cargar datos.<br>
+      <small style="color:#5a6070">${err.message}</small>
+    </div>`;
+});
 </script>
 </body>
 </html>
