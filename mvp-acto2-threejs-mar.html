@@ -1,0 +1,1977 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>El Niño — Globo 3D</title>
+  <script src="https://unpkg.com/globe.gl@2.27.0/dist/globe.gl.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Georgia', serif;
+      background: #04080f;
+      color: #e8e0d5;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ── HEADER ── */
+    header {
+      padding: 14px 40px 12px;
+      border-bottom: 1px solid #141c2e;
+      background: rgba(4, 8, 15, 0.97);
+      z-index: 10;
+      flex-shrink: 0;
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 11px;
+    }
+
+    header h1 {
+      font-size: 1.1rem;
+      font-weight: normal;
+      letter-spacing: 0.02em;
+      color: #f0e8df;
+    }
+
+    .intensity-badge {
+      font-family: sans-serif;
+      font-size: 0.78rem;
+      color: #e09070;
+      background: #1a1020;
+      border: 1px solid #3a2030;
+      padding: 3px 10px;
+      border-radius: 12px;
+    }
+
+    .slider-wrap { display: flex; flex-direction: column; gap: 6px; }
+
+    .slider-track-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .slider-label {
+      font-family: sans-serif;
+      font-size: 0.72rem;
+      color: #5a5060;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      flex: 1;
+      height: 4px;
+      border-radius: 2px;
+      background: linear-gradient(to right,
+        #003cc8 0%, #148ce6 15%,
+        #f5f5f5 35%,
+        #ffd21e 52%, #ff8200 65%, #fa1e0a 80%, #780050 100%
+      );
+      outline: none;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: #fff;
+      border: 2px solid #e05c2a;
+      box-shadow: 0 0 8px rgba(224,92,42,0.6);
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      box-shadow: 0 0 16px rgba(224,92,42,0.9);
+    }
+
+    .slider-ticks {
+      display: flex;
+      padding: 0 30px 0 110px;
+      justify-content: space-between;
+    }
+
+    .slider-tick {
+      font-family: sans-serif;
+      font-size: 0.65rem;
+      color: #2a2535;
+      text-align: center;
+      flex: 1;
+      transition: color 0.2s;
+    }
+    .slider-tick.active { color: #b09080; }
+
+    /* ── MECANISMO (fila bajo el slider) ── */
+    .mech-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 7px;
+      padding-top: 9px;
+      border-top: 1px solid #141c2e;
+      margin-top: 7px;
+      font-family: sans-serif;
+      font-size: 0.70rem;
+      line-height: 1.5;
+      color: #4a5568;
+    }
+    .mech-tag {
+      color: #e09070;
+      font-weight: 700;
+      white-space: nowrap;
+      flex-shrink: 0;
+      letter-spacing: 0.01em;
+    }
+    .mech-sep { color: #2a3040; flex-shrink: 0; margin-top: 1px; }
+    #mechText { flex: 1; }
+
+    /* ── GLOBO ── */
+    #globe-wrapper {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #globe-container {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+    }
+
+    /* ── TOOLTIP ── */
+    #tooltip {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: rgba(4, 8, 15, 0.92);
+      border: 1px solid #1e2a3e;
+      border-radius: 8px;
+      padding: 14px 18px;
+      z-index: 20;
+      min-width: 195px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s;
+      backdrop-filter: blur(6px);
+    }
+
+    #tooltip.visible { opacity: 1; }
+
+    #tooltip .t-name    { font-size: 0.9rem; color: #f0e8df; margin-bottom: 2px; }
+    #tooltip .t-country { font-family: sans-serif; font-size: 0.68rem; color: #4a5568; margin-bottom: 6px; }
+    #tooltip .t-anomaly { font-size: 1.6rem; font-family: sans-serif; font-weight: 700; }
+    #tooltip .t-note    { font-size: 0.72rem; font-family: sans-serif; color: #6a7080; margin-top: 4px; line-height: 1.4; }
+
+    /* ── LEYENDA ── */
+    #legend {
+      position: absolute;
+      bottom: 68px;
+      right: 20px;
+      background: rgba(4, 8, 15, 0.88);
+      border: 1px solid #1e2a3e;
+      border-radius: 8px;
+      padding: 12px 14px;
+      z-index: 20;
+      width: 200px;
+      backdrop-filter: blur(6px);
+    }
+
+    #legend .leg-title {
+      font-family: sans-serif;
+      font-size: 0.63rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #5a6070;
+      margin-bottom: 8px;
+    }
+
+    .leg-bar {
+      height: 10px;
+      border-radius: 3px;
+      background: linear-gradient(to right,
+        #003cc8, #148ce6, #6ec8fa, #f5f5f5,
+        #fffaa0, #ffd21e, #ff8200, #fa1e0a, #c80028, #780050
+      );
+      margin-bottom: 4px;
+    }
+
+    .leg-labels {
+      display: flex;
+      justify-content: space-between;
+      font-family: sans-serif;
+      font-size: 0.62rem;
+      color: #5a6070;
+    }
+
+    /* ── LEYENDA DE CORRIENTES ── */
+    #current-legend {
+      position: absolute;
+      bottom: 68px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(4, 8, 15, 0.90);
+      border: 1px solid #1e2a3e;
+      border-radius: 8px;
+      padding: 10px 14px;
+      z-index: 20;
+      backdrop-filter: blur(6px);
+      pointer-events: none;
+      display: none;
+      min-width: 230px;
+    }
+    .curr-title {
+      font-family: sans-serif;
+      font-size: 0.60rem;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: #3a4050;
+      margin-bottom: 8px;
+    }
+    .curr-item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 5px;
+      font-family: sans-serif;
+      font-size: 0.68rem;
+      color: #5a6070;
+    }
+    .curr-line {
+      width: 28px;
+      height: 3px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+    .curr-hint {
+      font-family: sans-serif;
+      font-size: 0.60rem;
+      color: #2a3040;
+      margin-top: 7px;
+      border-top: 1px solid #141c2e;
+      padding-top: 6px;
+    }
+
+    /* ── BARRA INFERIOR ── */
+    #bottom-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 52px;
+      background: rgba(4, 8, 15, 0.92);
+      border-top: 1px solid #141c2e;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      z-index: 20;
+      backdrop-filter: blur(6px);
+    }
+
+    .bar-section {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .bar-section.center {
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .bar-section.right {
+      justify-content: flex-end;
+    }
+
+    .ctrl-btn {
+      background: rgba(4,8,15,0.6);
+      border: 1px solid #1e2a3e;
+      border-radius: 6px;
+      padding: 6px 13px;
+      font-family: sans-serif;
+      font-size: 0.72rem;
+      color: #7a8090;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .ctrl-btn:hover { color: #f0e8df; border-color: #3a4a6a; }
+    .ctrl-btn.active { color: #e09070; border-color: #e05c2a; }
+
+    .ctrl-btn.focus-btn {
+      color: #60a0d0;
+      border-color: #1e3a5a;
+    }
+    .ctrl-btn.focus-btn:hover { color: #9ad0f0; border-color: #3a6a8a; }
+
+    .nav-arrow {
+      font-size: 1.1rem;
+      padding: 4px 11px;
+      line-height: 1;
+    }
+
+    .story-dots {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .story-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #1e2a3e;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      border: 1px solid #2a3a4e;
+      flex-shrink: 0;
+    }
+
+    .story-dot:hover { background: #3a4a6a; }
+
+    .story-dot.active {
+      background: #e09070;
+      border-color: #e05c2a;
+      width: 18px;
+      border-radius: 3px;
+    }
+
+    .bar-label {
+      font-family: sans-serif;
+      font-size: 0.68rem;
+      color: #3a4050;
+      white-space: nowrap;
+    }
+
+    /* ── POPUP DE HISTORIA ── */
+    #story-popup {
+      position: absolute;
+      bottom: 68px;
+      left: 20px;
+      width: 295px;
+      background: rgba(4, 8, 15, 0.96);
+      border: 1px solid #1e2a3e;
+      border-radius: 10px;
+      padding: 18px 20px 14px;
+      z-index: 25;
+      backdrop-filter: blur(10px);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(10px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    #story-popup.visible {
+      opacity: 1;
+      pointer-events: all;
+      transform: translateY(0);
+    }
+
+    .popup-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .popup-emoji {
+      font-size: 1.9rem;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .popup-meta { flex: 1; }
+
+    .popup-person {
+      font-size: 0.92rem;
+      color: #f0e8df;
+      line-height: 1.3;
+    }
+
+    .popup-location {
+      font-family: sans-serif;
+      font-size: 0.70rem;
+      color: #5a6070;
+      margin-top: 3px;
+    }
+
+    .popup-close {
+      background: none;
+      border: none;
+      color: #2a3040;
+      font-size: 1.3rem;
+      cursor: pointer;
+      line-height: 1;
+      transition: color 0.2s;
+      padding: 0;
+      flex-shrink: 0;
+    }
+
+    .popup-close:hover { color: #f0e8df; }
+
+    .popup-impact {
+      font-family: sans-serif;
+      font-size: 0.76rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      letter-spacing: 0.02em;
+    }
+
+    .popup-divider {
+      height: 1px;
+      background: #141c2e;
+      margin: 10px 0;
+    }
+
+    .popup-story {
+      font-size: 0.80rem;
+      line-height: 1.6;
+      color: #8a8878;
+      margin-bottom: 14px;
+    }
+
+    .popup-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid #141c2e;
+      padding-top: 11px;
+    }
+
+    .popup-nav-btn {
+      background: none;
+      border: 1px solid #1e2a3e;
+      border-radius: 4px;
+      padding: 4px 10px;
+      font-family: sans-serif;
+      font-size: 0.68rem;
+      color: #5a6070;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .popup-nav-btn:hover { color: #f0e8df; border-color: #3a4a6a; }
+
+    .popup-counter {
+      font-family: sans-serif;
+      font-size: 0.65rem;
+      color: #2a3040;
+    }
+
+    /* ── MARCADORES EN EL GLOBO ── */
+    .story-marker {
+      cursor: pointer;
+      position: relative;
+      width: 24px;
+      height: 24px;
+      transform: translate(-50%, -50%);
+      pointer-events: auto;
+    }
+
+    .marker-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 2;
+      border: 1.5px solid rgba(255,255,255,0.3);
+      box-shadow: 0 0 6px rgba(255,255,255,0.4);
+      transition: transform 0.2s;
+    }
+
+    .story-marker:hover .marker-dot {
+      transform: translate(-50%, -50%) scale(1.4);
+    }
+
+    .marker-pulse {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      position: absolute;
+      top: 0; left: 0;
+      border: 1.5px solid rgba(255,255,255,0.5);
+      animation: mpulse 2.2s ease-out infinite;
+    }
+
+    .marker-pulse2 {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      position: absolute;
+      top: 0; left: 0;
+      border: 1px solid rgba(255,255,255,0.3);
+      animation: mpulse 2.2s ease-out infinite 1.1s;
+    }
+
+    @keyframes mpulse {
+      0%   { transform: scale(0.4); opacity: 0.9; }
+      100% { transform: scale(1.8); opacity: 0; }
+    }
+
+    /* ── SPINNER ── */
+    #loading {
+      position: absolute;
+      inset: 0;
+      background: #04080f;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      flex-direction: column;
+      gap: 20px;
+      transition: opacity 0.6s;
+    }
+
+    #loading.fadeout { opacity: 0; pointer-events: none; }
+
+    .loading-globe {
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #1a3a6a, #040c1e);
+      box-shadow: 0 0 30px rgba(40,100,255,0.3), inset 0 0 20px rgba(0,0,0,0.5);
+      animation: pulse 2s ease-in-out infinite;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .loading-globe::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 1.5px solid rgba(60,120,255,0.3);
+      animation: spin 3s linear infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 20px rgba(40,100,255,0.2); }
+      50%       { box-shadow: 0 0 40px rgba(40,100,255,0.5); }
+    }
+
+    .loading-text {
+      font-family: sans-serif;
+      font-size: 0.82rem;
+      color: #5a6070;
+      letter-spacing: 0.05em;
+    }
+
+    .loading-step {
+      font-family: sans-serif;
+      font-size: 0.68rem;
+      color: #3a4050;
+      margin-top: -10px;
+    }
+
+    .loading-bar-wrap {
+      width: 160px;
+      height: 2px;
+      background: #141c2e;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .loading-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(to right, #1a50c0, #e05c2a);
+      border-radius: 2px;
+      transition: width 0.4s ease;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── PANEL DE IMPACTO PERSONAL ── */
+    #impact-panel {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 300px;
+      max-height: calc(100% - 175px);
+      background: rgba(4, 8, 15, 0.96);
+      border: 1px solid #1e2a3e;
+      border-radius: 10px;
+      z-index: 22;
+      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .ip-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 13px 15px 11px;
+      border-bottom: 1px solid #141c2e;
+      flex-shrink: 0;
+    }
+
+    .ip-eyebrow {
+      font-family: sans-serif;
+      font-size: 0.60rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #e09070;
+      margin-bottom: 2px;
+    }
+
+    .ip-panel-title { font-size: 0.88rem; color: #f0e8df; }
+
+    .ip-toggle {
+      background: none;
+      border: none;
+      color: #3a4050;
+      font-size: 1.3rem;
+      cursor: pointer;
+      padding: 0;
+      line-height: 1;
+      transition: color 0.2s;
+      flex-shrink: 0;
+      margin-left: 8px;
+    }
+    .ip-toggle:hover { color: #f0e8df; }
+
+    #ipBody {
+      overflow-y: auto;
+      padding: 13px 15px;
+      flex: 1;
+    }
+    #ipBody::-webkit-scrollbar { width: 3px; }
+    #ipBody::-webkit-scrollbar-thumb { background: #1e2a3e; border-radius: 2px; }
+
+    .ip-intro {
+      font-family: sans-serif;
+      font-size: 0.71rem;
+      color: #4a5568;
+      line-height: 1.55;
+      margin-bottom: 13px;
+    }
+
+    .ip-field { margin-bottom: 11px; }
+
+    .ip-label {
+      display: block;
+      font-family: sans-serif;
+      font-size: 0.64rem;
+      color: #3a4a5a;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 5px;
+    }
+
+    .ip-input, .ip-select {
+      width: 100%;
+      background: #060d18;
+      border: 1px solid #1a2436;
+      border-radius: 5px;
+      padding: 7px 9px;
+      font-family: sans-serif;
+      font-size: 0.76rem;
+      color: #b0a8a0;
+      outline: none;
+      transition: border-color 0.2s;
+      -webkit-appearance: none;
+    }
+    .ip-input:focus, .ip-select:focus { border-color: #2a4070; }
+    .ip-input::placeholder { color: #1e2a3a; }
+
+    .ip-radio-group { display: flex; gap: 14px; }
+    .ip-radio-label {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-family: sans-serif;
+      font-size: 0.74rem;
+      color: #6a7080;
+      cursor: pointer;
+    }
+    .ip-radio-input { accent-color: #e05c2a; }
+
+    .ip-submit {
+      width: 100%;
+      background: rgba(26, 58, 106, 0.5);
+      border: 1px solid #2a4a7a;
+      border-radius: 6px;
+      padding: 9px;
+      font-family: sans-serif;
+      font-size: 0.76rem;
+      color: #8ab0e0;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 4px;
+    }
+    .ip-submit:hover { background: rgba(30,74,136,0.7); color: #f0e8df; border-color: #3a6aaa; }
+
+    .ip-error { font-family: sans-serif; font-size: 0.67rem; color: #e05c2a; margin-top: 5px; min-height: 14px; }
+
+    /* Resultado */
+    .ip-result-greeting { font-size: 0.92rem; color: #f0e8df; margin-bottom: 8px; }
+    .ip-result-context  { font-family: sans-serif; font-size: 0.72rem; color: #6a7880; line-height: 1.55; }
+    .ip-result-body     { font-family: sans-serif; font-size: 0.75rem; color: #9a9888; line-height: 1.6; }
+    .ip-result-age      { font-family: sans-serif; font-size: 0.70rem; color: #5a6070; line-height: 1.55; font-style: italic; }
+    .ip-divider         { height: 1px; background: #141c2e; margin: 10px 0; }
+
+    .ip-back {
+      background: none;
+      border: 1px solid #1e2a3e;
+      border-radius: 4px;
+      padding: 5px 10px;
+      font-family: sans-serif;
+      font-size: 0.67rem;
+      color: #4a5568;
+      cursor: pointer;
+      margin-top: 13px;
+      transition: all 0.2s;
+    }
+    .ip-back:hover { color: #f0e8df; border-color: #3a4a6a; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <h1>Fenómeno El Niño — Impacto Global de Temperatura</h1>
+    <span class="intensity-badge" id="intensityBadge">Normal — sin anomalía</span>
+  </div>
+  <div class="slider-wrap">
+    <div class="slider-track-wrap">
+      <span class="slider-label">Temperatura normal</span>
+      <input type="range" id="intensitySlider" min="0" max="100" value="0" step="1" />
+      <span class="slider-label">El Niño extraordinario</span>
+    </div>
+    <div class="slider-ticks" id="sliderTicks"></div>
+  </div>
+  <!-- Mecanismo dinámico -->
+  <div class="mech-row">
+    <span class="mech-tag" id="mechTitle">Estado normal</span>
+    <span class="mech-sep">—</span>
+    <span id="mechText">Los vientos alisios soplan hacia el oeste y acumulan agua cálida en el Pacífico occidental. La Corriente de Humboldt lleva agua fría a la superficie frente a Perú y Ecuador.</span>
+  </div>
+</header>
+
+<div id="globe-wrapper">
+  <div id="globe-container"></div>
+
+  <!-- Loading -->
+  <div id="loading">
+    <div class="loading-globe"></div>
+    <div class="loading-text">Fenómeno El Niño</div>
+    <div class="loading-bar-wrap"><div class="loading-bar" id="loadingBar"></div></div>
+    <div class="loading-step" id="loadingStep">Descargando datos geográficos…</div>
+  </div>
+
+  <!-- Tooltip hover país/región -->
+  <div id="tooltip">
+    <div class="t-name"    id="ttName">—</div>
+    <div class="t-country" id="ttCountry">—</div>
+    <div class="t-anomaly" id="ttAnomaly">—</div>
+    <div class="t-note"    id="ttNote">—</div>
+  </div>
+
+  <!-- Leyenda temperatura -->
+  <div id="legend">
+    <div class="leg-title">Anomalía de temperatura (°C)</div>
+    <div class="leg-bar"></div>
+    <div class="leg-labels">
+      <span>−2</span><span>0</span><span>+2</span><span>+4</span><span>+5</span>
+    </div>
+  </div>
+
+  <!-- Leyenda corrientes (visible al activar corrientes) -->
+  <div id="current-legend">
+    <div class="curr-title">Corrientes oceánicas</div>
+    <div class="curr-item">
+      <div class="curr-line" style="background:#28a0f0"></div>
+      <span>Corriente de Humboldt (fría)</span>
+    </div>
+    <div class="curr-item">
+      <div class="curr-line" style="background:#ff5a0a"></div>
+      <span>Corriente cálida El Niño</span>
+    </div>
+    <div class="curr-item">
+      <div class="curr-line" style="background:#8888cc"></div>
+      <span>Corriente Ecuatorial del Sur</span>
+    </div>
+    <div class="curr-hint">Las corrientes cambian con el slider de intensidad</div>
+  </div>
+
+  <!-- Panel: ¿Cómo te afecta El Niño? -->
+  <div id="impact-panel">
+    <div class="ip-header">
+      <div>
+        <div class="ip-eyebrow">El Niño y tú</div>
+        <div class="ip-panel-title">¿Cómo te afectaría?</div>
+      </div>
+      <button class="ip-toggle" id="ipToggle" title="Colapsar">−</button>
+    </div>
+    <div id="ipBody">
+
+      <div id="ipForm">
+        <p class="ip-intro">Cuéntanos sobre ti y te mostramos cómo El Niño podría impactar tu vida directamente.</p>
+
+        <div class="ip-field">
+          <label class="ip-label" for="ipName">Tu nombre</label>
+          <input type="text" id="ipName" class="ip-input" placeholder="Escribe tu nombre" />
+        </div>
+
+        <div class="ip-field">
+          <label class="ip-label">Género</label>
+          <div class="ip-radio-group">
+            <label class="ip-radio-label"><input type="radio" name="gender" value="hombre" class="ip-radio-input" checked /><span>Hombre</span></label>
+            <label class="ip-radio-label"><input type="radio" name="gender" value="mujer"  class="ip-radio-input" /><span>Mujer</span></label>
+            <label class="ip-radio-label"><input type="radio" name="gender" value="otro"   class="ip-radio-input" /><span>Otro</span></label>
+          </div>
+        </div>
+
+        <div class="ip-field">
+          <label class="ip-label" for="ipAge">Edad</label>
+          <select id="ipAge" class="ip-select">
+            <option value="">Selecciona...</option>
+            <option value="15-20">15–20 años</option>
+            <option value="21-30">21–30 años</option>
+            <option value="31-40">31–40 años</option>
+            <option value="41-55">41–55 años</option>
+            <option value="56+">56 o más años</option>
+          </select>
+        </div>
+
+        <div class="ip-field">
+          <label class="ip-label" for="ipProfession">Profesión</label>
+          <select id="ipProfession" class="ip-select">
+            <option value="">Selecciona...</option>
+          </select>
+        </div>
+
+        <div class="ip-field">
+          <label class="ip-label" for="ipCountry">País donde vives</label>
+          <select id="ipCountry" class="ip-select">
+            <option value="">Selecciona...</option>
+          </select>
+        </div>
+
+        <button id="ipSubmit" class="ip-submit">Ver mi impacto →</button>
+        <div class="ip-error" id="ipError"></div>
+      </div>
+
+      <div id="ipResult" style="display:none">
+        <div class="ip-result-greeting" id="ipResultGreeting"></div>
+        <div class="ip-result-context"  id="ipResultContext"></div>
+        <div class="ip-divider"></div>
+        <div class="ip-result-body"    id="ipResultBody"></div>
+        <div class="ip-divider"></div>
+        <div class="ip-result-age"     id="ipResultAge"></div>
+        <button class="ip-back" id="ipBack">← Cambiar datos</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Popup de historia personal -->
+  <div id="story-popup">
+    <div class="popup-header">
+      <div class="popup-emoji" id="popupEmoji">👤</div>
+      <div class="popup-meta">
+        <div class="popup-person"   id="popupPerson">—</div>
+        <div class="popup-location" id="popupLocation">—</div>
+      </div>
+      <button class="popup-close" onclick="closeStory()">×</button>
+    </div>
+    <div class="popup-impact" id="popupImpact">—</div>
+    <div class="popup-divider"></div>
+    <div class="popup-story" id="popupStory">—</div>
+    <div class="popup-nav">
+      <button class="popup-nav-btn" id="popupPrev">← Anterior</button>
+      <span class="popup-counter" id="popupCounter">1 / 6</span>
+      <button class="popup-nav-btn" id="popupNext">Siguiente →</button>
+    </div>
+  </div>
+
+  <!-- Barra inferior -->
+  <div id="bottom-bar">
+    <div class="bar-section">
+      <button class="ctrl-btn" id="rotateBtn">⟳ Rotar</button>
+      <button class="ctrl-btn" id="oceanBtn" title="Mostrar temperatura del mar en el Pacífico">🌊 Temperatura mar</button>
+      <button class="ctrl-btn" id="currentsBtn" title="Mostrar corrientes oceánicas animadas">↔ Corrientes</button>
+    </div>
+    <div class="bar-section center">
+      <button class="ctrl-btn nav-arrow" id="prevStory">‹</button>
+      <div id="storyDots" class="story-dots"></div>
+      <button class="ctrl-btn nav-arrow" id="nextStory">›</button>
+    </div>
+    <div class="bar-section right">
+      <button class="ctrl-btn focus-btn" id="focusBtn" title="Enfocar Ecuador y Perú">📍 Ecuador &amp; Perú</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+// HISTORIAS PERSONALES
+// ─────────────────────────────────────────────
+const STORIES = [
+  {
+    lat: -12.05, lng: -77.03,
+    iso: 'PER',
+    emoji: '🌊',
+    person: 'María, 34 años',
+    location: 'Lima, Perú',
+    impact: '+4.5°C sobre lo normal',
+    story: 'Las lluvias torrenciales desbordaron el río Rímac e inundaron su barrio en Villa El Salvador. María perdió muebles, documentos y un año de ahorros. "Nunca había visto algo así", cuenta. Es la tercera inundación en cinco años.',
+    markerColor: '#fa3010',
+  },
+  {
+    lat: 36.17, lng: -115.14,
+    iso: 'USA',
+    emoji: '🔥',
+    person: 'James, 28 años',
+    location: 'Nevada, EE. UU.',
+    impact: '+0.8°C sobre lo normal',
+    story: 'El patrón atípico de lluvias dejó a Nevada con la temporada de incendios más larga de su historia. James, bombero voluntario, trabajó 22 días seguidos. "El viento cambiaba de dirección cada hora. No podíamos predecir nada."',
+    markerColor: '#ff8200',
+  },
+  {
+    lat: -6.21, lng: 106.85,
+    iso: 'IDN',
+    emoji: '🌾',
+    person: 'Siti, 41 años',
+    location: 'Yakarta, Indonesia',
+    impact: '−1.2°C (sequía extrema)',
+    story: 'La sequía asociada a El Niño redujo en 40 % la cosecha de arroz en Java. Siti no pudo pagar el alquiler de su terreno y tuvo que vender parte del ganado familiar. "El suelo estaba resquebrajado como nunca antes lo había visto."',
+    markerColor: '#148ce6',
+  },
+  {
+    lat: -1.29, lng: 36.82,
+    iso: 'KEN',
+    emoji: '🌧️',
+    person: 'Amara, 55 años',
+    location: 'Nairobi, Kenia',
+    impact: '+1.0°C sobre lo normal',
+    story: 'Las lluvias extremas vinculadas al Niño cubrieron de lodo los campos de Amara. Perdió la totalidad de la cosecha de maíz. Con 55 años, empezó desde cero. "La tierra dio, y luego se lo llevó todo en una sola noche."',
+    markerColor: '#ffd21e',
+  },
+  {
+    lat: -33.87, lng: 151.21,
+    iso: 'AUS',
+    emoji: '☀️',
+    person: 'John, 62 años',
+    location: 'Sídney, Australia',
+    impact: '−1.5°C (sequía histórica)',
+    story: 'El verano australiano de 2026 fue el más seco en 50 años. John, ganadero en Nueva Gales del Sur, vendió el 30 % de su rebaño por falta de pasto y agua. "Esto ya no es solo el clima. Es una nueva realidad permanente."',
+    markerColor: '#6ec8fa',
+  },
+  {
+    lat: 41.39, lng: 2.15,
+    iso: 'ESP',
+    emoji: '🌡️',
+    person: 'Carmen, 47 años',
+    location: 'Barcelona, España',
+    impact: '+0.5°C sobre lo normal',
+    story: 'La ola de calor de julio de 2026 mantuvo a Barcelona por encima de 40°C durante 11 días consecutivos. Carmen, enfermera, atendió a cientos de pacientes con golpe de calor. "El hospital estaba al límite de su capacidad cada noche."',
+    markerColor: '#ffd21e',
+  },
+  {
+    lat: -2.19, lng: -79.88,
+    iso: 'ECU',
+    emoji: '⛵',
+    person: 'Carlos, 52 años',
+    location: 'Guayaquil, Ecuador',
+    impact: '+3.5°C sobre lo normal',
+    story: 'El río Guayas desbordó tres veces en la misma temporada. Carlos, pescador artesanal, perdió su bote y sus redes — todo su sustento. "El mar ya no es el mismo, viene con ira", dice. Lleva seis meses viviendo en casa de su hermano.',
+    markerColor: '#f04010',
+  },
+  {
+    lat: 14.60, lng: 120.98,
+    iso: 'PHL',
+    emoji: '🌾',
+    person: 'Ana, 38 años',
+    location: 'Manila, Filipinas',
+    impact: '−1.0°C (sequía y tifones)',
+    story: 'La sequía arrasó con el 60% de la cosecha de arroz de la familia de Ana en Mindanao. Luego llegó el tifón. Ana migró temporalmente a Manila para enviar dinero a su pueblo. "El campo ya no alcanza para vivir", confía.',
+    markerColor: '#1480d0',
+  },
+  {
+    lat: 19.08, lng: 72.88,
+    iso: 'IND',
+    emoji: '☔',
+    person: 'Priya, 29 años',
+    location: 'Maharashtra, India',
+    impact: '−0.4°C (monzón débil)',
+    story: 'El monzón de 2026 llegó dos semanas tarde y sin la fuerza esperada. Priya plantó en seco y vio morir los cultivos. La deuda con el prestamista creció. "Rogamos por la lluvia todos los días", cuenta desde su aldea en Maharashtra.',
+    markerColor: '#5ab0e0',
+  },
+  {
+    lat: 9.02, lng: 38.74,
+    iso: 'ETH',
+    emoji: '🌵',
+    person: 'Fatima, 44 años',
+    location: 'Etiopía oriental',
+    impact: '+1.5°C (sequía severa)',
+    story: 'La cosecha falló dos años seguidos en el Cuerno de África. Fatima caminaba 9 km diarios para conseguir agua para sus cuatro hijos. Con ayuda de una ONG instaló un sistema de captación pluvial. "Pero no es suficiente para todos los del pueblo."',
+    markerColor: '#e09020',
+  },
+  {
+    lat: 20.66, lng: -103.35,
+    iso: 'MEX',
+    emoji: '🏗️',
+    person: 'Roberto, 45 años',
+    location: 'Guadalajara, México',
+    impact: '+1.2°C sobre lo normal',
+    story: 'El verano de 2026 fue brutal en el occidente de México. Roberto, albañil, empezó a trabajar desde las 4 am para evitar el calor del mediodía. Tres compañeros sufrieron golpes de calor en el mismo mes. "Antes podíamos trabajar hasta el mediodía. Ya no."',
+    markerColor: '#ffb020',
+  },
+  {
+    lat: -33.45, lng: -70.67,
+    iso: 'CHL',
+    emoji: '🔥',
+    person: 'Valentina, 31 años',
+    location: 'Región del Maule, Chile',
+    impact: '+1.5°C sobre lo normal',
+    story: 'La megasequía de Chile se intensificó con El Niño. Valentina, bombera forestal en la Región del Maule, combatió incendios durante 40 días seguidos en el verano de 2026. "Los árboles arden antes, más rápido y con más violencia que hace diez años."',
+    markerColor: '#ff9030',
+  },
+];
+
+// ─────────────────────────────────────────────
+// DATOS DE TEMPERATURA — PAÍSES
+// ─────────────────────────────────────────────
+const BASE_ANOMALY = {
+  PER:  4.5, ECU:  3.5, COL:  2.0, CHL:  1.5,
+  BOL:  0.8, VEN:  1.0, BRA:  1.8, ARG:  0.8,
+  URY:  0.6, PRY:  0.5, GUY:  0.7, SUR:  0.7,
+  MEX:  1.2, GTM:  1.0, BLZ:  0.8, HND:  1.0,
+  SLV:  1.0, NIC:  1.0, CRI:  0.8, PAN:  0.8,
+  CUB:  0.5, DOM:  0.5, JAM:  0.5, HTI:  0.5,
+  TTO:  0.6, BRB:  0.5,
+  USA:  0.8, CAN:  0.5, GRL:  0.3,
+  GBR:  0.4, IRL:  0.4, FRA:  0.3, ESP:  0.5,
+  PRT:  0.6, DEU:  0.3, NLD:  0.3, BEL:  0.3,
+  CHE:  0.3, AUT:  0.3, ITA:  0.4, GRC:  0.4,
+  NOR:  0.4, SWE:  0.3, FIN:  0.3, DNK:  0.3,
+  POL:  0.3, CZE:  0.3, HUN:  0.3, ROU:  0.3,
+  UKR:  0.2, BLR:  0.2, RUS:  0.3,
+  TUR:  0.3, IRQ:  0.4, IRN:  0.3, SAU:  0.6,
+  YEM:  0.6, OMN:  0.5, ARE:  0.5, QAT:  0.5,
+  KWT:  0.5, JOR:  0.4, ISR:  0.3, PAK: -0.2,
+  IND: -0.4, BGD: -0.3, LKA: -0.4, NPL: -0.2,
+  CHN:  0.3, JPN:  0.2, KOR:  0.2, MNG:  0.2,
+  MMR: -0.4, THA: -0.5, VNM: -0.5, KHM: -0.5,
+  LAO: -0.4, MYS: -0.8, SGP: -0.6, IDN: -1.2,
+  PHL: -1.0, TLS: -1.0,
+  AUS: -1.5, PNG: -1.2, NZL: -0.3, FJI: -0.5,
+  MAR:  0.4, DZA:  0.3, EGY:  0.4, SDN:  0.8,
+  NGA:  0.5, CMR:  0.4, COD:  0.3, GAB:  0.3,
+  ETH:  1.5, SOM:  1.2, KEN:  1.0, TZA:  0.8,
+  UGA:  0.8, MDG:  0.5,
+  AGO: -0.3, ZMB: -0.4, MOZ: -0.5, ZWE: -0.6,
+  BWA: -0.5, NAM: -0.5, ZAF: -0.8,
+};
+const DEFAULT_ANOMALY = 0.3;
+
+// ─────────────────────────────────────────────
+// DATOS SUB-REGIONALES — Perú y Ecuador
+// Claves: "ISO:nombre" según Natural Earth admin-1
+// El litoral es el más afectado; la Amazonía/Oriente, el menos
+// ─────────────────────────────────────────────
+const SUBREGION_ANOMALY = {
+  // ── PERÚ ── departamentos
+  'PER:Tumbes':           5.0,  // Costa norte — el más afectado
+  'PER:Piura':            4.8,
+  'PER:Lambayeque':       4.5,
+  'PER:La Libertad':      4.2,
+  'PER:Ancash':           3.8,
+  'PER:Lima':             3.5,
+  'PER:Callao':           3.5,
+  'PER:Ica':              3.0,
+  'PER:Arequipa':         2.5,
+  'PER:Moquegua':         2.2,
+  'PER:Tacna':            2.0,
+  'PER:Cajamarca':        2.0,
+  'PER:Amazonas':         1.0,
+  'PER:San Martin':       1.2,
+  'PER:San Martín':       1.2,
+  'PER:Loreto':           0.8,
+  'PER:Ucayali':          0.8,
+  'PER:Huanuco':          0.8,
+  'PER:Huánuco':          0.8,
+  'PER:Pasco':            0.5,
+  'PER:Junin':            0.8,
+  'PER:Junín':            0.8,
+  'PER:Huancavelica':     0.8,
+  'PER:Ayacucho':         0.5,
+  'PER:Apurimac':         0.4,
+  'PER:Apurímac':         0.4,
+  'PER:Cusco':            0.4,
+  'PER:Cuzco':            0.4,
+  'PER:Puno':             0.5,
+  'PER:Madre de Dios':    0.5,
+
+  // ── ECUADOR ── provincias
+  'ECU:Santa Elena':      4.5,  // Costa sur — la más afectada
+  'ECU:Guayas':           4.2,
+  'ECU:Manabi':           4.0,
+  'ECU:Manabí':           4.0,
+  'ECU:Los Rios':         3.8,
+  'ECU:Los Ríos':         3.8,
+  'ECU:El Oro':           3.8,
+  'ECU:Esmeraldas':       3.5,
+  'ECU:Galapagos':        3.0,
+  'ECU:Galápagos':        3.0,
+  'ECU:Loja':             2.5,
+  'ECU:Santo Domingo de los Tsachilas': 2.0,
+  'ECU:Santo Domingo':    2.0,
+  'ECU:Bolivar':          1.5,
+  'ECU:Bolívar':          1.5,
+  'ECU:Azuay':            1.5,
+  'ECU:Canar':            1.2,
+  'ECU:Cañar':            1.2,
+  'ECU:Chimborazo':       1.0,
+  'ECU:Cotopaxi':         0.8,
+  'ECU:Tungurahua':       0.8,
+  'ECU:Pichincha':        0.8,
+  'ECU:Imbabura':         0.7,
+  'ECU:Carchi':           0.6,
+  'ECU:Napo':             0.5,
+  'ECU:Pastaza':          0.3,
+  'ECU:Morona Santiago':  0.4,
+  'ECU:Orellana':         0.3,
+  'ECU:Sucumbios':        0.3,
+  'ECU:Sucumbíos':        0.3,
+  'ECU:Zamora Chinchipe': 0.5,
+};
+
+// ─────────────────────────────────────────────
+// TEXTOS DE MECANISMO
+// ─────────────────────────────────────────────
+const MECHANISM_TEXTS = [
+  { max: 10, title: 'Estado normal',
+    text: 'Los vientos alisios soplan hacia el oeste y acumulan agua cálida en el Pacífico occidental. La Corriente de Humboldt lleva agua fría a la superficie frente a Perú y Ecuador, creando uno de los ecosistemas marinos más productivos del mundo.' },
+  { max: 30, title: 'El Niño débil',
+    text: 'Los vientos alisios se debilitan. El agua cálida del Pacífico occidental empieza a desplazarse hacia el este. La Corriente de Humboldt pierde intensidad y la temperatura del mar en la costa peruana comienza a subir.' },
+  { max: 55, title: 'El Niño moderado',
+    text: 'La corriente cálida avanza hacia el este. La Corriente de Humboldt está suprimida frente a Ecuador. Las lluvias aumentan en la costa de Perú y Ecuador, mientras que Indonesia y Australia empiezan a sufrir sequía.' },
+  { max: 79, title: 'El Niño fuerte',
+    text: 'El Pacífico oriental está dominado por agua cálida. La Corriente de Humboldt está casi completamente bloqueada. Inundaciones severas en la costa andina, colapso de pesquerías y sequías intensas en Asia-Pacífico y el sur de África.' },
+  { max: 100, title: 'El Niño extraordinario',
+    text: 'El Pacífico oriental alcanza +5°C sobre lo normal. Las pesquerías se derrumban por falta de nutrientes. Perú y Ecuador sufren las peores inundaciones de su historia reciente. Un evento de esta magnitud ocurrió en 1982-83, 1997-98 y 2015-16.' },
+];
+
+const INTENSITY_LABELS = [
+  { max: 10,  label: 'Normal',         desc: 'Sin anomalía significativa' },
+  { max: 30,  label: 'Débil',          desc: 'Ligeras variaciones en zonas tropicales' },
+  { max: 55,  label: 'Moderado',       desc: 'Impactos visibles en costa pacífica y Oceanía' },
+  { max: 79,  label: 'Fuerte',         desc: 'Inundaciones en América, sequías en Asia-Pacífico' },
+  { max: 100, label: 'Extraordinario', desc: 'Evento extremo con consecuencias globales' },
+];
+
+// ─────────────────────────────────────────────
+// COLORES
+// ─────────────────────────────────────────────
+const COLOR_STOPS = [
+  [-2.0, [  0,  60, 200]],
+  [-1.0, [ 20, 140, 230]],
+  [-0.2, [110, 200, 250]],
+  [ 0.0, [245, 245, 245]],
+  [ 0.4, [255, 250, 160]],
+  [ 1.0, [255, 210,  30]],
+  [ 1.8, [255, 130,   0]],
+  [ 2.8, [250,  30,  10]],
+  [ 3.8, [200,   0,  40]],
+  [ 5.0, [120,   0,  80]],
+];
+
+function anomalyToHex(val) {
+  const s = COLOR_STOPS;
+  if (val <= s[0][0]) return toHex(s[0][1]);
+  for (let i = 1; i < s.length; i++) {
+    if (val <= s[i][0]) {
+      const t = (val - s[i-1][0]) / (s[i][0] - s[i-1][0]);
+      return toHex(s[i-1][1].map((c,j) => Math.round(c + t*(s[i][1][j]-c))));
+    }
+  }
+  return toHex(s.at(-1)[1]);
+}
+
+function toHex([r,g,b]) {
+  return '#' + [r,g,b].map(x => x.toString(16).padStart(2,'0')).join('');
+}
+
+// ─────────────────────────────────────────────
+// ANOMALÍA — con lookup sub-regional para Perú y Ecuador
+// ─────────────────────────────────────────────
+function getBaseAnomaly(iso, featureName) {
+  if ((iso === 'PER' || iso === 'ECU') && featureName) {
+    const key = `${iso}:${featureName}`;
+    if (SUBREGION_ANOMALY[key] !== undefined) return SUBREGION_ANOMALY[key];
+    // Intento normalizado (sin tildes)
+    const norm = featureName.normalize('NFD').replace(/[̀-ͯ]/g, '');
+    const nKey = `${iso}:${norm}`;
+    if (SUBREGION_ANOMALY[nKey] !== undefined) return SUBREGION_ANOMALY[nKey];
+  }
+  return BASE_ANOMALY[iso] ?? DEFAULT_ANOMALY;
+}
+
+function getAnomaly(iso, mult, featureName) {
+  return getBaseAnomaly(iso, featureName) * mult;
+}
+
+// ─────────────────────────────────────────────
+// TEMPERATURA SUPERFICIAL DEL MAR (SST)
+// Rejilla del Pacífico para mostrar el calentamiento oceánico
+// ─────────────────────────────────────────────
+function baseSSTAnomaly(lat, lng) {
+  const absLat = Math.abs(lat);
+  if (absLat > 35) return 0.05;
+  const latFactor = Math.max(0, 1 - absLat / 30);
+
+  // Zona costera Ecuador/Perú (Niño 1+2): máximo calentamiento
+  if (absLat <= 12 && lng >= -95 && lng <= -70) {
+    const coastal = Math.max(0, 1 - Math.abs(lng + 80) / 18);
+    return (3.2 + coastal * 2.2) * latFactor;
+  }
+  // Zona Niño 3.4 (Pacífico central-oriental): segundo pico
+  if (absLat <= 8 && lng >= -175 && lng <= -95) {
+    const decay = Math.max(0, 1 - Math.abs(lng + 135) / 40);
+    return (2.8 + decay * 0.8) * latFactor;
+  }
+  // Pacífico tropical amplio
+  if (absLat <= 22 && lng >= -175 && lng <= -70) {
+    return 1.5 * latFactor;
+  }
+  return 0.3 * latFactor;
+}
+
+function generateSSTGrid() {
+  const pts = [];
+  // Rejilla gruesa: Pacífico tropical
+  for (let lat = -32; lat <= 32; lat += 7) {
+    for (let lng = -178; lng <= -65; lng += 7) {
+      const sstBase = baseSSTAnomaly(lat, lng);
+      if (sstBase > 0.05) pts.push({ lat, lng, sstBase, r: 4.0 });
+    }
+  }
+  // Rejilla fina: zona clave Ecuador/Perú
+  for (let lat = -18; lat <= 10; lat += 3.5) {
+    for (let lng = -96; lng <= -72; lng += 3.5) {
+      const sstBase = baseSSTAnomaly(lat, lng);
+      pts.push({ lat, lng, sstBase, r: 2.5 });
+    }
+  }
+  return pts;
+}
+const SST_GRID = generateSSTGrid();
+
+// ─────────────────────────────────────────────
+// CORRIENTES OCEÁNICAS — arcos animados
+// La opacidad de cada corriente cambia con el slider:
+//   Humboldt: fuerte en Normal → desaparece en El Niño fuerte
+//   Corriente cálida El Niño: ausente en Normal → dominante en El Niño fuerte
+//   Corriente Ecuatorial del Sur: fuerte en Normal → débil en El Niño
+// ─────────────────────────────────────────────
+function getOceanArcs(mult) {
+  const hA = Math.max(0.03, 1 - mult * 1.35).toFixed(2);   // Humboldt — se debilita
+  const nA = Math.max(0.02, mult * 2.0 - 0.1).toFixed(2);  // El Niño — crece
+  const sA = Math.max(0.03, 0.80 - mult * 1.1).toFixed(2); // SEC — se debilita
+
+  const hC = `rgba(40,160,240,${hA})`;
+  const nC = `rgba(255,85,10,${nA})`;
+  const sC = `rgba(140,140,210,${sA})`;
+
+  const arcs = [];
+
+  // ── Corriente de Humboldt (norte-fluyente, frente costa S. América)
+  [[-42,-73,-28,-72],[-28,-72,-16,-74],[-16,-74,-5,-79],[-5,-79,2,-82],[2,-82,8,-85]]
+  .forEach(([sl,slg,el,elg]) =>
+    arcs.push({ startLat:sl,startLng:slg,endLat:el,endLng:elg,
+      color:[hC,hC], animateTime:2400, stroke:1.4 }));
+
+  // ── Corriente cálida El Niño (este-fluyente a lo largo del ecuador)
+  // Segmento en el Pacífico occidental (longitudes positivas)
+  [[1,140,1,158],[1,158,1,174]]
+  .forEach(([sl,slg,el,elg]) =>
+    arcs.push({ startLat:sl,startLng:slg,endLat:el,endLng:elg,
+      color:[nC,nC], animateTime:1600, stroke:2.0 }));
+  // Segmento en el Pacífico oriental (longitudes negativas)
+  [[0,-175,0,-155],[0,-155,0,-135],[0,-135,0,-112],[0,-112,-2,-93],[-2,-93,-4,-80]]
+  .forEach(([sl,slg,el,elg]) =>
+    arcs.push({ startLat:sl,startLng:slg,endLat:el,endLng:elg,
+      color:[nC,nC], animateTime:1600, stroke:2.0 }));
+
+  // ── Corriente Ecuatorial del Sur (oeste-fluyente, vientos alisios)
+  [[-3,-76,-3,-106],[-3,-106,-3,-138],[-3,-138,-3,-168],[-3,-168,-3,-176]]
+  .forEach(([sl,slg,el,elg]) =>
+    arcs.push({ startLat:sl,startLng:slg,endLat:el,endLng:elg,
+      color:[sC,sC], animateTime:3800, stroke:1.0 }));
+
+  return arcs;
+}
+
+// ─────────────────────────────────────────────
+// ESTADO
+// ─────────────────────────────────────────────
+let geojson         = null;
+let multiplier      = 0;
+let world           = null;
+let autoRotating    = false;
+let currentStoryIdx = -1;
+let showOcean       = false;
+let showCurrents    = false;
+
+// Natural Earth — mapas de nombres a ISO
+const NAME_TO_ISO = {
+  'Peru':'PER','Brazil':'BRA','Colombia':'COL','Ecuador':'ECU',
+  'Chile':'CHL','Bolivia':'BOL','Venezuela':'VEN','Argentina':'ARG',
+  'Uruguay':'URY','Paraguay':'PRY','Guyana':'GUY','Suriname':'SUR',
+  'Mexico':'MEX','Guatemala':'GTM','Belize':'BLZ','Honduras':'HND',
+  'El Salvador':'SLV','Nicaragua':'NIC','Costa Rica':'CRI','Panama':'PAN',
+  'Cuba':'CUB','Dominican Republic':'DOM','Jamaica':'JAM','Haiti':'HTI',
+  'Trinidad and Tobago':'TTO','Barbados':'BRB',
+  'United States of America':'USA','Canada':'CAN','Greenland':'GRL',
+  'United Kingdom':'GBR','Ireland':'IRL','France':'FRA','Spain':'ESP',
+  'Portugal':'PRT','Germany':'DEU','Netherlands':'NLD','Belgium':'BEL',
+  'Switzerland':'CHE','Austria':'AUT','Italy':'ITA','Greece':'GRC',
+  'Norway':'NOR','Sweden':'SWE','Finland':'FIN','Denmark':'DNK',
+  'Poland':'POL','Czech Republic':'CZE','Czechia':'CZE','Hungary':'HUN',
+  'Romania':'ROU','Ukraine':'UKR','Belarus':'BLR','Russia':'RUS',
+  'Turkey':'TUR','Iraq':'IRQ','Iran':'IRN','Saudi Arabia':'SAU',
+  'Yemen':'YEM','Oman':'OMN','United Arab Emirates':'ARE','Qatar':'QAT',
+  'Kuwait':'KWT','Jordan':'JOR','Israel':'ISR','Pakistan':'PAK',
+  'India':'IND','Bangladesh':'BGD','Sri Lanka':'LKA','Nepal':'NPL',
+  'China':'CHN','Japan':'JPN','South Korea':'KOR','Mongolia':'MNG',
+  'Myanmar':'MMR','Thailand':'THA','Vietnam':'VNM','Cambodia':'KHM',
+  'Laos':'LAO','Malaysia':'MYS','Singapore':'SGP','Indonesia':'IDN',
+  'Philippines':'PHL','East Timor':'TLS','Timor-Leste':'TLS',
+  'Australia':'AUS','Papua New Guinea':'PNG','New Zealand':'NZL','Fiji':'FJI',
+  'Morocco':'MAR','Algeria':'DZA','Egypt':'EGY','Sudan':'SDN',
+  'Nigeria':'NGA','Cameroon':'CMR',
+  'Democratic Republic of the Congo':'COD','Congo, DRC':'COD',
+  'Gabon':'GAB','Ethiopia':'ETH','Somalia':'SOM','Kenya':'KEN',
+  'Tanzania':'TZA','Uganda':'UGA','Madagascar':'MDG','Angola':'AGO',
+  'Zambia':'ZMB','Mozambique':'MOZ','Zimbabwe':'ZWE','Botswana':'BWA',
+  'Namibia':'NAM','South Africa':'ZAF',
+};
+
+function isoOf(f) {
+  if (!f || !f.properties) return '';
+  const p = f.properties;
+  const raw = (p.adm0_a3 || p.adm0_a3_is || p.adm0_a3_us ||
+               p.ADM0_A3  || p.gu_a3      || p.sov_a3     || '').trim().toUpperCase();
+  if (raw && raw !== '-99' && raw !== '-9' && BASE_ANOMALY[raw] !== undefined) return raw;
+  const admin = (p.admin || p.ADMIN || p.adm0_name || '').trim();
+  return NAME_TO_ISO[admin] || raw || '';
+}
+
+function nameOf(f) {
+  return f.properties.name_en || f.properties.name    ||
+         f.properties.NAME    || f.properties.ADMIN   || '—';
+}
+function countryOf(f) {
+  return f.properties.admin   || f.properties.adm0_name ||
+         f.properties.ADMIN   || f.properties.NAME    || '';
+}
+
+function capColor(f) {
+  const iso   = isoOf(f);
+  const fname = nameOf(f);
+  const a     = getAnomaly(iso, multiplier, fname);
+  return anomalyToHex(a);
+}
+
+function altitude(f) {
+  const iso   = isoOf(f);
+  const fname = nameOf(f);
+  const a     = Math.abs(getAnomaly(iso, multiplier, fname));
+  return 0.004 + a * 0.012;
+}
+
+// ─────────────────────────────────────────────
+// LOADING
+// ─────────────────────────────────────────────
+function setLoadingStep(text, pct) {
+  const step = document.getElementById('loadingStep');
+  const bar  = document.getElementById('loadingBar');
+  if (step) step.textContent = text;
+  if (bar)  bar.style.width  = pct + '%';
+}
+
+function hideLoading() {
+  const el = document.getElementById('loading');
+  if (!el) return;
+  el.classList.add('fadeout');
+  setTimeout(() => el.remove(), 700);
+}
+
+// ─────────────────────────────────────────────
+// TOOLTIP HOVER
+// ─────────────────────────────────────────────
+const tooltip   = document.getElementById('tooltip');
+const ttName    = document.getElementById('ttName');
+const ttCountry = document.getElementById('ttCountry');
+const ttAnom    = document.getElementById('ttAnomaly');
+const ttNote    = document.getElementById('ttNote');
+
+function handleHover(f) {
+  if (!f) { tooltip.classList.remove('visible'); return; }
+  const province = nameOf(f);
+  const country  = countryOf(f);
+  const iso      = isoOf(f);
+  const anomaly  = getAnomaly(iso, multiplier, province);
+  const sign     = anomaly > 0 ? '+' : '';
+  const color    = anomalyToHex(anomaly);
+  const note     = anomaly > 0.2
+    ? 'Temperatura sobre el promedio histórico'
+    : anomaly < -0.2
+      ? 'Temperatura bajo el promedio histórico'
+      : 'Sin variación significativa';
+  ttName.textContent    = province;
+  ttCountry.textContent = country;
+  ttAnom.textContent    = `${sign}${anomaly.toFixed(1)}°C`;
+  ttAnom.style.color    = color;
+  ttNote.textContent    = note;
+  tooltip.classList.add('visible');
+}
+
+// ─────────────────────────────────────────────
+// HISTORIAS — POPUP + FLY-TO
+// ─────────────────────────────────────────────
+function openStory(idx) {
+  currentStoryIdx = idx;
+  const s = STORIES[idx];
+
+  if (world) {
+    autoRotating = false;
+    world.controls().autoRotate = false;
+    const btn = document.getElementById('rotateBtn');
+    btn.classList.remove('active');
+    btn.textContent = '⟳ Rotar';
+    world.pointOfView({ lat: s.lat, lng: s.lng, altitude: 1.6 }, 1400);
+  }
+
+  document.getElementById('popupEmoji').textContent    = s.emoji;
+  document.getElementById('popupPerson').textContent   = s.person;
+  document.getElementById('popupLocation').textContent = s.location;
+  const impactEl = document.getElementById('popupImpact');
+  impactEl.textContent  = s.impact;
+  impactEl.style.color  = s.markerColor;
+  document.getElementById('popupStory').textContent    = s.story;
+  document.getElementById('popupCounter').textContent  = `${idx + 1} / ${STORIES.length}`;
+
+  document.querySelectorAll('.story-dot').forEach((dot, i) => {
+    dot.classList.toggle('active', i === idx);
+  });
+
+  document.getElementById('story-popup').classList.add('visible');
+}
+
+function closeStory() {
+  document.getElementById('story-popup').classList.remove('visible');
+  currentStoryIdx = -1;
+  document.querySelectorAll('.story-dot').forEach(d => d.classList.remove('active'));
+}
+
+function prevStory() {
+  const idx = currentStoryIdx < 0 ? 0 : (currentStoryIdx - 1 + STORIES.length) % STORIES.length;
+  openStory(idx);
+}
+
+function nextStory() {
+  const idx = currentStoryIdx < 0 ? 0 : (currentStoryIdx + 1) % STORIES.length;
+  openStory(idx);
+}
+
+// ─────────────────────────────────────────────
+// CAPAS OCEÁNICAS
+// ─────────────────────────────────────────────
+function updateOceanLayer() {
+  if (!world) return;
+  if (showOcean) {
+    world
+      .pointsData(SST_GRID)
+      .pointColor(d => anomalyToHex(d.sstBase * multiplier))
+      .pointAltitude(0.001)
+      .pointRadius(d => d.r);
+  } else {
+    world.pointsData([]);
+  }
+}
+
+function updateCurrentsLayer() {
+  if (!world) return;
+  if (showCurrents) {
+    world
+      .arcsData(getOceanArcs(multiplier))
+      .arcColor('color')
+      .arcDashLength(0.38)
+      .arcDashGap(0.16)
+      .arcDashAnimateTime(d => d.animateTime)
+      .arcStroke(d => d.stroke)
+      .arcAltitude(0.025)
+      .arcAltitudeAutoScale(false);
+  } else {
+    world.arcsData([]);
+  }
+}
+
+// ─────────────────────────────────────────────
+// GLOBO
+// ─────────────────────────────────────────────
+function initGlobe(data) {
+  geojson = data;
+  setLoadingStep('Inicializando globo 3D…', 70);
+
+  world = Globe({ animateIn: true, waitForGlobeReady: true })
+    (document.getElementById('globe-container'))
+    .backgroundColor('#04080f')
+    .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-dark.jpg')
+    .showAtmosphere(true)
+    .atmosphereColor('#1a50c0')
+    .atmosphereAltitude(0.14)
+    // Polígonos de países/regiones
+    .polygonsData(geojson.features)
+    .polygonCapColor(capColor)
+    .polygonSideColor(() => 'rgba(4,8,15,0.4)')
+    .polygonStrokeColor(() => 'rgba(4,8,15,0.7)')
+    .polygonAltitude(() => 0.004)
+    .onPolygonHover(handleHover)
+    .polygonsTransitionDuration(500)
+    // Capa SST — inicialmente vacía
+    .pointsData([])
+    .pointColor(d => anomalyToHex(d.sstBase * multiplier))
+    .pointAltitude(0.001)
+    .pointRadius(d => d.r || 3.5)
+    // Capa corrientes — inicialmente vacía
+    .arcsData([])
+    .arcColor('color')
+    .arcDashLength(0.38)
+    .arcDashGap(0.16)
+    .arcDashAnimateTime(d => d.animateTime || 2000)
+    .arcStroke(d => d.stroke || 1.2)
+    .arcAltitude(0.025)
+    .arcAltitudeAutoScale(false)
+    // Marcadores HTML de historias
+    .htmlElementsData(STORIES)
+    .htmlLat('lat')
+    .htmlLng('lng')
+    .htmlAltitude(0.016)
+    .htmlElement(d => {
+      const el = document.createElement('div');
+      el.className = 'story-marker';
+      el.innerHTML = `
+        <div class="marker-pulse"  style="border-color:${d.markerColor}88"></div>
+        <div class="marker-pulse2" style="border-color:${d.markerColor}55"></div>
+        <div class="marker-dot"   style="background:${d.markerColor}"></div>
+      `;
+      el.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openStory(STORIES.indexOf(d));
+      });
+      return el;
+    })
+    .onGlobeReady(() => {
+      setLoadingStep('¡Listo!', 100);
+      setTimeout(hideLoading, 300);
+      initStoryNav();
+    });
+
+  const ctrl = world.controls();
+  ctrl.autoRotate      = false;
+  ctrl.autoRotateSpeed = 0.5;
+  ctrl.enableDamping   = true;
+  ctrl.dampingFactor   = 0.08;
+  ctrl.enablePan       = false;
+  ctrl.minDistance     = 130;
+  ctrl.maxDistance     = 500;
+}
+
+function updateGlobe() {
+  if (!world) return;
+  world
+    .polygonCapColor(capColor)
+    .polygonAltitude(altitude)
+    .polygonsTransitionDuration(400);
+
+  // Refrescar capas oceánicas si están activas
+  if (showOcean)    updateOceanLayer();
+  if (showCurrents) updateCurrentsLayer();
+}
+
+// ─────────────────────────────────────────────
+// NAV DOTS + BOTONES
+// ─────────────────────────────────────────────
+function initStoryNav() {
+  const dotsEl = document.getElementById('storyDots');
+  STORIES.forEach((s, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'story-dot';
+    dot.title = s.location;
+    dot.addEventListener('click', () => openStory(i));
+    dotsEl.appendChild(dot);
+  });
+
+  document.getElementById('prevStory').addEventListener('click', prevStory);
+  document.getElementById('nextStory').addEventListener('click', nextStory);
+  document.getElementById('popupPrev').addEventListener('click', prevStory);
+  document.getElementById('popupNext').addEventListener('click', nextStory);
+}
+
+// ─────────────────────────────────────────────
+// SLIDER + MECANISMO
+// ─────────────────────────────────────────────
+const TICKS   = ['Normal', 'Débil', 'Moderado', 'Fuerte', 'Extraordinario'];
+const badge   = document.getElementById('intensityBadge');
+const slider  = document.getElementById('intensitySlider');
+const ticksEl = document.getElementById('sliderTicks');
+
+TICKS.forEach(t => {
+  const s = document.createElement('span');
+  s.className = 'slider-tick';
+  s.textContent = t;
+  ticksEl.appendChild(s);
+});
+
+function getIntensityInfo(v) {
+  return INTENSITY_LABELS.find(l => v <= l.max) || INTENSITY_LABELS.at(-1);
+}
+
+function getMechText(v) {
+  return MECHANISM_TEXTS.find(t => v <= t.max) || MECHANISM_TEXTS.at(-1);
+}
+
+function updateMechPanel(v) {
+  const m = getMechText(v);
+  document.getElementById('mechTitle').textContent = m.title;
+  document.getElementById('mechText').textContent  = m.text;
+}
+
+function updateSlider(v) {
+  const info = getIntensityInfo(v);
+  const idx  = INTENSITY_LABELS.indexOf(info);
+  document.querySelectorAll('.slider-tick').forEach((el, i) => {
+    el.classList.toggle('active', i === idx);
+  });
+  badge.textContent = `${info.label} — ${info.desc}`;
+  multiplier = v / 100;
+  updateGlobe();
+  updateMechPanel(v);
+}
+
+slider.addEventListener('input', () => updateSlider(parseInt(slider.value)));
+updateSlider(0);
+
+// ─────────────────────────────────────────────
+// BOTONES DE CONTROL
+// ─────────────────────────────────────────────
+document.getElementById('rotateBtn').addEventListener('click', function () {
+  autoRotating = !autoRotating;
+  if (world) world.controls().autoRotate = autoRotating;
+  this.classList.toggle('active', autoRotating);
+  this.textContent = autoRotating ? '⟳ Rotando' : '⟳ Rotar';
+});
+
+document.getElementById('oceanBtn').addEventListener('click', function () {
+  showOcean = !showOcean;
+  this.classList.toggle('active', showOcean);
+  updateOceanLayer();
+});
+
+document.getElementById('currentsBtn').addEventListener('click', function () {
+  showCurrents = !showCurrents;
+  this.classList.toggle('active', showCurrents);
+  document.getElementById('current-legend').style.display = showCurrents ? 'block' : 'none';
+  updateCurrentsLayer();
+});
+
+document.getElementById('focusBtn').addEventListener('click', function () {
+  if (!world) return;
+  // Enfocar Ecuador y Perú: centrar en el Pacífico oriental frente a ambos países
+  world.pointOfView({ lat: -5, lng: -80, altitude: 1.75 }, 1500);
+});
+
+// ─────────────────────────────────────────────
+// CARGA DE DATOS GEOGRÁFICOS
+// ─────────────────────────────────────────────
+const GEO_ADM1 = 'https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_50m_admin_1_states_provinces.geojson';
+const GEO_ADM0 = 'https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_countries.geojson';
+
+setLoadingStep('Descargando datos geográficos…', 10);
+
+Promise.all([
+  fetch(GEO_ADM1).then(r => { if (!r.ok) throw new Error(`ADM1 HTTP ${r.status}`); return r.json(); }),
+  fetch(GEO_ADM0).then(r => { if (!r.ok) throw new Error(`ADM0 HTTP ${r.status}`); return r.json(); }),
+])
+.then(([adm1, adm0]) => {
+  setLoadingStep('Combinando provincias y países…', 55);
+
+  const covered = new Set(
+    adm1.features.map(f => {
+      const p = f.properties;
+      return (p.adm0_a3 || p.ADM0_A3 || p.gu_a3 || '').trim().toUpperCase();
+    }).filter(Boolean)
+  );
+
+  const fallback = adm0.features.filter(f => {
+    const p = f.properties;
+    const iso = (p.ADM0_A3 || p.ISO_A3 || '').trim().toUpperCase();
+    return iso && !covered.has(iso);
+  });
+
+  const combined = {
+    type: 'FeatureCollection',
+    features: [...adm1.features, ...fallback],
+  };
+
+  setTimeout(() => initGlobe(combined), 50);
+})
+.catch(err => {
+  document.getElementById('loading').innerHTML = `
+    <div style="color:#e05c2a;text-align:center;padding:24px;font-family:sans-serif;">
+      Error al cargar datos.<br>
+      <small style="color:#5a6070">${err.message}</small>
+    </div>`;
+});
+
+// ─────────────────────────────────────────────
+// PANEL: ¿CÓMO TE AFECTA EL NIÑO?
+// ─────────────────────────────────────────────
+
+const COUNTRY_ISO_MAP = {
+  'Perú':'PER','Ecuador':'ECU','Colombia':'COL','Chile':'CHL',
+  'Bolivia':'BOL','Venezuela':'VEN','Brasil':'BRA','Argentina':'ARG',
+  'Uruguay':'URY','Paraguay':'PRY','México':'MEX','Guatemala':'GTM',
+  'Honduras':'HND','El Salvador':'SLV','Nicaragua':'NIC','Costa Rica':'CRI',
+  'Panamá':'PAN','Cuba':'CUB','República Dominicana':'DOM','Jamaica':'JAM',
+  'Trinidad y Tobago':'TTO','Barbados':'BRB',
+  'Estados Unidos':'USA','Canadá':'CAN',
+  'España':'ESP','Francia':'FRA','Alemania':'DEU','Italia':'ITA',
+  'Portugal':'PRT','Reino Unido':'GBR','Países Bajos':'NLD','Bélgica':'BEL',
+  'Suiza':'CHE','Austria':'AUT','Grecia':'GRC','Noruega':'NOR',
+  'Suecia':'SWE','Finlandia':'FIN','Dinamarca':'DNK','Polonia':'POL',
+  'Hungría':'HUN','Rumanía':'ROU','Ucrania':'UKR','Rusia':'RUS',
+  'Turquía':'TUR','Irak':'IRQ','Irán':'IRN','Arabia Saudita':'SAU',
+  'Yemen':'YEM','Omán':'OMN','Emiratos Árabes Unidos':'ARE',
+  'Qatar':'QAT','Kuwait':'KWT','Jordania':'JOR','Israel':'ISR',
+  'India':'IND','Paquistán':'PAK','Bangladesh':'BGD','Nepal':'NPL',
+  'China':'CHN','Japón':'JPN','Corea del Sur':'KOR','Mongolia':'MNG',
+  'Myanmar':'MMR','Tailandia':'THA','Vietnam':'VNM','Camboya':'KHM',
+  'Laos':'LAO','Malasia':'MYS','Singapur':'SGP','Indonesia':'IDN',
+  'Filipinas':'PHL','Timor Oriental':'TLS',
+  'Australia':'AUS','Papua Nueva Guinea':'PNG','Nueva Zelanda':'NZL','Fiyi':'FJI',
+  'Marruecos':'MAR','Argelia':'DZA','Egipto':'EGY','Sudán':'SDN',
+  'Nigeria':'NGA','Camerún':'CMR','Congo (RDC)':'COD','Gabón':'GAB',
+  'Etiopía':'ETH','Somalia':'SOM','Kenia':'KEN','Tanzania':'TZA',
+  'Uganda':'UGA','Madagascar':'MDG','Angola':'AGO','Zambia':'ZMB',
+  'Mozambique':'MOZ','Zimbabue':'ZWE','Botsuana':'BWA','Namibia':'NAM',
+  'Sudáfrica':'ZAF',
+};
+
+const PROFESSIONS = [
+  'Agricultura / Ganadería',
+  'Pesca / Acuicultura',
+  'Construcción / Obras civiles',
+  'Tecnología / Software / IT',
+  'Salud / Medicina',
+  'Educación / Docencia',
+  'Transporte / Logística',
+  'Comercio / Ventas',
+  'Turismo / Hospitalidad',
+  'Finanzas / Banca / Seguros',
+  'Energía / Minería',
+  'Sector público / Gobierno',
+  'Arte / Cultura / Medios',
+  'Estudiante',
+  'Jubilado/a',
+  'Otro',
+];
+
+const PROF_IMPACTS = {
+  'Agricultura / Ganadería': {
+    warm: 'Las lluvias extremas saturan el suelo, imposibilitan las labores de campo por semanas y favorecen enfermedades fúngicas. Los cultivos de raíz y los de ciclo largo son los más vulnerables. Los precios de insumos suben y los contratos de venta anticipada se vuelven difíciles de cumplir.',
+    cold: 'La sequía reduce drásticamente el agua para riego y eleva el estrés hídrico. Las pérdidas de cosecha pueden superar el 40 %, como ocurrió en Indonesia y Australia en eventos pasados. La falta de forraje también golpea la ganadería extensiva.',
+    neutral: 'La variabilidad de lluvias desordena los ciclos de siembra y cosecha. Seguir los pronósticos del ENSO con al menos 3 meses de anticipación es hoy una herramienta de gestión agrícola tan importante como el calendario lunar.',
+  },
+  'Pesca / Acuicultura': {
+    warm: 'El Niño calienta el Pacífico y desplaza los cardúmenes de anchoveta, sardina y otras especies hacia aguas más frías y profundas. Las capturas pueden caer entre un 50 y un 80 % en la costa peruana y ecuatoriana durante el pico del evento.',
+    cold: 'Aguas más frías pueden favorecer algunas pesquerías, pero la sequía en tierra afecta la acuicultura continental y reduce la productividad de estuarios. Las corrientes alteradas dificultan la navegación y la predicción de caladeros.',
+    neutral: 'Las anomalías del ENSO alteran las rutas de migración de peces aunque sean moderadas. Monitorear los reportes de IMARPE o el organismo pesquero de tu país te dará ventaja para planificar zonas y temporadas.',
+  },
+  'Construcción / Obras civiles': {
+    warm: 'Las lluvias intensas paralizan obras al aire libre y elevan el riesgo de derrumbes en terrenos inestables. Los materiales almacenados sin protección quedan expuestos, y quienes trabajan por jornada pierden ingresos durante días o semanas.',
+    cold: 'La sequía resquebraja el suelo y complica las cimentaciones. La escasez de agua limita el mezclado de cemento y el curado de estructuras, ralentizando cronogramas y encareciéndolos.',
+    neutral: 'El clima impredecible puede retrasar proyectos clave. Incluir cláusulas climáticas en contratos y prever días adicionales en el cronograma por condiciones extremas es cada vez más necesario.',
+  },
+  'Tecnología / Software / IT': {
+    warm: 'Las inundaciones dañan infraestructura eléctrica e internet — cortes de 48 a 72 horas son habituales en eventos fuertes. Las empresas con clientes locales deben garantizar continuidad del servicio incluso en crisis, lo que eleva la demanda de soluciones cloud y respaldo remoto.',
+    cold: 'La sequía puede reducir la generación hidroeléctrica y provocar cortes de luz. El sector tech pierde clientes indirectamente: agricultores y pymes afectadas reducen su inversión digital. Tener UPS, conexión 4G de respaldo y flujos de trabajo offline marca la diferencia.',
+    neutral: 'El mayor riesgo es la dependencia de infraestructura física vulnerable a eventos climáticos. Migrar servicios críticos a la nube y documentar planes de continuidad del negocio son inversiones con retorno inmediato.',
+  },
+  'Salud / Medicina': {
+    warm: 'Las inundaciones favorecen epidemias de dengue, leptospirosis y enfermedades gastrointestinales. Los hospitales se saturan y el acceso de pacientes a centros de salud queda cortado. El personal de salud trabaja con turnos extendidos y bajo alta presión durante semanas.',
+    cold: 'La sequía eleva los casos de desnutrición, estrés por calor y enfermedades respiratorias por polvo. La escasez de agua complica la higiene básica y dispara las infecciones de transmisión hídrica en comunidades rurales.',
+    neutral: 'El cambio en patrones climáticos altera la distribución de vectores de enfermedades. Intensificar el monitoreo epidemiológico antes y durante el fenómeno permite anticipar picos de demanda de atención.',
+  },
+  'Educación / Docencia': {
+    warm: 'Las inundaciones suelen cerrar escuelas y universidades durante días o semanas. La transición a clases virtuales se dificulta cuando hay cortes de electricidad e internet. Preparar materiales offline y planes de contingencia pedagógica antes de la temporada de lluvias es esencial.',
+    cold: 'En zonas rurales, la sequía puede reducir la asistencia: los estudiantes ayudan a sus familias a conseguir agua o a trabajar el campo. Los calendarios académicos necesitan flexibilidad para recuperar el tiempo perdido sin penalizar al alumnado.',
+    neutral: 'El Niño puede generar ausencias por eventos climáticos puntuales. Incorporarlo como tema de estudio transversal — desde ciencias hasta economía — es una oportunidad pedagógica con alta relevancia actual.',
+  },
+  'Transporte / Logística': {
+    warm: 'Las lluvias dañan carreteras, puentes y puertos, cortando rutas críticas por días. Los costos de flete se elevan ante la escasez de alternativas viables y las cadenas de suministro se vuelven impredecibles.',
+    cold: 'La sequía afecta el transporte fluvial en ríos de bajo caudal — especialmente en la Amazonía y África subsahariana. Las tormentas de polvo reducen visibilidad en carreteras áridas y dañan motores.',
+    neutral: 'Las disrupciones logísticas del Niño son puntuales pero costosas. Tener rutas alternativas mapeadas y stocks de seguridad para clientes clave te posicionará como proveedor confiable en la crisis.',
+  },
+  'Comercio / Ventas': {
+    warm: 'Los locales inundados, el daño en el stock y la caída del consumo por pérdidas de la población reducen las ventas drásticamente. Tener canales de venta online activos y stock de productos de primera necesidad es el mejor respaldo.',
+    cold: 'La sequía sube el precio de los alimentos básicos, comprimiendo el poder de compra. La sensibilidad al precio aumenta y el gasto discrecional cae. Diferenciarse por calidad o por servicio — más que por precio — es la estrategia más efectiva.',
+    neutral: 'El consumo tiende a orientarse hacia bienes de emergencia durante el fenómeno. Adaptar el inventario a las necesidades del momento — mayor rotación de artículos básicos — puede darte ventaja competitiva.',
+  },
+  'Turismo / Hospitalidad': {
+    warm: 'Las lluvias intensas e inundaciones generan cancelaciones masivas y dañan infraestructura turística: caminos, sitios arqueológicos, playas. Las temporadas altas se transforman en períodos de altísima incertidumbre para el sector.',
+    cold: 'La sequía afecta destinos naturales (ríos bajos, mayor riesgo de incendios forestales, paisajes degradados). Comunicar con transparencia las condiciones reales genera más confianza que el silencio — y fideliza a los visitantes.',
+    neutral: 'El Niño altera los patrones de temporada alta y baja. Ofrecer actividades alternativas para clima adverso y paquetes flexibles hará tu propuesta más resiliente y atractiva.',
+  },
+  'Finanzas / Banca / Seguros': {
+    warm: 'Las inundaciones generan mayor siniestralidad en seguros, aumento de créditos de emergencia y más morosidad en carteras agrícolas y comerciales. El Niño también crea oportunidades: seguros paramétricos, bonos de catástrofe y productos de gestión del riesgo climático tienen alta demanda.',
+    cold: 'La sequía deprime la producción agrícola y la generación hidroeléctrica, afectando los mercados locales. Las carteras de crédito expuestas a estos sectores elevan su riesgo. El monitoreo del ENSO debe integrarse en los modelos de evaluación.',
+    neutral: 'El riesgo climático está dejando de ser exógeno para convertirse en parte central del análisis de crédito y portafolio. Incorporarlo proactivamente es hoy una ventaja competitiva real.',
+  },
+  'Energía / Minería': {
+    warm: 'Las lluvias pueden beneficiar las hidroeléctricas a corto plazo, pero los deslizamientos son una amenaza seria para infraestructura en zonas de montaña. Las operaciones mineras al aire libre quedan paralizadas durante eventos intensos.',
+    cold: 'La sequía reduce los niveles de reservorios hidroeléctricos y puede causar racionamiento energético. Las operaciones mineras que dependen del agua para procesamiento sufren paros forzados y pérdidas cuantiosas.',
+    neutral: 'La variabilidad hídrica del Niño exige monitoreo constante de reservorios y planes de abastecimiento alternativo tanto para generación eléctrica como para procesos industriales.',
+  },
+  'Sector público / Gobierno': {
+    warm: 'El Niño activa los protocolos de gestión de riesgo de desastres a todos los niveles. La coordinación interinstitucional, los recursos de emergencia y la comunicación oportuna con la ciudadanía son las prioridades absolutas durante el evento.',
+    cold: 'La sequía exige coordinación urgente entre los ministerios de agricultura, energía y ambiente. Los planes de seguridad alimentaria e hídrica deben activarse antes de que el fenómeno alcance su pico.',
+    neutral: 'La preparación preventiva — planes de contingencia, reservas de emergencia y comunicación ciudadana anticipada — es siempre la inversión más efectiva ante el fenómeno.',
+  },
+  'Arte / Cultura / Medios': {
+    warm: 'Las inundaciones generan alta demanda de cobertura mediática y documentación del impacto. Hay también una creciente audiencia para el arte comprometido con la crisis climática. Las interrupciones de eventos culturales son el principal impacto directo en tu actividad.',
+    cold: 'La sequía y sus efectos en comunidades locales son un tema de alta relevancia para la creación y la cobertura. El periodismo de datos aplicado al ENSO tiene audiencia global y creciente.',
+    neutral: 'El Niño tiene enorme potencial narrativo. Desde el documental hasta la visualización de datos, hay un mercado creciente para contenidos que expliquen sus impactos humanos con rigor y emoción.',
+  },
+  'Estudiante': {
+    warm: 'Las inundaciones pueden cerrar tu institución por días o semanas. Tener materiales offline y conocer los protocolos de emergencia de tu centro es lo mínimo. El fenómeno también es una oportunidad para proyectos académicos de alto impacto real.',
+    cold: 'La sequía puede reducir la asistencia escolar en zonas rurales y afectar el acceso a recursos básicos. Como estudiante, documentar los efectos del Niño en tu comunidad puede ser la base de un proyecto profesional relevante.',
+    neutral: 'Estás en el mejor momento para estudiar el Niño de primera mano. Su impacto en la economía, sociedad y medioambiente de tu país ofrece material para investigación con alta relevancia y proyección.',
+  },
+  'Jubilado/a': {
+    warm: 'Las personas mayores son especialmente vulnerables ante inundaciones: menor movilidad, mayor riesgo de enfermedades y dificultad para acceder a servicios de emergencia. Un plan familiar de evacuación y contacto frecuente con familiares o vecinos es crucial.',
+    cold: 'La sequía y el calor extremo son riesgos de salud reales. La deshidratación y el golpe de calor son las principales amenazas. Mantente hidratado/a, en espacios frescos y en contacto con tu red de apoyo.',
+    neutral: 'Los cambios climáticos del Niño pueden afectar tu comodidad y salud diaria. Mantenerte informado/a sobre los pronósticos y tener preparado un kit básico de emergencia son pasos simples con gran valor.',
+  },
+  'Otro': {
+    warm: 'El Niño trae lluvias intensas e inundaciones que afectan prácticamente todas las actividades en las zonas más impactadas. Un kit de emergencia, rutas de evacuación conocidas y comunicación familiar son el primer paso de preparación.',
+    cold: 'La sequía puede afectar el suministro de agua, los alimentos y la energía. Anticipar estas necesidades en tu hogar y comunidad reduce significativamente el impacto cuando el fenómeno está en su pico.',
+    neutral: 'El Niño genera incertidumbre climática que se traduce en variaciones de precios y disponibilidad de servicios. Mantenerse informado/a con anticipación te permite prepararte antes de que el evento alcance su intensidad.',
+  },
+};
+
+const AGE_NOTES = {
+  '15-20': 'A tu edad, el Niño puede interrumpir tus estudios, pero también es una oportunidad única para documentar sus efectos en tu comunidad y construir experiencia real en un tema que marcará tu generación.',
+  '21-30': 'En la etapa de inicio profesional, la flexibilidad es tu mayor ventaja. Adaptar tu trabajo a modalidad remota o diversificar hacia sectores menos expuestos al clima puede proteger tu carrera durante el fenómeno.',
+  '31-40': 'Con responsabilidades laborales y familiares, el Niño exige planificación: un fondo de emergencia de 2–3 meses y un plan familiar de contingencia son las inversiones más concretas que puedes hacer hoy.',
+  '41-55': 'Tu experiencia viviendo eventos climáticos anteriores es un activo. Quienes ya saben cómo responde su entorno ante el Niño toman mejores decisiones. Comparte ese conocimiento con tu equipo y familia.',
+  '56+': 'En esta etapa es importante priorizar la salud y la red de apoyo. Ante eventos extremos, no subestimes las señales de alerta y mantén contacto frecuente con familiares o vecinos de confianza.',
+};
+
+function getClimateType(iso) {
+  const a = BASE_ANOMALY[iso] ?? DEFAULT_ANOMALY;
+  return a > 0.4 ? 'warm' : a < -0.2 ? 'cold' : 'neutral';
+}
+
+function buildCountryContext(iso, countryName) {
+  const a = BASE_ANOMALY[iso] ?? DEFAULT_ANOMALY;
+  if (a >= 2.0)  return `En ${countryName}, El Niño genera anomalías de hasta +${a.toFixed(1)}°C — uno de los impactos más extremos del planeta. Se traduce en lluvias torrenciales, inundaciones y deslizamientos que afectan infraestructura, salud y economía.`;
+  if (a >= 0.8)  return `En ${countryName}, El Niño eleva las temperaturas +${a.toFixed(1)}°C sobre lo normal, intensificando lluvias, sequías o calor extremo según la región. Ningún sector queda ajeno.`;
+  if (a >= 0.2)  return `En ${countryName}, El Niño tiene un efecto moderado (+${a.toFixed(1)}°C): mayor calor, eventos más intensos y menor predictibilidad en las lluvias estacionales.`;
+  if (a <= -0.8) return `En ${countryName}, El Niño provoca un enfriamiento de ${a.toFixed(1)}°C que genera sequías severas, reducción de lluvias y estrés hídrico en agricultura y energía.`;
+  if (a <= -0.2) return `En ${countryName}, El Niño genera un enfriamiento leve (${a.toFixed(1)}°C) que se traduce en menor precipitación y períodos de sequía que afectan el agua disponible y la producción agrícola.`;
+  return `En ${countryName}, El Niño tiene un impacto moderado que genera mayor variabilidad climática: temporadas más irregulares y eventos extremos más frecuentes.`;
+}
+
+function generatePersonalImpact({ name, gender, ageRange, profession, country }) {
+  const iso        = COUNTRY_ISO_MAP[country] || '';
+  const climate    = getClimateType(iso);
+  const profText   = (PROF_IMPACTS[profession] || PROF_IMPACTS['Otro'])[climate];
+  const context    = buildCountryContext(iso, country);
+  const ageText    = AGE_NOTES[ageRange] || '';
+  const saludo     = `${name}, tu panorama:`;
+  return { saludo, context, profText, ageText };
+}
+
+function initImpactPanel() {
+  const profSel = document.getElementById('ipProfession');
+  PROFESSIONS.forEach(p => {
+    const o = document.createElement('option');
+    o.value = p; o.textContent = p;
+    profSel.appendChild(o);
+  });
+
+  const countrySel = document.getElementById('ipCountry');
+  Object.keys(COUNTRY_ISO_MAP).sort((a, b) => a.localeCompare(b, 'es')).forEach(c => {
+    const o = document.createElement('option');
+    o.value = c; o.textContent = c;
+    countrySel.appendChild(o);
+  });
+
+  document.getElementById('ipToggle').addEventListener('click', function () {
+    const body = document.getElementById('ipBody');
+    const hidden = body.style.display === 'none';
+    body.style.display = hidden ? '' : 'none';
+    this.textContent  = hidden ? '−' : '+';
+  });
+
+  document.getElementById('ipSubmit').addEventListener('click', () => {
+    const name       = document.getElementById('ipName').value.trim();
+    const gender     = document.querySelector('input[name="gender"]:checked')?.value || 'otro';
+    const ageRange   = document.getElementById('ipAge').value;
+    const profession = document.getElementById('ipProfession').value;
+    const country    = document.getElementById('ipCountry').value;
+    const errEl      = document.getElementById('ipError');
+
+    if (!name)       { errEl.textContent = 'Por favor escribe tu nombre.';   return; }
+    if (!ageRange)   { errEl.textContent = 'Selecciona tu rango de edad.';   return; }
+    if (!profession) { errEl.textContent = 'Selecciona tu profesión.';       return; }
+    if (!country)    { errEl.textContent = 'Selecciona tu país.';            return; }
+    errEl.textContent = '';
+
+    const { saludo, context, profText, ageText } = generatePersonalImpact({ name, gender, ageRange, profession, country });
+
+    document.getElementById('ipResultGreeting').textContent = saludo;
+    document.getElementById('ipResultContext').textContent  = context;
+    document.getElementById('ipResultBody').textContent     = profText;
+    document.getElementById('ipResultAge').textContent      = ageText;
+
+    document.getElementById('ipForm').style.display   = 'none';
+    document.getElementById('ipResult').style.display = '';
+
+    const iso = COUNTRY_ISO_MAP[country];
+    if (iso && world) {
+      const match = STORIES.find(s => s.iso === iso);
+      if (match) world.pointOfView({ lat: match.lat, lng: match.lng, altitude: 1.8 }, 1400);
+    }
+  });
+
+  document.getElementById('ipBack').addEventListener('click', () => {
+    document.getElementById('ipForm').style.display   = '';
+    document.getElementById('ipResult').style.display = 'none';
+    document.getElementById('ipError').textContent    = '';
+  });
+}
+
+initImpactPanel();
+</script>
+</body>
+</html>
