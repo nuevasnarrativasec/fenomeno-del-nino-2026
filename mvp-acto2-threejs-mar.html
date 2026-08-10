@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>El Niño — Globo 3D</title>
-  <script src="https://unpkg.com/globe.gl@2.27.0/dist/globe.gl.min.js"></script>
+  <script src="https://unpkg.com/globe.gl@2.34.4/dist/globe.gl.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1094,6 +1094,8 @@ const SUBREGION_ANOMALY = {
   'PER:Ancash':           3.8,
   'PER:Lima':             3.5,
   'PER:Callao':           3.5,
+  'PER:El Callao':        3.5,   // nombre en geoBoundaries
+  'PER:Municipalidad Metropolitana de Lima': 3.5,  // Lima Metro en geoBoundaries
   'PER:Ica':              3.0,
   'PER:Arequipa':         2.5,
   'PER:Moquegua':         2.2,
@@ -1229,49 +1231,186 @@ function getAnomaly(iso, mult, featureName) {
 
 // ─────────────────────────────────────────────
 // TEMPERATURA SUPERFICIAL DEL MAR (SST)
-// Rejilla del Pacífico para mostrar el calentamiento oceánico
+// baseSSTAnomaly(lat,lng) da la anomalía (°C) en cualquier punto: una lengua
+// cálida ecuatorial que se intensifica hacia el este y culmina frente a
+// Ecuador y Perú, como las imágenes satelitales de la NASA. Este campo se
+// pinta luego, píxel a píxel, dentro de la textura del globo.
 // ─────────────────────────────────────────────
+
+// Perfil longitudinal de la lengua ecuatorial, medido de oeste a este.
+// x = grados hacia el este desde 120°E: 120→180 (Pacífico occidental),
+// 180→290 (Pacífico oriental, donde 290 = −70° = costa sudamericana).
+// La lengua se intensifica hacia el este y alcanza su máximo frente a
+// Ecuador y Perú (Niño 1+2), tal como en el evento de referencia.
+const TONGUE_LNG = [
+  [124, 0.30], [150, 0.85], [170, 1.55], [180, 2.00],
+  [200, 2.45], [220, 2.85], [240, 3.20], [255, 3.55],
+  [268, 4.10], [280, 4.60], [288, 4.20], [292, 3.30],
+];
+
+function lerpProfile(prof, x) {
+  if (x <= prof[0][0]) return prof[0][1];
+  for (let i = 1; i < prof.length; i++) {
+    if (x <= prof[i][0]) {
+      const f = (x - prof[i-1][0]) / (prof[i][0] - prof[i-1][0]);
+      return prof[i-1][1] + f * (prof[i][1] - prof[i-1][1]);
+    }
+  }
+  return prof.at(-1)[1];
+}
+
+// Mapea la longitud (−180..180) a la coordenada x del Pacífico, o null si
+// el punto cae fuera de la cuenca del Pacífico.
+function lngToPacificX(lng) {
+  if (lng >= 120 && lng <= 180)  return lng;
+  if (lng >= -180 && lng < -70)  return lng + 360;
+  return null;
+}
+
 function baseSSTAnomaly(lat, lng) {
-  const absLat = Math.abs(lat);
-  if (absLat > 35) return 0.05;
-  const latFactor = Math.max(0, 1 - absLat / 30);
+  const x = lngToPacificX(lng);
+  if (x === null) return 0;
 
-  // Zona costera Ecuador/Perú (Niño 1+2): máximo calentamiento
-  if (absLat <= 12 && lng >= -95 && lng <= -70) {
-    const coastal = Math.max(0, 1 - Math.abs(lng + 80) / 18);
-    return (3.2 + coastal * 2.2) * latFactor;
+  // Lengua ecuatorial: campana gaussiana en latitud (ancho ~±10°)
+  const latSigma = 7.5;
+  const latW = Math.exp(-(lat * lat) / (2 * latSigma * latSigma));
+  let a = lerpProfile(TONGUE_LNG, x) * latW;
+
+  // Realce costero del Pacífico oriental: la corriente cálida trepa por la
+  // costa americana hacia el norte (hasta California/México) y algo al sur.
+  if (x >= 258) {
+    const ramp   = Math.min(1, (x - 258) / 24);
+    const northW = Math.exp(-Math.pow((lat - 10) / 20, 2)); // rama norte
+    const southW = Math.exp(-Math.pow((lat + 14) / 15, 2)); // rama sur (Perú/Chile N)
+    a = Math.max(a, (1.7 * northW + 1.1 * southW) * ramp);
   }
-  // Zona Niño 3.4 (Pacífico central-oriental): segundo pico
-  if (absLat <= 8 && lng >= -175 && lng <= -95) {
-    const decay = Math.max(0, 1 - Math.abs(lng + 135) / 40);
-    return (2.8 + decay * 0.8) * latFactor;
-  }
-  // Pacífico tropical amplio
-  if (absLat <= 22 && lng >= -175 && lng <= -70) {
-    return 1.5 * latFactor;
-  }
-  return 0.3 * latFactor;
+  return a;
 }
 
-function generateSSTGrid() {
-  const pts = [];
-  // Rejilla gruesa: Pacífico tropical
-  for (let lat = -32; lat <= 32; lat += 7) {
-    for (let lng = -178; lng <= -65; lng += 7) {
-      const sstBase = baseSSTAnomaly(lat, lng);
-      if (sstBase > 0.05) pts.push({ lat, lng, sstBase, r: 4.0 });
+// ── Escala de color del océano (SST) ──
+// Recibe t∈[0,1] (anomalía / 5°C) y devuelve [r,g,b,alpha]: de transparente →
+// azul → blanco → amarillo → naranja → rojo → magenta. La textura se pinta
+// por píxel, así que el resultado es siempre continuo (sin mallas ni rombos).
+const OCEAN_HEAT_STOPS = [
+  [0.00, [ 10,  40, 120], 0.00],
+  [0.08, [ 30, 120, 210], 0.20],
+  [0.20, [120, 200, 245], 0.42],
+  [0.32, [245, 245, 235], 0.55],
+  [0.44, [255, 226,  90], 0.68],
+  [0.58, [255, 150,  30], 0.80],
+  [0.72, [240,  70,  20], 0.88],
+  [0.86, [200,  10,  40], 0.93],
+  [1.00, [120,   0,  70], 0.96],
+];
+
+function oceanHeatColorArr(t) {
+  t = Math.max(0, Math.min(1, t));
+  const s = OCEAN_HEAT_STOPS;
+  for (let i = 1; i < s.length; i++) {
+    if (t <= s[i][0]) {
+      const f = (t - s[i-1][0]) / (s[i][0] - s[i-1][0]);
+      const c = s[i-1][1];
+      const d = s[i][1];
+      return [
+        c[0] + f * (d[0] - c[0]),
+        c[1] + f * (d[1] - c[1]),
+        c[2] + f * (d[2] - c[2]),
+        s[i-1][2] + f * (s[i][2] - s[i-1][2]),
+      ];
     }
   }
-  // Rejilla fina: zona clave Ecuador/Perú
-  for (let lat = -18; lat <= 10; lat += 3.5) {
-    for (let lng = -96; lng <= -72; lng += 3.5) {
-      const sstBase = baseSSTAnomaly(lat, lng);
-      pts.push({ lat, lng, sstBase, r: 2.5 });
-    }
-  }
-  return pts;
+  const l = s.at(-1);
+  return [l[1][0], l[1][1], l[1][2], l[2]];
 }
-const SST_GRID = generateSSTGrid();
+
+// ─────────────────────────────────────────────
+// TEXTURA SST — se pinta la anomalía dentro de la textura del globo, sobre una
+// base oceánica celeste (la tierra la dibujan los polígonos de colores).
+// No hay segunda malla, así que es imposible que aparezcan rombos/z-fighting.
+// ─────────────────────────────────────────────
+const TEX_W = 1024, TEX_H = 512;
+let sstField    = null;   // Float32Array: anomalía base por píxel
+let texCanvas   = null, texCtx = null;
+let baseTexData = null;   // ImageData de la base oceánica
+let globeTex    = null;   // THREE.Texture apuntando a texCanvas
+
+// Color del mar: celeste en el ecuador → azul más profundo hacia los polos.
+const OCEAN_EQ   = [ 16,  84, 112];   // celeste oscuro
+const OCEAN_POLE = [  6,  30,  56];   // azul muy profundo
+function paintOceanBase(ctx) {
+  for (let j = 0; j < TEX_H; j++) {
+    const lat = 90 - (j + 0.5) / TEX_H * 180;
+    const f = Math.pow(Math.abs(lat) / 90, 1.1);
+    const r = Math.round(OCEAN_EQ[0] + (OCEAN_POLE[0] - OCEAN_EQ[0]) * f);
+    const g = Math.round(OCEAN_EQ[1] + (OCEAN_POLE[1] - OCEAN_EQ[1]) * f);
+    const b = Math.round(OCEAN_EQ[2] + (OCEAN_POLE[2] - OCEAN_EQ[2]) * f);
+    ctx.fillStyle = `rgb(${r},${g},${b})`;
+    ctx.fillRect(0, j, TEX_W, 1);
+  }
+}
+
+// Precomputa la anomalía base en la rejilla de la textura (una sola vez).
+function buildSSTField() {
+  sstField = new Float32Array(TEX_W * TEX_H);
+  for (let j = 0; j < TEX_H; j++) {
+    const lat = 90 - (j + 0.5) / TEX_H * 180;
+    for (let i = 0; i < TEX_W; i++) {
+      const lng = -180 + (i + 0.5) / TEX_W * 360;
+      sstField[j * TEX_W + i] = baseSSTAnomaly(lat, lng);
+    }
+  }
+}
+
+// Redibuja la textura: copia la base y superpone la lengua cálida escalada
+// por la intensidad actual (multiplier). Con showOcean=false queda solo la base.
+function drawSSTTexture() {
+  if (!texCtx || !baseTexData) return;
+  const img = texCtx.createImageData(TEX_W, TEX_H);
+  img.data.set(baseTexData.data);
+  const d = img.data;
+  const m = showOcean ? multiplier : 0;
+  if (m > 0 && sstField) {
+    for (let idx = 0, p = 0; idx < sstField.length; idx++, p += 4) {
+      const a = sstField[idx] * m;
+      if (a > 0.04) {
+        const col = oceanHeatColorArr(a / 5);
+        const al = col[3];
+        d[p]   = d[p]   + (col[0] - d[p])   * al;
+        d[p+1] = d[p+1] + (col[1] - d[p+1]) * al;
+        d[p+2] = d[p+2] + (col[2] - d[p+2]) * al;
+      }
+    }
+  }
+  texCtx.putImageData(img, 0, 0);
+  if (globeTex) globeTex.needsUpdate = true;
+}
+
+// Engancha un canvas como textura del globo, reutilizando la imagen base ya
+// cargada por globe.gl (misma clase Texture → sin necesidad de importar THREE).
+function attachSSTTexture() {
+  if (!world) return;
+  const mat = world.globeMaterial();
+  const src = mat && mat.map;
+  if (!src || !src.image) { setTimeout(attachSSTTexture, 200); return; }
+
+  texCanvas = document.createElement('canvas');
+  texCanvas.width = TEX_W; texCanvas.height = TEX_H;
+  texCtx = texCanvas.getContext('2d');
+  // Base oceánica celeste (pintada por nosotros → sin problemas de CORS).
+  paintOceanBase(texCtx);
+  baseTexData = texCtx.getImageData(0, 0, TEX_W, TEX_H);
+
+  const TexClass = src.constructor;      // THREE.Texture
+  globeTex = new TexClass(texCanvas);
+  if ('colorSpace' in src) globeTex.colorSpace = src.colorSpace;
+  globeTex.wrapS = src.wrapS; globeTex.wrapT = src.wrapT;
+  globeTex.needsUpdate = true;
+  mat.map = globeTex;
+  mat.needsUpdate = true;
+
+  buildSSTField();
+  drawSSTTexture();
+}
 
 // ─────────────────────────────────────────────
 // CORRIENTES OCEÁNICAS — arcos animados
@@ -1389,11 +1528,11 @@ function capColor(f) {
   return anomalyToHex(a);
 }
 
+// Mapa plano: altura constante para todos los polígonos (sin extrusión 3D).
+// Un valor pequeño mantiene la capa de países justo sobre la textura del globo.
+const FLAT_ALT = 0.006;
 function altitude(f) {
-  const iso   = isoOf(f);
-  const fname = nameOf(f);
-  const a     = Math.abs(getAnomaly(iso, multiplier, fname));
-  return 0.004 + a * 0.012;
+  return FLAT_ALT;
 }
 
 // ─────────────────────────────────────────────
@@ -1495,16 +1634,16 @@ function nextStory() {
 // CAPAS OCEÁNICAS
 // ─────────────────────────────────────────────
 function updateOceanLayer() {
-  if (!world) return;
-  if (showOcean) {
-    world
-      .pointsData(SST_GRID)
-      .pointColor(d => anomalyToHex(d.sstBase * multiplier))
-      .pointAltitude(0.001)
-      .pointRadius(d => d.r);
-  } else {
-    world.pointsData([]);
-  }
+  drawSSTTexture();
+}
+
+// Redibujar la textura recorre ~0.5M píxeles; al arrastrar el slider lo
+// hacemos con throttle para mantener la interfaz fluida (los polígonos van en vivo).
+let _oceanRefreshPending = false;
+function refreshOceanThrottled() {
+  if (!showOcean || _oceanRefreshPending) return;
+  _oceanRefreshPending = true;
+  setTimeout(() => { _oceanRefreshPending = false; drawSSTTexture(); }, 100);
 }
 
 function updateCurrentsLayer() {
@@ -1543,14 +1682,11 @@ function initGlobe(data) {
     .polygonCapColor(capColor)
     .polygonSideColor(() => 'rgba(4,8,15,0.4)')
     .polygonStrokeColor(() => 'rgba(4,8,15,0.7)')
-    .polygonAltitude(() => 0.004)
+    .polygonAltitude(altitude)
     .onPolygonHover(handleHover)
     .polygonsTransitionDuration(500)
-    // Capa SST — inicialmente vacía
-    .pointsData([])
-    .pointColor(d => anomalyToHex(d.sstBase * multiplier))
-    .pointAltitude(0.001)
-    .pointRadius(d => d.r || 3.5)
+    // La temperatura del mar (SST) se pinta en la textura del globo (ver
+    // attachSSTTexture), no como una capa aparte.
     // Capa corrientes — inicialmente vacía
     .arcsData([])
     .arcColor('color')
@@ -1583,6 +1719,7 @@ function initGlobe(data) {
       setLoadingStep('¡Listo!', 100);
       setTimeout(hideLoading, 300);
       initStoryNav();
+      attachSSTTexture();
     });
 
   const ctrl = world.controls();
@@ -1603,7 +1740,7 @@ function updateGlobe() {
     .polygonsTransitionDuration(400);
 
   // Refrescar capas oceánicas si están activas
-  if (showOcean)    updateOceanLayer();
+  if (showOcean)    refreshOceanThrottled();
   if (showCurrents) updateCurrentsLayer();
 }
 
@@ -1702,17 +1839,73 @@ document.getElementById('focusBtn').addEventListener('click', function () {
 // ─────────────────────────────────────────────
 // CARGA DE DATOS GEOGRÁFICOS
 // ─────────────────────────────────────────────
+// Provincias/países del mundo (Natural Earth). Nota: en 'master' el archivo
+// admin_1 quedó reducido a 9 países grandes, así que Perú y Ecuador —clave para
+// esta historia— se traen aparte desde geoBoundaries (ver GEO_PROV_ES).
 const GEO_ADM1 = 'https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_50m_admin_1_states_provinces.geojson';
 const GEO_ADM0 = 'https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_countries.geojson';
 
+// Departamentos de Perú y provincias de Ecuador (geoBoundaries, vía endpoint LFS
+// con CORS). El nombre de la región viene en properties.shapeName.
+const GEO_PROV_ES = {
+  PER: 'https://media.githubusercontent.com/media/wmgeolab/geoBoundaries/main/releaseData/gbOpen/PER/ADM1/geoBoundaries-PER-ADM1_simplified.geojson',
+  ECU: 'https://media.githubusercontent.com/media/wmgeolab/geoBoundaries/main/releaseData/gbOpen/ECU/ADM1/geoBoundaries-ECU-ADM1_simplified.geojson',
+};
+
+// three-globe rellena cada polígono según la orientación de sus anillos.
+// Natural Earth usa el anillo exterior en sentido horario (área con signo < 0);
+// geoBoundaries viene al revés, lo que hacía que se rellenara TODO el globo.
+// Reorientamos: exterior horario, huecos antihorario.
+function ringSignedArea(r) {
+  let a = 0;
+  for (let i = 0; i < r.length - 1; i++) a += r[i][0] * r[i+1][1] - r[i+1][0] * r[i][1];
+  return a / 2;
+}
+function rewindRings(poly) {
+  poly.forEach((ring, idx) => {
+    const s = Math.sign(ringSignedArea(ring));
+    const want = idx === 0 ? -1 : 1;   // exterior CW, huecos CCW
+    if (s !== 0 && s !== want) ring.reverse();
+  });
+}
+function rewindGeometry(geom) {
+  if (!geom) return;
+  if (geom.type === 'Polygon') rewindRings(geom.coordinates);
+  else if (geom.type === 'MultiPolygon') geom.coordinates.forEach(rewindRings);
+}
+
+// Convierte features de geoBoundaries al formato que espera el resto del código
+// (isoOf/nameOf leen adm0_a3 y name) y corrige la orientación de los anillos.
+function normalizeProvinces(fc, iso, adminName) {
+  if (!fc || !fc.features) return [];
+  return fc.features.map(f => {
+    rewindGeometry(f.geometry);
+    return {
+      type: 'Feature',
+      geometry: f.geometry,
+      properties: { adm0_a3: iso, admin: adminName, name: f.properties.shapeName || '' },
+    };
+  });
+}
+
 setLoadingStep('Descargando datos geográficos…', 10);
 
+const fetchJSON = (url, label, optional = false) =>
+  fetch(url)
+    .then(r => { if (!r.ok) throw new Error(`${label} HTTP ${r.status}`); return r.json(); })
+    .catch(err => { if (optional) { console.warn(`⚠ ${label} no disponible:`, err.message); return null; } throw err; });
+
 Promise.all([
-  fetch(GEO_ADM1).then(r => { if (!r.ok) throw new Error(`ADM1 HTTP ${r.status}`); return r.json(); }),
-  fetch(GEO_ADM0).then(r => { if (!r.ok) throw new Error(`ADM0 HTTP ${r.status}`); return r.json(); }),
+  fetchJSON(GEO_ADM1, 'ADM1'),
+  fetchJSON(GEO_ADM0, 'ADM0'),
+  fetchJSON(GEO_PROV_ES.PER, 'PER-ADM1', true),
+  fetchJSON(GEO_PROV_ES.ECU, 'ECU-ADM1', true),
 ])
-.then(([adm1, adm0]) => {
+.then(([adm1, adm0, perProv, ecuProv]) => {
   setLoadingStep('Combinando provincias y países…', 55);
+
+  const peruFeatures    = normalizeProvinces(perProv, 'PER', 'Peru');
+  const ecuadorFeatures = normalizeProvinces(ecuProv, 'ECU', 'Ecuador');
 
   const covered = new Set(
     adm1.features.map(f => {
@@ -1720,6 +1913,9 @@ Promise.all([
       return (p.adm0_a3 || p.ADM0_A3 || p.gu_a3 || '').trim().toUpperCase();
     }).filter(Boolean)
   );
+  // Perú/Ecuador ya los cubrimos con sus provincias → no usar su polígono país.
+  if (peruFeatures.length)    covered.add('PER');
+  if (ecuadorFeatures.length) covered.add('ECU');
 
   const fallback = adm0.features.filter(f => {
     const p = f.properties;
@@ -1729,7 +1925,7 @@ Promise.all([
 
   const combined = {
     type: 'FeatureCollection',
-    features: [...adm1.features, ...fallback],
+    features: [...adm1.features, ...peruFeatures, ...ecuadorFeatures, ...fallback],
   };
 
   setTimeout(() => initGlobe(combined), 50);
