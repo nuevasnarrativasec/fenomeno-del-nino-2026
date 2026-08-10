@@ -1276,13 +1276,28 @@ function baseSSTAnomaly(lat, lng) {
   const latW = Math.exp(-(lat * lat) / (2 * latSigma * latSigma));
   let a = lerpProfile(TONGUE_LNG, x) * latW;
 
-  // Realce costero del Pacífico oriental: la corriente cálida trepa por la
-  // costa americana hacia el norte (hasta California/México) y algo al sur.
-  if (x >= 258) {
-    const ramp   = Math.min(1, (x - 258) / 24);
-    const northW = Math.exp(-Math.pow((lat - 10) / 20, 2)); // rama norte
-    const southW = Math.exp(-Math.pow((lat + 14) / 15, 2)); // rama sur (Perú/Chile N)
-    a = Math.max(a, (1.7 * northW + 1.1 * southW) * ramp);
+  // Realce costero del Pacífico oriental. Durante El Niño la corriente cálida
+  // baña TODA la costa: sube hacia Centroamérica/México al norte y recorre el
+  // litoral peruano completo hasta el sur (Tacna). Intensa al norte, y aún
+  // claramente marcada en el centro y el sur del Perú.
+  if (x >= 250) {
+    const ramp = Math.min(1, (x - 250) / 28);            // 0 mar adentro → 1 en la costa
+
+    // Rama norte (Centroamérica / México / hasta California), suave/amarilla.
+    const northW = Math.exp(-Math.pow((lat - 10) / 18, 2));
+
+    // Franja costera peruana: meseta de 0° (Ecuador) a −18° (Tacna),
+    // con caídas suaves fuera de ese tramo.
+    let coastW;
+    if (lat > 0)        coastW = Math.exp(-Math.pow(lat / 5, 2));         // empalme con el norte
+    else if (lat < -18) coastW = Math.exp(-Math.pow((lat + 18) / 5, 2));  // sur → Chile norte
+    else                coastW = 1;                                       // toda la costa peruana
+
+    // Intensidad: máxima al norte, decreciente pero fuerte hacia el sur.
+    const nToS     = Math.max(0, Math.min(1, (lat + 18) / 22)); // 1 al norte → 0 en −18°
+    const coastAmp = 3.0 + 1.2 * nToS;                          // 4.2 (norte) → 3.0 (Tacna)
+
+    a = Math.max(a, Math.max(1.7 * northW, coastW * coastAmp) * ramp);
   }
   return a;
 }
