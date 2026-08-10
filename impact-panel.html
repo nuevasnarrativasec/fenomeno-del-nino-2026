@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>El Niño y tú — ¿Cómo te afectaría?</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Georgia', serif;
+      background: #04080f;
+      color: #e8e0d5;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    /* ── PANEL DE IMPACTO PERSONAL ── */
+    #impact-panel {
+      position: relative;
+      width: 340px;
+      max-width: 100%;
+      max-height: calc(100vh - 48px);
+      background: rgba(4, 8, 15, 0.96);
+      border: 1px solid #1e2a3e;
+      border-radius: 10px;
+      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 24px 70px rgba(0,0,0,0.55);
+    }
+
+    .ip-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 15px 17px 13px;
+      border-bottom: 1px solid #141c2e;
+      flex-shrink: 0;
+    }
+
+    .ip-eyebrow {
+      font-family: sans-serif;
+      font-size: 0.60rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #e09070;
+      margin-bottom: 2px;
+    }
+
+    .ip-panel-title { font-size: 0.95rem; color: #f0e8df; }
+
+    .ip-toggle {
+      background: none;
+      border: none;
+      color: #3a4050;
+      font-size: 1.3rem;
+      cursor: pointer;
+      padding: 0;
+      line-height: 1;
+      transition: color 0.2s;
+      flex-shrink: 0;
+      margin-left: 8px;
+    }
+    .ip-toggle:hover { color: #f0e8df; }
+
+    #ipBody {
+      overflow-y: auto;
+      padding: 14px 17px;
+      flex: 1;
+    }
+    #ipBody::-webkit-scrollbar { width: 3px; }
+    #ipBody::-webkit-scrollbar-thumb { background: #1e2a3e; border-radius: 2px; }
+
+    .ip-intro {
+      font-family: sans-serif;
+      font-size: 0.74rem;
+      color: #4a5568;
+      line-height: 1.55;
+      margin-bottom: 14px;
+    }
+
+    .ip-field { margin-bottom: 12px; }
+
+    .ip-label {
+      display: block;
+      font-family: sans-serif;
+      font-size: 0.64rem;
+      color: #3a4a5a;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 5px;
+    }
+
+    .ip-input, .ip-select {
+      width: 100%;
+      background: #060d18;
+      border: 1px solid #1a2436;
+      border-radius: 5px;
+      padding: 8px 9px;
+      font-family: sans-serif;
+      font-size: 0.78rem;
+      color: #b0a8a0;
+      outline: none;
+      transition: border-color 0.2s;
+      -webkit-appearance: none;
+    }
+    .ip-input:focus, .ip-select:focus { border-color: #2a4070; }
+    .ip-input::placeholder { color: #1e2a3a; }
+
+    .ip-radio-group { display: flex; gap: 14px; }
+    .ip-radio-label {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-family: sans-serif;
+      font-size: 0.74rem;
+      color: #6a7080;
+      cursor: pointer;
+    }
+    .ip-radio-input { accent-color: #e05c2a; }
+
+    .ip-submit {
+      width: 100%;
+      background: rgba(26, 58, 106, 0.5);
+      border: 1px solid #2a4a7a;
+      border-radius: 6px;
+      padding: 10px;
+      font-family: sans-serif;
+      font-size: 0.78rem;
+      color: #8ab0e0;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 4px;
+    }
+    .ip-submit:hover { background: rgba(30,74,136,0.7); color: #f0e8df; border-color: #3a6aaa; }
+
+    .ip-error { font-family: sans-serif; font-size: 0.67rem; color: #e05c2a; margin-top: 5px; min-height: 14px; }
+
+    /* Resultado */
+    .ip-result-greeting { font-size: 0.95rem; color: #f0e8df; margin-bottom: 8px; }
+    .ip-result-context  { font-family: sans-serif; font-size: 0.74rem; color: #6a7880; line-height: 1.55; }
+    .ip-result-body     { font-family: sans-serif; font-size: 0.77rem; color: #9a9888; line-height: 1.6; }
+    .ip-result-age      { font-family: sans-serif; font-size: 0.72rem; color: #5a6070; line-height: 1.55; font-style: italic; }
+    .ip-divider         { height: 1px; background: #141c2e; margin: 11px 0; }
+
+    .ip-back {
+      background: none;
+      border: 1px solid #1e2a3e;
+      border-radius: 4px;
+      padding: 6px 11px;
+      font-family: sans-serif;
+      font-size: 0.67rem;
+      color: #4a5568;
+      cursor: pointer;
+      margin-top: 14px;
+      transition: all 0.2s;
+    }
+    .ip-back:hover { color: #f0e8df; border-color: #3a4a6a; }
+  </style>
+</head>
+<body>
+
+  <!-- Panel: ¿Cómo te afecta El Niño? -->
+  <div id="impact-panel">
+    <div class="ip-header">
+      <div>
+        <div class="ip-eyebrow">El Niño y tú</div>
+        <div class="ip-panel-title">¿Cómo te afectaría?</div>
+      </div>
+      <button class="ip-toggle" id="ipToggle" title="Colapsar">−</button>
+    </div>
+    <div id="ipBody">
+
+      <div id="ipForm">
+        <p class="ip-intro">Cuéntanos sobre ti y te mostramos cómo El Niño podría impactar tu vida directamente.</p>
+
+        <div class="ip-field">
+          <label class="ip-label" for="ipName">Tu nombre</label>
+          <input type="text" id="ipName" class="ip-input" placeholder="Escribe tu nombre" />
+        </div>
+
+        <div class="ip-field">
+          <label class="ip-label">Género</label>
+          <div class="ip-radio-group">
+            <label class="ip-radio-label"><input type="radio" name="gender" value="hombre" class="ip-radio-input" checked /><span>Hombre</span></label>
+            <label class="ip-radio-label"><input type="radio" name="gender" value="mujer"  class="ip-radio-input" /><span>Mujer</span></label>
+            <label class="ip-radio-label"><input type="radio" name="gender" value="otro"   class="ip-radio-input" /><span>Otro</span></label>
+          </div>
+        </div>
+
+        <div class="ip-field">
+          <label class="ip-label" for="ipAge">Edad</label>
+          <select id="ipAge" class="ip-select">
+            <option value="">Selecciona...</option>
+            <option value="15-20">15–20 años</option>
+            <option value="21-30">21–30 años</option>
+            <option value="31-40">31–40 años</option>
+            <option value="41-55">41–55 años</option>
+            <option value="56+">56 o más años</option>
+          </select>
+        </div>
+
+        <div class="ip-field">
+          <label class="ip-label" for="ipProfession">Profesión</label>
+          <select id="ipProfession" class="ip-select">
+            <option value="">Selecciona...</option>
+          </select>
+        </div>
+
+        <div class="ip-field">
+          <label class="ip-label" for="ipRegion">Tu región</label>
+          <select id="ipRegion" class="ip-select">
+            <option value="">Selecciona...</option>
+          </select>
+        </div>
+
+        <button id="ipSubmit" class="ip-submit">Ver mi impacto →</button>
+        <div class="ip-error" id="ipError"></div>
+      </div>
+
+      <div id="ipResult" style="display:none">
+        <div class="ip-result-greeting" id="ipResultGreeting"></div>
+        <div class="ip-result-context"  id="ipResultContext"></div>
+        <div class="ip-divider"></div>
+        <div class="ip-result-body"    id="ipResultBody"></div>
+        <div class="ip-divider"></div>
+        <div class="ip-result-age"     id="ipResultAge"></div>
+        <button class="ip-back" id="ipBack">← Cambiar datos</button>
+      </div>
+
+    </div>
+  </div>
+
+<script>
+// ─────────────────────────────────────────────
+// PANEL: ¿CÓMO TE AFECTA EL NIÑO?  (independiente)
+// ─────────────────────────────────────────────
+
+// ─── CONFIGURACIÓN GOOGLE SHEETS ─────────────────────────────────────────────
+// 1. Sube el archivo Excel plantilla a Google Drive
+// 2. En Google Drive, ábrelo como Google Sheets (botón derecho → Abrir con → Sheets)
+// 3. Archivo → Compartir → "Cualquiera con el enlace puede ver"
+// 4. Copia el ID de la URL (parte entre /d/ y /edit, ~44 caracteres)
+// 5. Pégalo aquí:
+const SHEET_ID = ''; // ← PEGA EL ID DE TU GOOGLE SHEET AQUÍ
+
+// ─── DATOS DE RESPALDO ───────────────────────────────────────────────────────
+// Se usan automáticamente si SHEET_ID está vacío o si hay un error de red.
+
+const PERU_REGIONS_DEFAULT = [
+  { region:'Tumbes',        tipo:'warm',    contexto:'Tumbes es la región más afectada por El Niño en el Perú. Las lluvias pueden superar el 1 000 % del promedio histórico, generando inundaciones catastróficas que destruyen cultivos, viviendas e infraestructura vial.' },
+  { region:'Piura',         tipo:'warm',    contexto:'Piura es el epicentro histórico del fenómeno: en 1983 y 1998 el río Piura desbordó arrasando zonas urbanas. El calentamiento marino eleva la evaporación y genera lluvias torrenciales que pueden durar meses.' },
+  { region:'Lambayeque',    tipo:'warm',    contexto:'Las lluvias del Niño inundan los valles del Chancay y La Leche, golpeando el arroz, el azúcar y las agroexportaciones. Las ciudades de Chiclayo y Ferreñafe quedan expuestas a huaicos y cortes viales.' },
+  { region:'La Libertad',   tipo:'warm',    contexto:'El Niño genera lluvias intensas en los valles costeros del Santa, Moche y Virú, afectando la agroindustria exportadora. Los huaicos cortan la Panamericana y elevan el riesgo de inundaciones en Trujillo.' },
+  { region:'Áncash',        tipo:'warm',    contexto:'La costa ancashina recibe lluvias anómalas que generan aluviones en quebradas secas. La sierra experimenta variabilidad hídrica con posibles sequías parciales en cabeceras de cuenca.' },
+  { region:'Lima',          tipo:'warm',    contexto:'Lima, normalmente muy seca, puede recibir lluvias inusuales que reactivan quebradas como el Huaycoloro. Los huaicos en el cono este y la saturación del alcantarillado son los principales riesgos.' },
+  { region:'Callao',        tipo:'warm',    contexto:'El Callao enfrenta marejadas más intensas, lluvias inusuales y oleaje anómalo. La infraestructura portuaria puede sufrir interrupciones operativas durante eventos fuertes.' },
+  { region:'Ica',           tipo:'warm',    contexto:'Ica combina calor extremo con lluvias inusuales que pueden dañar el espárrago y la uva de exportación. El río Ica puede desbordarse en eventos intensos, afectando los valles agrícolas.' },
+  { region:'Arequipa',      tipo:'neutral', contexto:'Arequipa tiene un impacto moderado: la costa recibe algo más de calor mientras la sierra muestra variabilidad hídrica. El río Chili puede presentar crecidas puntuales sin llegar a ser catastróficas.' },
+  { region:'Moquegua',      tipo:'neutral', contexto:'Moquegua presenta un impacto leve a moderado. Las lluvias pueden ser más erráticas y el calor costero se intensifica, pero los efectos son considerablemente menores que en la costa norte.' },
+  { region:'Tacna',         tipo:'neutral', contexto:'Tacna experimenta variaciones menores: algo más de calor y lluvias más irregulares. El impacto es generalmente moderado en comparación con el norte y la sierra sur.' },
+  { region:'Cajamarca',     tipo:'neutral', contexto:'Cajamarca puede experimentar lluvias por encima del promedio en algunos valles y déficit en otros. La variabilidad regional es alta: zonas altas con más precipitación, valles occidentales con escasez.' },
+  { region:'Amazonas',      tipo:'cold',    contexto:'La selva alta de Amazonas experimenta una paradoja: mientras la costa se inunda, la Amazonía padece sequía. El Marañón y sus afluentes bajan de nivel, afectando la navegación y la pesca fluvial.' },
+  { region:'San Martín',    tipo:'cold',    contexto:'San Martín muestra reducción de lluvias que afecta el cacao, el café y el arroz. Los ríos Mayo y Huallaga bajan significativamente, afectando el transporte y el riego en la región.' },
+  { region:'Loreto',        tipo:'cold',    contexto:'Loreto es la región amazónica más afectada: el Amazonas y sus tributarios pueden alcanzar mínimos históricos, cortando comunidades aisladas de sus fuentes de alimento y movilidad fluvial.' },
+  { region:'Ucayali',       tipo:'cold',    contexto:'El Ucayali experimenta sequía moderada. El río Ucayali baja su nivel, afectando el transporte fluvial. La mayor irradiación solar intensifica el calor y aumenta el riesgo de incendios forestales.' },
+  { region:'Huánuco',       tipo:'neutral', contexto:'Huánuco presenta impacto mixto: la selva alta puede padecer menor precipitación mientras las zonas andinas experimentan variabilidad estacional. El café y el cacao son los cultivos más expuestos.' },
+  { region:'Pasco',         tipo:'neutral', contexto:'Pasco muestra variabilidad climática con sequías parciales en zonas altas. La minería puede verse afectada por fluctuaciones en la disponibilidad de agua para procesos metalúrgicos.' },
+  { region:'Junín',         tipo:'neutral', contexto:'Junín experimenta reducción moderada de lluvias en sierra y selva central. El lago Junín puede bajar su nivel. La trucha y la producción de papa son los sectores más sensibles.' },
+  { region:'Huancavelica',  tipo:'cold',    contexto:'Huancavelica padece sequía durante El Niño: las lluvias de la sierra sur disminuyen, afectando la ganadería altoandina y los cultivos de papa. Los reservorios del Mantaro ven reducido su caudal hidroeléctrico.' },
+  { region:'Ayacucho',      tipo:'cold',    contexto:'Ayacucho es una de las regiones más golpeadas por la sequía. Las lluvias caen muy por debajo del promedio, afectando gravemente la agricultura de subsistencia y la ganadería local.' },
+  { region:'Apurímac',      tipo:'cold',    contexto:'Apurímac sufre déficit hídrico severo. Los ríos Apurímac y Pachachaca bajan su nivel. La papa, el maíz y la producción ganadera son los más afectados por la falta de lluvias.' },
+  { region:'Cusco',         tipo:'cold',    contexto:'Cusco puede experimentar sequía en sus zonas andinas, afectando el agro y el agua para consumo. El Camino Inca puede cerrarse por riesgo de huaicos y los atractivos naturales se ven afectados.' },
+  { region:'Puno',          tipo:'cold',    contexto:'Puno padece sequía intensa y mayor riesgo de heladas. El lago Titicaca puede bajar su nivel. La ganadería de camélidos y la quinua son los más afectados, junto con los cultivos de papa.' },
+  { region:'Madre de Dios', tipo:'neutral', contexto:'Madre de Dios experimenta reducción moderada de lluvias. El río Madre de Dios baja su nivel, afectando el transporte, la pesca y las comunidades indígenas que dependen del bosque amazónico.' },
+];
+
+const PROFESSIONS_DEFAULT = [
+  'Agricultura / Ganadería',
+  'Pesca / Acuicultura',
+  'Construcción / Obras civiles',
+  'Tecnología / Software / IT',
+  'Salud / Medicina',
+  'Educación / Docencia',
+  'Transporte / Logística',
+  'Comercio / Ventas',
+  'Turismo / Hospitalidad',
+  'Finanzas / Banca / Seguros',
+  'Energía / Minería',
+  'Sector público / Gobierno',
+  'Arte / Cultura / Medios',
+  'Estudiante',
+  'Jubilado/a',
+  'Otro',
+];
+
+const PROF_IMPACTS_DEFAULT = {
+  'Agricultura / Ganadería': {
+    warm: 'Las lluvias extremas saturan el suelo y favorecen enfermedades fúngicas. En la costa norte peruana los cultivos de arroz, limón y mango pueden perderse masivamente. Los campos quedan anegados semanas y los contratos de exportación se vuelven imposibles de cumplir.',
+    cold: 'La sequía en sierra y selva reduce drásticamente el agua de riego. Las pérdidas de papa, maíz y quinua pueden superar el 40 % en regiones como Puno y Ayacucho. La falta de forraje también golpea la ganadería de camélidos y bovinos.',
+    neutral: 'La variabilidad de lluvias desordena los calendarios de siembra. Seguir los pronósticos ENSO del Senamhi con 3 meses de anticipación es hoy tan importante como el calendario agrícola tradicional.',
+  },
+  'Pesca / Acuicultura': {
+    warm: 'El Niño calienta el Pacífico y desplaza los cardúmenes de anchoveta, jurel y caballa hacia el sur y en profundidad. Las capturas industriales pueden caer entre 50 y 80 %. Los langostineros del norte ven sus piscigranjas inundadas.',
+    cold: 'La menor precipitación afecta la piscicultura continental (trucha en Junín y Puno). Los ríos amazónicos con aguas bajas dificultan la pesca de subsistencia en Loreto y Ucayali.',
+    neutral: 'Las anomalías del ENSO alteran las rutas de migración aunque sean moderadas. Los reportes del IMARPE anticipan caladeros con semanas de anticipación — úsalos.',
+  },
+  'Construcción / Obras civiles': {
+    warm: 'Las lluvias intensas paralizan obras en toda la costa norte. Los huaicos destruyen avances en carreteras y puentes. En Lima, las quebradas activan el riesgo de aluvión en el cono este. Quienes trabajan por jornada pueden perder semanas de ingresos.',
+    cold: 'La sequía en sierra puede agrietar suelos y complicar cimentaciones. La escasez de agua en obras de la selva central limita el curado de estructuras y ralentiza cronogramas.',
+    neutral: 'El clima impredecible puede retrasar cualquier proyecto. Incluir días adicionales en el cronograma y cláusulas climáticas en contratos es cada vez más indispensable.',
+  },
+  'Tecnología / Software / IT': {
+    warm: 'Las inundaciones en ciudades costeras cortan electricidad e internet por 48–72 horas. Las empresas necesitan planes de continuidad: respaldo en la nube, conexión 4G/satelital y flujos de trabajo que soporten cortes prolongados.',
+    cold: 'La sequía puede reducir la generación hidroeléctrica del sistema interconectado. La crisis en sectores agrícolas y pesqueros reduce la inversión digital de clientes PYME. Diversificar la cartera por región mitiga el riesgo.',
+    neutral: 'La dependencia de infraestructura eléctrica vulnerable es el mayor riesgo. Migrar servicios críticos a la nube y documentar planes de continuidad son inversiones con retorno inmediato.',
+  },
+  'Salud / Medicina': {
+    warm: 'Las inundaciones costeñas disparan epidemias de dengue, leptospirosis y enfermedades gastrointestinales. Los hospitales de Piura, Tumbes y Chiclayo colapsan. El personal trabaja en condiciones extremas con accesos cortados por huaicos.',
+    cold: 'La sequía en sierra y selva eleva la desnutrición y las infecciones respiratorias por polvo. La escasez de agua afecta la higiene básica en comunidades rurales de Puno, Ayacucho y Loreto.',
+    neutral: 'El cambio en patrones climáticos altera la distribución de vectores. Intensificar la vigilancia epidemiológica antes del fenómeno permite anticipar picos de demanda de atención.',
+  },
+  'Educación / Docencia': {
+    warm: 'Las inundaciones cierran colegios durante semanas en la costa norte. La transición a clases virtuales se dificulta por los cortes de electricidad. Tener materiales offline y planes pedagógicos de contingencia es clave.',
+    cold: 'En zonas rurales de la sierra sur, la sequía reduce la asistencia escolar. Los calendarios académicos necesitan flexibilidad para recuperar el tiempo perdido sin penalizar al alumnado.',
+    neutral: 'Incorporar El Niño como tema transversal — desde ciencias hasta historia — es una oportunidad pedagógica de alto impacto y relevancia actual.',
+  },
+  'Transporte / Logística': {
+    warm: 'Los huaicos destruyen la Panamericana Norte y las carreteras hacia Cajamarca y La Libertad. Los costos de flete se disparan. El Puerto de Paita puede cerrar por oleaje durante eventos intensos.',
+    cold: 'Los ríos amazónicos con caudal bajo dificultan el transporte fluvial en Loreto y Ucayali. Las barcazas quedan varadas y las comunidades se aíslan de sus fuentes de abastecimiento.',
+    neutral: 'Mapear rutas alternativas antes de que llegue el fenómeno y mantener stocks de seguridad para clientes clave son las ventajas competitivas más prácticas.',
+  },
+  'Comercio / Ventas': {
+    warm: 'Los locales inundados, la pérdida de stock y la caída del poder adquisitivo reducen las ventas en la costa norte. Los canales online y el stock de productos básicos son el mejor respaldo durante la emergencia.',
+    cold: 'La sequía eleva el precio de los alimentos básicos en sierra y selva, comprimiendo el consumo. El gasto discrecional cae. Diferenciarse por servicio — no solo por precio — es la estrategia más resiliente.',
+    neutral: 'El Niño orienta el consumo hacia bienes de primera necesidad. Adaptar el inventario con mayor rotación de productos básicos puede darte ventaja competitiva durante el fenómeno.',
+  },
+  'Turismo / Hospitalidad': {
+    warm: 'Las inundaciones generan cancelaciones masivas en la costa norte. Machu Picchu y el Camino Inca pueden cerrarse por huaicos. Las temporadas altas se convierten en períodos de altísima incertidumbre para el sector.',
+    cold: 'La sequía afecta los atractivos naturales del altiplano: el lago Titicaca baja, los ríos para canotaje pierden caudal. La transparencia con los visitantes sobre las condiciones reales fideliza más que el silencio.',
+    neutral: 'Ofrecer actividades alternativas para clima adverso y paquetes flexibles con cancelación gratuita hará tu propuesta más resiliente y competitiva.',
+  },
+  'Finanzas / Banca / Seguros': {
+    warm: 'Las inundaciones generan alta siniestralidad, más créditos de emergencia y mayor morosidad en carteras agrícolas y comerciales del norte. Hay oportunidades reales en seguros paramétricos y líneas de emergencia climática.',
+    cold: 'La sequía deprime la producción agrícola y la generación del Mantaro. Las carteras de crédito en sierra sur y selva elevan su riesgo. El monitoreo del ENSO debe integrarse en los modelos de evaluación crediticia.',
+    neutral: 'El riesgo climático es ahora central en el análisis de crédito y portafolio. Incorporarlo proactivamente es ventaja competitiva frente a instituciones que lo tratan como factor exógeno.',
+  },
+  'Energía / Minería': {
+    warm: 'Las lluvias benefician las centrales del Mantaro a corto plazo, pero los deslizamientos amenazan la infraestructura de transmisión en montaña. Las operaciones mineras al aire libre en la sierra norte quedan paralizadas.',
+    cold: 'La sequía en la cuenca del Mantaro reduce la generación hidroeléctrica y puede causar racionamiento en el SINAC. Las operaciones que dependen del agua para procesamiento sufren paros y pérdidas cuantiosas.',
+    neutral: 'La variabilidad hídrica exige monitoreo constante de reservorios. Contratos de energía spot y planes alternativos de abastecimiento de agua son coberturas cada vez más indispensables.',
+  },
+  'Sector público / Gobierno': {
+    warm: 'El Niño activa los protocolos del SINAGERD. La coordinación entre el COEN, los gobiernos regionales y las municipalidades es la prioridad absoluta. Los presupuestos de emergencia deben estar pre-aprobados antes del inicio del fenómeno.',
+    cold: 'La sequía en sierra y selva exige coordinar entre el ANA, el Minagri y los gobiernos regionales planes de seguridad hídrica y alimentaria. Actuar antes de que el fenómeno alcance su pico es siempre más eficiente.',
+    neutral: 'La preparación preventiva — planes aprobados, recursos pre-asignados y comunicación ciudadana anticipada — es siempre la inversión más efectiva ante el fenómeno.',
+  },
+  'Arte / Cultura / Medios': {
+    warm: 'Las inundaciones generan alta demanda de cobertura mediática en Perú. El periodismo de campo en zonas afectadas tiene alto impacto nacional. Las interrupciones de eventos culturales en la costa norte son el principal efecto directo.',
+    cold: 'La sequía en sierra y selva y sus efectos en comunidades indígenas son un tema de alta relevancia periodística. El documental y el periodismo de datos sobre el ENSO tienen audiencia global creciente.',
+    neutral: 'El Niño es una historia con enorme potencial narrativo en Perú. Desde la visualización de datos hasta el testimonio personal, hay un mercado creciente para contenidos que expliquen sus impactos con rigor y emoción.',
+  },
+  'Estudiante': {
+    warm: 'Las inundaciones pueden cerrar tu institución semanas. Tener materiales offline, conocer los protocolos de evacuación y seguir al Senamhi son los primeros pasos. El Niño también ofrece material de primer nivel para proyectos académicos.',
+    cold: 'La sequía en tu región puede afectar la asistencia escolar y los recursos básicos de tu comunidad. Documentar los efectos del Niño en tu entorno puede ser la base de un proyecto académico o periodístico relevante.',
+    neutral: 'Estás en el mejor momento para estudiar el Niño de primera mano. Su impacto multidimensional ofrece material para investigación con proyección real.',
+  },
+  'Jubilado/a': {
+    warm: 'Las personas mayores son especialmente vulnerables ante inundaciones: menor movilidad, mayor exposición a enfermedades y difícil acceso a centros de salud. Un plan familiar de evacuación y contacto frecuente con vecinos es esencial.',
+    cold: 'El frío intenso de la sierra y la sequía son riesgos de salud reales. Las heladas en Puno, Cusco y Ayacucho son más frecuentes durante el Niño. Mantenerse abrigado, hidratado y en contacto con tu red de apoyo puede salvar vidas.',
+    neutral: 'Los cambios climáticos del Niño pueden afectar tu comodidad y salud diaria. Mantenerte informado/a con el Senamhi y tener preparado un kit básico de emergencia son pasos simples con gran valor.',
+  },
+  'Otro': {
+    warm: 'El Niño trae lluvias intensas e inundaciones que afectan prácticamente todas las actividades en la costa norte. Un kit de emergencia, rutas de evacuación conocidas y comunicación familiar frecuente son el primer paso.',
+    cold: 'La sequía en sierra y selva puede afectar el suministro de agua, los alimentos y la energía en tu región. Anticipar estas necesidades reduce significativamente el impacto cuando el fenómeno está en su pico.',
+    neutral: 'El Niño genera incertidumbre climática que se traduce en variaciones de precios y disponibilidad de servicios. Mantenerse informado/a con anticipación te permite prepararte antes de que el evento alcance su intensidad.',
+  },
+};
+
+const AGE_NOTES_DEFAULT = {
+  '15-20': 'A tu edad, el Niño puede interrumpir tus estudios, pero también es una oportunidad única para documentar sus efectos en tu comunidad y construir experiencia real en un tema que marcará tu generación.',
+  '21-30': 'En la etapa de inicio profesional, la flexibilidad es tu mayor ventaja. Adaptar tu trabajo a modalidad remota o diversificar hacia sectores menos expuestos al clima puede proteger tu carrera durante el fenómeno.',
+  '31-40': 'Con responsabilidades laborales y familiares, el Niño exige planificación: un fondo de emergencia de 2–3 meses y un plan familiar de contingencia son las inversiones más concretas que puedes hacer hoy.',
+  '41-55': 'Tu experiencia viviendo eventos climáticos anteriores es un activo. Quienes ya saben cómo responde su entorno ante el Niño toman mejores decisiones. Comparte ese conocimiento con tu equipo y familia.',
+  '56+': 'En esta etapa es importante priorizar la salud y la red de apoyo. Ante eventos extremos, no subestimes las señales de alerta y mantén contacto frecuente con familiares o vecinos de confianza.',
+};
+
+// ─── ESTADO (se sobrescribe al cargar el Sheet) ──────────────────────────────
+let sheetRegions     = null;
+let sheetProfessions = null;
+let sheetAges        = null;
+
+// ─── PARSEAR CSV SIMPLE ──────────────────────────────────────────────────────
+function parseCSV(text) {
+  const rows = [];
+  const lines = text.split('\n');
+  for (const line of lines) {
+    if (!line.trim()) continue;
+    const cols = [];
+    let cur = '', inQ = false;
+    for (let i = 0; i < line.length; i++) {
+      const c = line[i];
+      if (c === '"') { inQ = !inQ; continue; }
+      if (c === ',' && !inQ) { cols.push(cur.trim()); cur = ''; }
+      else cur += c;
+    }
+    cols.push(cur.trim());
+    rows.push(cols);
+  }
+  return rows;
+}
+
+// ─── CARGAR GOOGLE SHEETS ────────────────────────────────────────────────────
+async function loadSheetData() {
+  if (!SHEET_ID) return;
+  const base = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=`;
+  try {
+    const [rRes, pRes, aRes] = await Promise.all([
+      fetch(base + 'regiones'),
+      fetch(base + 'profesiones'),
+      fetch(base + 'edades'),
+    ]);
+    if (!rRes.ok || !pRes.ok || !aRes.ok) throw new Error('Sheet no accesible');
+    const [rText, pText, aText] = await Promise.all([rRes.text(), pRes.text(), aRes.text()]);
+
+    const rRows = parseCSV(rText).slice(1);
+    sheetRegions = rRows.map(r => ({ region: r[0], tipo: r[1], contexto: r[2] })).filter(r => r.region);
+
+    const pRows = parseCSV(pText).slice(1);
+    sheetProfessions = pRows.filter(r => r[0]);
+
+    const aRows = parseCSV(aText).slice(1);
+    sheetAges = aRows.filter(r => r[0]);
+
+    console.log(`✓ Textos cargados desde Google Sheets: ${sheetRegions.length} regiones, ${sheetProfessions.length} profesiones`);
+  } catch (e) {
+    console.warn('⚠ Google Sheet no disponible, usando textos de respaldo:', e.message);
+  }
+}
+
+// ─── LÓGICA DE IMPACTO ───────────────────────────────────────────────────────
+function getRegionData(regionName) {
+  const list = sheetRegions || PERU_REGIONS_DEFAULT;
+  return list.find(r => r.region === regionName) || { tipo: 'neutral', contexto: 'En tu región, El Niño genera variaciones climáticas que afectan la disponibilidad de agua, la producción agrícola y los servicios básicos.' };
+}
+
+function getProfImpact(profession, tipo) {
+  if (sheetProfessions) {
+    const row = sheetProfessions.find(r => r[0] === profession);
+    if (row) {
+      const idx = tipo === 'warm' ? 1 : tipo === 'cold' ? 2 : 3;
+      return row[idx] || '';
+    }
+  }
+  return (PROF_IMPACTS_DEFAULT[profession] || PROF_IMPACTS_DEFAULT['Otro'])[tipo];
+}
+
+function getAgeNote(ageRange) {
+  if (sheetAges) {
+    const row = sheetAges.find(r => r[0] === ageRange);
+    if (row) return row[1] || '';
+  }
+  return AGE_NOTES_DEFAULT[ageRange] || '';
+}
+
+function generatePersonalImpact({ name, ageRange, profession, region }) {
+  const rd       = getRegionData(region);
+  const profText = getProfImpact(profession, rd.tipo);
+  const ageText  = getAgeNote(ageRange);
+  return { saludo: `${name}, tu panorama:`, context: rd.contexto, profText, ageText };
+}
+
+// ─── INICIALIZAR PANEL ───────────────────────────────────────────────────────
+function initImpactPanel() {
+  const profSel  = document.getElementById('ipProfession');
+  const profList = sheetProfessions ? sheetProfessions.map(r => r[0]) : PROFESSIONS_DEFAULT;
+  profList.forEach(p => {
+    const o = document.createElement('option');
+    o.value = p; o.textContent = p;
+    profSel.appendChild(o);
+  });
+
+  const regionSel  = document.getElementById('ipRegion');
+  const regionList = sheetRegions || PERU_REGIONS_DEFAULT;
+  regionList.forEach(r => {
+    const o = document.createElement('option');
+    o.value = r.region; o.textContent = r.region;
+    regionSel.appendChild(o);
+  });
+
+  document.getElementById('ipToggle').addEventListener('click', function () {
+    const body   = document.getElementById('ipBody');
+    const hidden = body.style.display === 'none';
+    body.style.display = hidden ? '' : 'none';
+    this.textContent   = hidden ? '−' : '+';
+  });
+
+  document.getElementById('ipSubmit').addEventListener('click', () => {
+    const name       = document.getElementById('ipName').value.trim();
+    const ageRange   = document.getElementById('ipAge').value;
+    const profession = document.getElementById('ipProfession').value;
+    const region     = document.getElementById('ipRegion').value;
+    const errEl      = document.getElementById('ipError');
+
+    if (!name)       { errEl.textContent = 'Por favor escribe tu nombre.';  return; }
+    if (!ageRange)   { errEl.textContent = 'Selecciona tu rango de edad.';  return; }
+    if (!profession) { errEl.textContent = 'Selecciona tu profesión.';      return; }
+    if (!region)     { errEl.textContent = 'Selecciona tu región.';         return; }
+    errEl.textContent = '';
+
+    const { saludo, context, profText, ageText } = generatePersonalImpact({ name, ageRange, profession, region });
+
+    document.getElementById('ipResultGreeting').textContent = saludo;
+    document.getElementById('ipResultContext').textContent  = context;
+    document.getElementById('ipResultBody').textContent     = profText;
+    document.getElementById('ipResultAge').textContent      = ageText;
+
+    document.getElementById('ipForm').style.display   = 'none';
+    document.getElementById('ipResult').style.display = '';
+  });
+
+  document.getElementById('ipBack').addEventListener('click', () => {
+    document.getElementById('ipForm').style.display   = '';
+    document.getElementById('ipResult').style.display = 'none';
+    document.getElementById('ipError').textContent    = '';
+  });
+}
+
+loadSheetData().then(() => initImpactPanel());
+</script>
+</body>
+</html>
