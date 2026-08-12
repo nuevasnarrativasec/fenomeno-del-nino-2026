@@ -707,18 +707,32 @@ function reg(el){charts.push(el);}
   zoomView([root.x, root.y, root.r*2]);
 
   function inFocus(d){ return focus===root || d.parent===focus; }
+  // ajusta el texto al ancho disponible truncando con «…» (mide el ancho real)
+  function fitText(node, full, maxW){
+    node.textContent=full;
+    if(!node.getComputedTextLength) return;
+    let len=node.getComputedTextLength();
+    if(len===0 || len<=maxW) return;         // cabe (o no se puede medir)
+    let s=full;
+    while(s.length>1){
+      s=s.slice(0,-1);
+      node.textContent=s+'…';
+      if(node.getComputedTextLength()<=maxW) break;
+    }
+  }
   function zoomView(v){
     const k=S/v[2]; view=v;
     node.attr('transform',d=>`translate(${(d.x-v[0])*k},${(d.y-v[1])*k})`).attr('r',d=>d.r*k)
       .style('opacity',d=>d.children?1:(inRange(d)?1:0.09));
     leafLabel.attr('transform',d=>`translate(${(d.x-v[0])*k},${(d.y-v[1])*k})`)
       .style('display',d=>(inFocus(d)&&inRange(d)&&d.r*k>=11)?'inline':'none');
-    leafLabel.each(function(d){ const rk=d.r*k, t=d3.select(this), two=rk>=27;
-      t.select('.nm').attr('dy',two?'-0.15em':'0.32em')
-        .style('font-size',Math.max(8,Math.min(13,rk/2.6))+'px')
-        .text(rk>=30?d.data.name:(rk>=18?d.data.name.split(' ')[0]:d.data.name.slice(0,3)));
-      t.select('.vl').attr('dy','1.15em').style('display',two?'inline':'none')
-        .style('font-size',Math.min(15,rk/2.4)+'px').text(two?d.data.value.toFixed(0)+'%':''); });
+    leafLabel.each(function(d){ const rk=d.r*k, two=rk>=27;
+      const nm=this.querySelector('.nm'), vl=this.querySelector('.vl');
+      const fs=Math.max(8,Math.min(13,rk/2.6));
+      nm.setAttribute('dy',two?'-0.15em':'0.32em'); nm.style.fontSize=fs+'px';
+      fitText(nm, d.data.name, 2*rk*0.88);               // trunca con «…» si no cabe
+      vl.setAttribute('dy','1.15em'); vl.style.display=two?'inline':'none';
+      vl.style.fontSize=Math.min(15,rk/2.4)+'px'; vl.textContent=two?d.data.value.toFixed(0)+'%':''; });
     // arcos (borde superior-derecho) + etiquetas curvas de periodos
     periods.forEach(p=>{ const cx=(p.x-v[0])*k, cy=(p.y-v[1])*k, rr=Math.max(1,p.r*k-4);
       const a0=-104*Math.PI/180, a1=-20*Math.PI/180; // de ~arriba hacia la derecha
