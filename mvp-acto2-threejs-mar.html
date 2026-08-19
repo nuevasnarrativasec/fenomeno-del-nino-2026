@@ -58,6 +58,14 @@
       display: flex;
       align-items: center;
       gap: 12px;
+      margin-bottom: 22px;
+    }
+
+    .slider-mid {
+      position: relative;
+      flex: 1;
+      display: flex;
+      align-items: center;
     }
 
     .slider-label {
@@ -73,11 +81,7 @@
       flex: 1;
       height: 4px;
       border-radius: 2px;
-      background: linear-gradient(to right,
-        #003cc8 0%, #148ce6 15%,
-        #f5f5f5 35%,
-        #ffd21e 52%, #ff8200 65%, #fa1e0a 80%, #780050 100%
-      );
+      background: linear-gradient(to right, #16263f, #24344f);
       outline: none;
       cursor: pointer;
     }
@@ -97,19 +101,28 @@
     }
 
     .slider-ticks {
-      display: flex;
-      padding: 0 30px 0 110px;
-      justify-content: space-between;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      height: 12px;
+      margin-top: 7px;
+      pointer-events: none;
     }
 
     .slider-tick {
+      position: absolute;
+      top: 0;
+      transform: translateX(-50%);
       font-family: sans-serif;
       font-size: 0.65rem;
       color: #2a2535;
-      text-align: center;
-      flex: 1;
+      white-space: nowrap;
       transition: color 0.2s;
     }
+    /* Extremos: no sobrepasar el borde del riel */
+    .slider-tick:first-child  { transform: translateX(0); }
+    .slider-tick:last-child   { transform: translateX(-100%); }
     .slider-tick.active { color: #b09080; }
 
     /* ── MECANISMO (fila bajo el slider) ── */
@@ -769,11 +782,13 @@
   </div>
   <div class="slider-wrap">
     <div class="slider-track-wrap">
-      <span class="slider-label">Temperatura normal</span>
-      <input type="range" id="intensitySlider" min="0" max="100" value="0" step="1" />
-      <span class="slider-label">El Niño extraordinario</span>
+      <span class="slider-label">Ene 1980</span>
+      <div class="slider-mid">
+        <input type="range" id="intensitySlider" min="0" max="558" value="558" step="1" />
+        <div class="slider-ticks" id="sliderTicks"></div>
+      </div>
+      <span class="slider-label">Jul 2026</span>
     </div>
-    <div class="slider-ticks" id="sliderTicks"></div>
   </div>
   <!-- Mecanismo dinámico -->
   <div class="mech-row">
@@ -869,9 +884,9 @@
   <div id="bottom-bar">
     <div class="bar-section">
       <button class="ctrl-btn" id="rotateBtn">⟳ Rotar</button>
-      <button class="ctrl-btn" id="oceanBtn" title="Mostrar temperatura del mar en el Pacífico">Temperatura mar</button>
-      <button class="ctrl-btn" id="currentsBtn" title="Mostrar corrientes oceánicas animadas">Corrientes</button>
-      <button class="ctrl-btn region-btn" id="regionsBtn" title="Señalar las regiones Niño 3.4 y Niño 1+2 sobre el mapa">Regiones Niño</button>
+      <button class="ctrl-btn" id="oceanBtn" title="Mostrar temperatura del mar en el Pacífico">🌊 Temperatura mar</button>
+      <button class="ctrl-btn" id="currentsBtn" title="Mostrar corrientes oceánicas animadas">↔ Corrientes</button>
+      <button class="ctrl-btn region-btn" id="regionsBtn" title="Señalar las regiones Niño 3.4 y Niño 1+2 sobre el mapa">🎯 Regiones Niño</button>
     </div>
     <div class="bar-section center">
       <button class="ctrl-btn nav-arrow" id="prevStory">‹</button>
@@ -889,188 +904,148 @@
 // HISTORIAS PERSONALES
 // ─────────────────────────────────────────────
 const STORIES = [
-  // ─── 6 historias FEN — Perú (respaldadas por PRODUCE, IPE, INDECI, MINSA) ───
+  // ─── 10 personajes en Perú (FEN) — Personaje · Edad · Departamento · Descripción ───
   {
-    lat: -5.72, lng: -80.86,
-    iso: 'PER',
-    emoji: '🐚',
-    person: 'Wilmer, buzo de conchas',
-    location: 'Bahía de Sechura, Piura',
-    impact: 'Cosecha de concha de abanico −43% (2017) y −42% (2023)',
-    story: 'Baja a las cinco de la mañana a la concesión de conchas de abanico de su familia. El agua se siente más tibia de lo normal y la mitad de las conchas están vacías o muertas: la cosecha más baja en seis años. Sin ese ingreso no paga la cuota del motor fuera de borda que compró a crédito, y sin motor ni siquiera puede salir a pescar para la olla de casa. (PRODUCE)',
-    markerColor: '#1567a4',
+    lat: -5.19, lng: -80.63, iso: 'PER', emoji: '🦟',
+    person: 'María, 34 años',
+    location: 'Piura, Perú',
+    story: 'Vive en un asentamiento humano en las afueras de Piura. Su hija Xiomara, de 9 años, lleva tres días internada con dengue. Cree que la culpa es de un mosquito que picó a la niña en el patio de la casa.',
+    markerColor: '#c04ac0',
   },
   {
-    lat: -4.93, lng: -80.36,
-    iso: 'PER',
-    emoji: '🥭',
-    person: 'Don Segundo, manguero',
-    location: 'Valle de San Lorenzo, Piura',
-    impact: 'Rendimiento de mango −20% (2017) y −26% (2023)',
-    story: 'Lleva veinte años exportando mango a Europa. Esta temporada la fruta sale más chica y escasa y la cosecha cierra 25% por debajo de lo esperado. No alcanza el volumen mínimo de su contrato con la empacadora y lo pierde para la próxima campaña; le queda vender al mercado local, más barato, y ya no califica para el crédito agrícola del abono del año siguiente. (IPE)',
-    markerColor: '#e0a020',
-  },
-  {
-    lat: -6.77, lng: -79.84,
-    iso: 'PER',
-    emoji: '🏚️',
-    person: 'Rocío, madre de dos',
-    location: 'Chiclayo, Lambayeque',
-    impact: 'Piura y Lambayeque, entre los 5 dptos. más golpeados (41,360 viviendas destruidas)',
-    story: 'A las dos de la madrugada el agua le llega a los tobillos dentro de su casa, cerca del río. Saca a sus dos hijos en brazos; al día siguiente la pared del fondo está derrumbada. Como su vivienda nunca tuvo título de propiedad formal, no califica para el bono de reconstrucción. Reconstruye con sus ahorros los fines de semana y, casi un año después, sigue viviendo por temporadas donde su suegra. (INDECI)',
+    lat: -9.53, lng: -77.53, iso: 'PER', emoji: '🚜',
+    person: 'El ingeniero, 41 años',
+    location: 'Áncash, Perú',
+    story: 'Trabaja para una empresa contratista, operando maquinaria pesada para retirar huaycos y escombros de la vía tras las lluvias. Lleva dos semanas sin volver a su casa por la magnitud del daño.',
     markerColor: '#c0392b',
   },
   {
-    lat: -4.86, lng: -79.72,
-    iso: 'PER',
-    emoji: '🌉',
-    person: 'Rosa, bodeguera',
-    location: 'Sierra de Piura',
-    impact: 'Puentes y tramos de carretera destruidos (INDECI)',
-    story: 'Su bodega depende de un solo puente para llegar a la carretera. Una madrugada de lluvia intensa el río se lleva el puente y el pueblo queda sin acceso por tierra más de un día. Los camiones que la surten dan una vuelta de horas por una trocha; durante casi una semana sus estantes se vacían. Cuando por fin entra un camión sube los precios —porque a ella se lo cobraron más caro por el desvío— y sus vecinos, sin otra tienda, pagan la diferencia. (INDECI)',
-    markerColor: '#7d5ba6',
+    lat: -6.77, lng: -79.84, iso: 'PER', emoji: '🚚',
+    person: 'El transportista, 29 años',
+    location: 'Lambayeque, Perú',
+    story: 'Chofer de una empresa de carga que transporta alimentos entre Chiclayo y el norte. Ese año, su ruta habitual se volvió zona de rescate.',
+    markerColor: '#d0453a',
   },
   {
-    lat: -9.07, lng: -78.59,
-    iso: 'PER',
-    emoji: '🐟',
-    person: 'Marisol, esposa de jornalero',
-    location: 'Chimbote, Áncash',
-    impact: 'Desembarque de anchoveta más bajo en 14 años (1.98 M TM, 2023)',
-    story: 'Su esposo trabaja por jornales en una planta de harina de anchoveta, como eventual: cuando llega poco pescado, es de los primeros a los que no llaman. Ese mes lo llamaron la mitad de los días. Atrasan unos días el alquiler y Marisol adelanta la fecha en que su hija mayor empieza a ayudar los fines de semana en la tienda de la esquina para cubrir la diferencia. (PRODUCE)',
-    markerColor: '#127a6b',
+    lat: -7.16, lng: -78.51, iso: 'PER', emoji: '🌊',
+    person: 'El promotor, 47 años',
+    location: 'Cajamarca, Perú',
+    story: 'Vive en un caserío rural. Es promotor de defensa civil de su comunidad desde hace 15 años; ha visto el mismo río desbordarse más veces de las que puede contar.',
+    markerColor: '#e0603a',
   },
   {
-    lat: -11.85, lng: -77.03,
-    iso: 'PER',
-    emoji: '🦟',
-    person: 'Milagros, trabajadora de tienda',
-    location: 'Carabayllo, Lima',
-    impact: 'Dengue en Lima Metropolitana: 925 (2022) → 74,040 (2024)',
-    story: 'Amanece un miércoles con fiebre y dolor de cuerpo; como el año anterior ya pasó "lo peor", cree que es un resfrío. Al tercer día no puede pararse: es dengue. Gasta en recuperarse toda la semana de vacaciones que guardaba para un viaje con sus hijos, y su hija de once años falta al colegio esos días para cuidar a su hermano menor. (MINSA)',
+    lat: -8.11, lng: -79.03, iso: 'PER', emoji: '🥭',
+    person: 'La comerciante, 52 años',
+    location: 'La Libertad, Perú',
+    story: 'Tiene un puesto de frutas en un mercado de Trujillo hace más de veinte años. Ese año no pudo vender mango, su producto más pedido, porque la cosecha de la región se malogró.',
+    markerColor: '#e0a020',
+  },
+  {
+    lat: -5.56, lng: -80.82, iso: 'PER', emoji: '🐚',
+    person: 'El acuicultor, 58 años',
+    location: 'Piura (Sechura), Perú',
+    story: 'Tiene una concesión de conchas de abanico en la bahía de Sechura desde hace quince años. Es la peor cosecha que recuerda.',
+    markerColor: '#1567a4',
+  },
+  {
+    lat: -15.84, lng: -70.02, iso: 'PER', emoji: '🥔',
+    person: 'La agricultora, 61 años',
+    location: 'Puno, Perú',
+    story: 'Cultiva papa nativa en una chacra a más de 3,800 metros de altura, sin acceso a riego. Ese año la lluvia de temporada nunca llegó.',
+    markerColor: '#4aa3e6',
+  },
+  {
+    lat: -13.16, lng: -74.22, iso: 'PER', emoji: '🪰',
+    person: 'El fruticultor, 47 años',
+    location: 'Ayacucho, Perú',
+    story: 'Trabaja un valle interandino cerca de Huamanga cultivando frutales. Una herida que no cerraba resultó ser leishmaniasis.',
+    markerColor: '#b04ac0',
+  },
+  {
+    lat: -11.75, lng: -76.70, iso: 'PER', emoji: '🏫',
+    person: 'La directora, 44 años',
+    location: 'Lima Provincias, Perú',
+    story: 'Dirige un colegio rural en una provincia de Lima. Su escuela sirvió de refugio de emergencia varias veces ese año.',
+    markerColor: '#e05c2a',
+  },
+  {
+    lat: -12.05, lng: -77.05, iso: 'PER', emoji: '🛵',
+    person: 'El joven, 24 años',
+    location: 'Lima Metropolitana, Perú',
+    story: 'Trabaja repartiendo pedidos en moto en un distrito del Cono Norte. Nunca ha salido de Lima. Tuvo dengue por primera vez ese año.',
     markerColor: '#c04ac0',
   },
 
-  // ─── Historias globales ───
+  // ─── 10 casos globales por El Niño ───
   {
-    lat: -12.05, lng: -77.03,
-    iso: 'PER',
-    emoji: '🌊',
-    person: 'María, 34 años',
-    location: 'Lima, Perú',
-    impact: '+4.5°C sobre lo normal',
-    story: 'Las lluvias torrenciales desbordaron el río Rímac e inundaron su barrio en Villa El Salvador. María perdió muebles, documentos y un año de ahorros. "Nunca había visto algo así", cuenta. Es la tercera inundación en cinco años.',
-    markerColor: '#fa3010',
-  },
-  {
-    lat: 36.17, lng: -115.14,
-    iso: 'USA',
-    emoji: '🔥',
-    person: 'James, 28 años',
-    location: 'Nevada, EE. UU.',
-    impact: '+0.8°C sobre lo normal',
-    story: 'El patrón atípico de lluvias dejó a Nevada con la temporada de incendios más larga de su historia. James, bombero voluntario, trabajó 22 días seguidos. "El viento cambiaba de dirección cada hora. No podíamos predecir nada."',
-    markerColor: '#ff8200',
-  },
-  {
-    lat: -6.21, lng: 106.85,
-    iso: 'IDN',
-    emoji: '🌾',
-    person: 'Siti, 41 años',
-    location: 'Yakarta, Indonesia',
-    impact: '−1.2°C (sequía extrema)',
-    story: 'La sequía asociada a El Niño redujo en 40 % la cosecha de arroz en Java. Siti no pudo pagar el alquiler de su terreno y tuvo que vender parte del ganado familiar. "El suelo estaba resquebrajado como nunca antes lo había visto."',
-    markerColor: '#148ce6',
-  },
-  {
-    lat: -1.29, lng: 36.82,
-    iso: 'KEN',
-    emoji: '🌧️',
-    person: 'Amara, 55 años',
-    location: 'Nairobi, Kenia',
-    impact: '+1.0°C sobre lo normal',
-    story: 'Las lluvias extremas vinculadas al Niño cubrieron de lodo los campos de Amara. Perdió la totalidad de la cosecha de maíz. Con 55 años, empezó desde cero. "La tierra dio, y luego se lo llevó todo en una sola noche."',
-    markerColor: '#ffd21e',
-  },
-  {
-    lat: -33.87, lng: 151.21,
-    iso: 'AUS',
-    emoji: '☀️',
-    person: 'John, 62 años',
-    location: 'Sídney, Australia',
-    impact: '−1.5°C (sequía histórica)',
-    story: 'El verano australiano de 2026 fue el más seco en 50 años. John, ganadero en Nueva Gales del Sur, vendió el 30 % de su rebaño por falta de pasto y agua. "Esto ya no es solo el clima. Es una nueva realidad permanente."',
+    lat: -33.0, lng: 147.0, iso: 'AUS', emoji: '🌾',
+    person: 'Liam, 45 años',
+    location: 'Agricultor · Australia',
+    story: 'La sequía extrema asociada a El Niño arruinó por completo su cosecha de trigo, impidiéndole exportar al mercado asiático y deprimiendo fuertemente sus ingresos familiares.',
     markerColor: '#6ec8fa',
   },
   {
-    lat: 41.39, lng: 2.15,
-    iso: 'ESP',
-    emoji: '🌡️',
-    person: 'Carmen, 47 años',
-    location: 'Barcelona, España',
-    impact: '+0.5°C sobre lo normal',
-    story: 'La ola de calor de julio de 2026 mantuvo a Barcelona por encima de 40°C durante 11 días consecutivos. Carmen, enfermera, atendió a cientos de pacientes con golpe de calor. "El hospital estaba al límite de su capacidad cada noche."',
-    markerColor: '#ffd21e',
-  },
-  {
-    lat: -2.19, lng: -79.88,
-    iso: 'ECU',
-    emoji: '⛵',
-    person: 'Carlos, 52 años',
-    location: 'Guayaquil, Ecuador',
-    impact: '+3.5°C sobre lo normal',
-    story: 'El río Guayas desbordó tres veces en la misma temporada. Carlos, pescador artesanal, perdió su bote y sus redes — todo su sustento. "El mar ya no es el mismo, viene con ira", dice. Lleva seis meses viviendo en casa de su hermano.',
-    markerColor: '#f04010',
-  },
-  {
-    lat: 14.60, lng: 120.98,
-    iso: 'PHL',
-    emoji: '🌾',
-    person: 'Ana, 38 años',
-    location: 'Manila, Filipinas',
-    impact: '−1.0°C (sequía y tifones)',
-    story: 'La sequía arrasó con el 60% de la cosecha de arroz de la familia de Ana en Mindanao. Luego llegó el tifón. Ana migró temporalmente a Manila para enviar dinero a su pueblo. "El campo ya no alcanza para vivir", confía.',
-    markerColor: '#1480d0',
-  },
-  {
-    lat: 19.08, lng: 72.88,
-    iso: 'IND',
-    emoji: '☔',
-    person: 'Priya, 29 años',
-    location: 'Maharashtra, India',
-    impact: '−0.4°C (monzón débil)',
-    story: 'El monzón de 2026 llegó dos semanas tarde y sin la fuerza esperada. Priya plantó en seco y vio morir los cultivos. La deuda con el prestamista creció. "Rogamos por la lluvia todos los días", cuenta desde su aldea en Maharashtra.',
+    lat: 26.85, lng: 80.91, iso: 'IND', emoji: '🌾',
+    person: 'Rajesh, 48 años',
+    location: 'Campesino · India',
+    story: 'El debilitamiento del monzón por El Niño redujo el rendimiento de sus cultivos de arroz un 3% por debajo de la tendencia histórica, limitando sus ventas locales.',
     markerColor: '#5ab0e0',
   },
   {
-    lat: 9.02, lng: 38.74,
-    iso: 'ETH',
-    emoji: '🌵',
-    person: 'Fatima, 44 años',
-    location: 'Etiopía oriental',
-    impact: '+1.5°C (sequía severa)',
-    story: 'La cosecha falló dos años seguidos en el Cuerno de África. Fatima caminaba 9 km diarios para conseguir agua para sus cuatro hijos. Con ayuda de una ONG instaló un sistema de captación pluvial. "Pero no es suficiente para todos los del pueblo."',
-    markerColor: '#e09020',
+    lat: -12.80, lng: 28.21, iso: 'ZMB', emoji: '🏭',
+    person: 'Kunda, 38 años',
+    location: 'Refinador · Zambia',
+    story: 'La severa sequía de El Niño secó los ríos, provocando apagones en su planta de fundición de cobre que paralizaron las operaciones e interrumpieron sus turnos de trabajo.',
+    markerColor: '#4aa3e6',
   },
   {
-    lat: 20.66, lng: -103.35,
-    iso: 'MEX',
-    emoji: '🏗️',
-    person: 'Roberto, 45 años',
-    location: 'Guadalajara, México',
-    impact: '+1.2°C sobre lo normal',
-    story: 'El verano de 2026 fue brutal en el occidente de México. Roberto, albañil, empezó a trabajar desde las 4 am para evitar el calor del mediodía. Tres compañeros sufrieron golpes de calor en el mismo mes. "Antes podíamos trabajar hasta el mediodía. Ya no."',
-    markerColor: '#ffb020',
+    lat: -2.20, lng: 113.92, iso: 'IDN', emoji: '🔥',
+    person: 'Siti, 35 años',
+    location: 'Recolectora · Indonesia',
+    story: 'Durante el El Niño de 2015, la grave sequía desató incendios masivos en las turberas de su región, destruyendo los recursos forestales de los que dependía su sustento.',
+    markerColor: '#ff8200',
   },
   {
-    lat: -33.45, lng: -70.67,
-    iso: 'CHL',
-    emoji: '🔥',
-    person: 'Valentina, 31 años',
-    location: 'Región del Maule, Chile',
-    impact: '+1.5°C sobre lo normal',
-    story: 'La megasequía de Chile se intensificó con El Niño. Valentina, bombera forestal en la Región del Maule, combatió incendios durante 40 días seguidos en el verano de 2026. "Los árboles arden antes, más rápido y con más violencia que hace diez años."',
-    markerColor: '#ff9030',
+    lat: -19.0, lng: 29.0, iso: 'ZWE', emoji: '🌽',
+    person: 'Tendai, 42 años',
+    location: 'Agricultora · Zimbabue',
+    story: 'La escasez de lluvias de El Niño en 2015-2016 redujo su producción de maíz en un 40%, obligando a su hogar a depender de asistencia alimentaria de emergencia.',
+    markerColor: '#148ce6',
+  },
+  {
+    lat: -28.5, lng: 26.8, iso: 'ZAF', emoji: '🌽',
+    person: 'Sipho, 44 años',
+    location: 'Agricultor · Sudáfrica',
+    story: 'Las sequías cíclicas de El Niño provocaron que el rendimiento de sus cosechas de maíz cayera un 20% por debajo del promedio histórico, dejándolo sin excedentes para comercializar.',
+    markerColor: '#5ab0e0',
+  },
+  {
+    lat: 26.0, lng: 68.4, iso: 'PAK', emoji: '🌊',
+    person: 'Aisha, 29 años',
+    location: 'Tejedora · Pakistán',
+    story: 'Durante la fase húmeda de La Niña en 2022, las inundaciones monzónicas extremas anegaron su pueblo, arrasando con su hogar y su taller de hilado.',
+    markerColor: '#fa3010',
+  },
+  {
+    lat: -22.5, lng: 27.5, iso: 'BWA', emoji: '🌵',
+    person: 'Lerato, 30 años',
+    location: 'Productor · Botsuana',
+    story: 'La intensa sequía de El Niño en 2015-2016 devastó el cinturón de maíz de su región, perdiendo la totalidad de sus siembras de secano poco después de plantarlas.',
+    markerColor: '#6ec8fa',
+  },
+  {
+    lat: 47.5, lng: 13.5, iso: 'AUT', emoji: '⚡',
+    person: 'Franz, 52 años',
+    location: 'Técnico · Austria',
+    story: 'La irregularidad de las precipitaciones redujo el caudal del río que alimenta su central hidroeléctrica de pasada, disminuyendo la generación estacional hasta un 15%.',
+    markerColor: '#8888cc',
+  },
+  {
+    lat: 30.58, lng: 114.30, iso: 'CHN', emoji: '🌊',
+    person: 'Chen, 41 años',
+    location: 'Arrocero · China',
+    story: 'Las copiosas lluvias de El Niño en el centro del país causaron inundaciones en la cuenca del Yangtze, perdiendo gran parte de su siembra de arroz en el verano posterior.',
+    markerColor: '#f04010',
   },
 ];
 
@@ -1207,6 +1182,61 @@ const INTENSITY_LABELS = [
   { max: 79,  label: 'Fuerte',         desc: 'Inundaciones en América, sequías en Asia-Pacífico' },
   { max: 100, label: 'Extraordinario', desc: 'Evento extremo con consecuencias globales' },
 ];
+
+// ─────────────────────────────────────────────
+// SERIE ICEN — Índice Costero El Niño (ENFEN, ATSM mensual región Niño 1+2)
+// Valores oficiales continuos: ene 1980 → jul 2026 (559 meses). El índice del mes
+// i corresponde a: año = 1980 + floor(i/12), mes = (i%12)+1.
+// Escala visual: el mes más cálido de la serie (jun 1983) llena la capa "Temperatura mar".
+// Fuente: ENFEN — Nota Técnica 01-2024 / Informe Técnico Año 12 N°14 (12-ago-2026).
+// ─────────────────────────────────────────────
+const ICEN_SCALE = 4.32;
+const ICEN_CATS = ['Neutra', 'Cálida Débil', 'Cálida Moderada', 'Cálida Fuerte', 'Cálida Extraordinaria', 'Fría Débil', 'Fría Moderada', 'Fría Fuerte'];
+const ICEN = [
+    0.11, 0.24, 0.34, 0.37, 0.22, -0.05, -0.13, -0.15, -0.05, -0.06, -0.13, -0.53, -0.74, -0.74, -0.48, -0.34, -0.38, -0.41, -0.55, -0.63, -0.56, -0.4,
+    -0.24, -0.14, -0.17, -0.45, -0.62, -0.45, 0, 0.45, 0.8, 1.16, 1.58, 2.26, 2.83, 3.11, 2.85, 2.63, 2.87, 3.48, 4.13, 4.32, 3.99, 3,
+    2.03, 1.13, 0.7, 0.24, -0.11, -0.38, -0.32, -0.39, -0.43, -0.54, -0.38, -0.12, -0.1, -0.02, -0.18, -0.27, -0.61, -0.69, -0.87, -1.03, -1.18, -1.16,
+    -0.97, -0.9, -0.77, -0.69, -0.53, -0.26, 0, -0.11, -0.41, -0.79, -0.92, -0.82, -0.5, -0.09, 0.17, 0.3, 0.42, 0.69, 0.97, 1.3, 1.48, 1.63,
+    1.46, 1.27, 1, 1.03, 1.18, 1.27, 1.1, 0.65, 0.24, -0.2, -0.5, -0.84, -1.14, -1.33, -1.44, -1.33, -1.26, -1.11, -0.95, -0.63, -0.26, 0,
+    0.05, -0.35, -0.68, -0.93, -0.67, -0.54, -0.42, -0.42, -0.36, -0.33, -0.23, -0.19, -0.22, -0.27, -0.24, -0.3, -0.4, -0.48, -0.49, -0.57, -0.6, -0.54,
+    -0.4, -0.26, -0.19, -0.16, -0.03, 0.28, 0.47, 0.53, 0.51, 0.58, 0.65, 0.62, 0.67, 0.89, 1.45, 1.99, 1.86, 1.12, 0.29, -0.01, -0.01, -0.04,
+    -0.14, -0.11, 0.1, 0.41, 0.82, 1.11, 1.26, 1.08, 0.85, 0.6, 0.52, 0.38, 0.21, 0.03, -0.1, -0.36, -0.76, -1, -0.97, -0.83, -0.86, -0.63,
+    -0.11, 0.38, 0.67, 0.68, 0.6, 0.23, -0.54, -1.04, -1.18, -0.86, -0.57, -0.38, -0.4, -0.41, -0.64, -0.66, -0.65, -0.42, -0.82, -1.13, -1.64, -1.43,
+    -1.3, -0.92, -0.76, -0.84, -1.03, -1.08, -0.74, -0.14, 0.48, 1.29, 2.12, 3.02, 3.57, 3.85, 3.85, 4.01, 4.08, 4.06, 3.49, 3.03, 2.76, 2.81,
+    2.66, 2.22, 1.58, 0.87, 0.49, 0.11, -0.05, -0.4, -0.49, -0.4, -0.42, -0.44, -0.67, -0.46, -0.32, -0.46, -0.69, -1.08, -0.96, -0.91, -0.66, -0.56,
+    -0.3, -0.21, -0.16, -0.25, -0.37, -0.36, -0.37, -0.59, -0.86, -0.95, -0.68, -0.25, 0.02, -0.05, -0.39, -0.67, -0.75, -0.88, -1.07, -1.09, -1.04, -0.89,
+    -0.59, 0.04, 0.57, 0.81, 0.67, 0.3, -0.03, -0.12, 0.07, 0.48, 0.79, 0.74, 0.4, 0.04, -0.19, -0.69, -1.12, -1.3, -0.78, -0.51, -0.1, -0.01,
+    0.22, 0.1, 0.02, -0.27, -0.39, -0.89, -1.01, -1.11, -0.86, -0.62, -0.32, 0.16, 0.38, 0.36, -0.17, -0.74, -0.88, -0.68, -0.46, -0.46, -0.5, -0.52,
+    -0.84, -1.18, -1.23, -0.92, -0.37, -0.15, -0.52, -0.78, -0.76, -0.19, 0.23, 0.62, 0.91, 0.94, 0.86, 0.72, 0.5, 0.05, -0.59, -1.22, -1.54, -1.46,
+    -1.26, -1.05, -1.23, -1.41, -1.64, -1.29, -0.64, 0.04, 0.34, 0.44, 0.5, 0.69, 0.98, 1.13, 0.92, 0.37, -0.12, -0.3, -0.43, -0.55, -0.36, -0.02,
+    0.47, 0.58, 0.75, 0.7, 0.56, 0.39, 0.42, 0.41, 0.35, 0.18, 0.05, 0.09, 0.07, -0.24, -0.75, -1.16, -1.24, -1.25, -1.13, -0.88, -0.5, -0.5,
+    -0.4, -0.31, 0.08, 0.18, 0.08, -0.28, -0.59, -0.71, -0.67, -0.46, -0.15, 0.11, 0.47, 0.65, 0.94, 0.77, 0.5, 0.18, -0.07, -0.23, -0.53, -0.63,
+    -0.73, -0.67, -0.85, -1.13, -1.54, -1.66, -1.52, -1.15, -0.86, -0.66, -0.55, -0.31, -0.33, -0.29, -0.3, 0.25, 0.87, 1.21, 1.15, 0.9, 0.81, 0.77,
+    0.65, 0.37, -0.06, -0.18, 0.2, 0.88, 1.6, 2.1, 2.13, 2.15, 2.02, 2.23, 2.21, 2.06, 1.75, 1.45, 1.05, 0.77, 0.51, 0.42, 0.34, 0.35,
+    0.36, 0.31, 0.25, 0.47, 0.89, 1.29, 1.31, 0.92, 0.31, -0.13, -0.32, -0.52, -0.69, -0.97, -1.21, -1.3, -1.25, -1.21, -1.16, -1.07, -0.84, -0.61,
+    -0.46, -0.24, -0.09, 0.27, 0.63, 0.87, 0.78, 0.49, 0.31, 0.21, 0.05, -0.28, -0.6, -0.72, -0.74, -0.53, -0.3, -0.18, -0.14, -0.14, 0.07, 0.02,
+    -0.2, -0.72, -1.02, -1.19, -1.02, -0.91, -0.76, -0.79, -0.84, -0.83, -0.86, -0.83, -0.7, -0.46, -0.3, -0.41, -0.62, -0.9, -1.23, -1.31, -1.46, -1.14,
+    -1.24, -1.26, -1.51, -1.44, -1.09, -0.93, -1.12, -1.3, -1.1, -0.7, -0.17, 0.47, 1.53, 2.11, 2.45, 2.57, 2.92, 2.9, 2.68, 2.28, 2.01, 1.67,
+    1.34, 0.88, 0.38, -0.38, -0.78, -0.97, -0.72, -0.65, -0.5, -0.34, -0.1, -0.11, 0, 0.45, 0.72, 0.46, 0.18, 0.11, 0.17, -0.01, -0.22, -0.42,
+    -0.5, -0.51, -0.06, 0.42, 0.96, 1.34, 1.98, 2.66, 3.29
+];
+const ICEN_CI = [
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 3, 3, 3, 3, 3, 3, 3,
+    4, 4, 4, 3, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 6, 6, 5, 5, 5, 0, 0, 0, 0, 0, 0, 5, 5, 5, 0, 0,
+    0, 0, 0, 1, 1, 1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 5, 6, 7, 7, 7, 6, 6, 5, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1,
+    1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 5, 5, 5, 5, 5, 0, 0, 0, 1, 1, 1, 0, 0, 5, 6, 5, 0, 0, 0, 0, 0, 0, 0, 0, 5, 6, 7, 7, 6, 5,
+    5, 5, 5, 5, 5, 0, 0, 1, 3, 3, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 5,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 0, 0, 0, 0, 0, 0, 5, 5, 5, 5, 5, 5, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0,
+    6, 6, 5, 0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 6, 5, 0, 0, 0, 0, 0, 0, 5, 5, 0, 0, 0, 0, 0, 5, 6, 6, 5, 0, 0, 0, 5, 5, 0, 0, 1,
+    1, 1, 1, 1, 0, 0, 0, 6, 7, 7, 6, 5, 6, 7, 7, 6, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 5, 6, 6, 6, 6, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 5, 0, 5, 6,
+    7, 7, 7, 6, 5, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 2, 2, 3, 3, 2, 3, 3, 2, 2, 2, 1, 1, 1, 0, 0, 0,
+    0, 0, 0, 0, 1, 1, 2, 1, 0, 0, 0, 0, 0, 5, 6, 6, 6, 6, 6, 5, 5, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 5, 5, 0, 0, 0,
+    0, 0, 0, 0, 0, 5, 5, 6, 5, 5, 5, 5, 5, 5, 5, 5, 0, 0, 0, 0, 0, 5, 6, 7, 7, 6, 6, 6, 7, 7, 5, 5, 6, 6, 5, 0, 0, 0, 2, 3,
+    3, 3, 3, 3, 3, 3, 2, 2, 2, 1, 0, 0, 5, 5, 5, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 3, 3
+];
+
 
 // ─────────────────────────────────────────────
 // COLORES
@@ -1580,7 +1610,7 @@ const NINO_REGIONS = [
     val: '+2,9 °C · jul 2026',
     color: '#f0603a', labelColor: '#ffb098',
     hint: 'Hoy la señal costera (Niño 1+2) es más intensa que la del Pacífico central (Niño Global / 3.4).',
-    source: 'Fuente: ENFEN / Senamhi (jul 2026)',
+    source: 'Fuente: ENFEN · ICEN mensual (Nota Técnica 01-2024)',
   },
 ];
 
@@ -1733,9 +1763,17 @@ function openStory(idx) {
   document.getElementById('popupEmoji').textContent    = s.emoji;
   document.getElementById('popupPerson').textContent   = s.person;
   document.getElementById('popupLocation').textContent = s.location;
-  const impactEl = document.getElementById('popupImpact');
-  impactEl.textContent  = s.impact;
-  impactEl.style.color  = s.markerColor;
+  const impactEl  = document.getElementById('popupImpact');
+  const dividerEl = document.querySelector('#story-popup .popup-divider');
+  if (s.impact) {
+    impactEl.textContent   = s.impact;
+    impactEl.style.color   = s.markerColor;
+    impactEl.style.display = '';
+    if (dividerEl) dividerEl.style.display = '';
+  } else {
+    impactEl.style.display = 'none';
+    if (dividerEl) dividerEl.style.display = 'none';
+  }
   document.getElementById('popupStory').textContent    = s.story;
   document.getElementById('popupCounter').textContent  = `${idx + 1} / ${STORIES.length}`;
 
@@ -1958,15 +1996,25 @@ function initStoryNav() {
 // ─────────────────────────────────────────────
 // SLIDER + MECANISMO
 // ─────────────────────────────────────────────
-const TICKS   = ['Normal', 'Débil', 'Moderado', 'Fuerte', 'Extraordinario'];
+const TICKS   = ['1980', '1990', '2000', '2010', '2020', '2026'];
 const badge   = document.getElementById('intensityBadge');
 const slider  = document.getElementById('intensitySlider');
 const ticksEl = document.getElementById('sliderTicks');
 
+slider.min  = 0;
+slider.max  = ICEN.length - 1;
+slider.step = 1;
+
+// Cada marca se sitúa en el % real de la línea de tiempo (enero de ese año),
+// no equidistante: p. ej. 2010 cae en 360/558 = 64,5 %, no en 60 %.
 TICKS.forEach(t => {
+  const year = parseInt(t, 10);
+  const idx  = Math.min((year - 1980) * 12, ICEN.length - 1); // enero del año (o tope)
+  const pos  = idx / (ICEN.length - 1);
   const s = document.createElement('span');
   s.className = 'slider-tick';
   s.textContent = t;
+  s.style.left = (pos * 100).toFixed(2) + '%';
   ticksEl.appendChild(s);
 });
 
@@ -1978,26 +2026,58 @@ function getMechText(v) {
   return MECHANISM_TEXTS.find(t => v <= t.max) || MECHANISM_TEXTS.at(-1);
 }
 
-function updateMechPanel(v) {
-  const m = getMechText(v);
-  document.getElementById('mechTitle').textContent = m.title;
-  document.getElementById('mechText').textContent  = m.text;
+// ── Serie ICEN → estado del mar ──
+const MESES_ABBR = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+const icenYear  = i => 1980 + Math.floor(i / 12);
+const icenMonth = i => (i % 12) + 1;
+const icenMonthLabel = i => `${MESES_ABBR[icenMonth(i) - 1]} ${icenYear(i)}`;
+function fmtICEN(v) {
+  const sign = v > 0 ? '+' : (v < 0 ? '−' : '');
+  return `${sign}${Math.abs(v).toFixed(2).replace('.', ',')} °C`;
 }
+// La capa "Temperatura mar" (SST) se escala con el valor ICEN del mes seleccionado:
+// el mes más cálido de la serie (jun 1983, +4,32 °C) llena la escala. Los meses
+// fríos o neutros (La Niña / valores negativos) se muestran como mar base.
+const icenToMultiplier = v => Math.max(0, Math.min(1, v / ICEN_SCALE));
 
-function updateSlider(v) {
-  const info = getIntensityInfo(v);
-  const idx  = INTENSITY_LABELS.indexOf(info);
-  document.querySelectorAll('.slider-tick').forEach((el, i) => {
-    el.classList.toggle('active', i === idx);
+let currentICENIdx = 0;
+
+function updateSlider(i) {
+  currentICENIdx = i;
+  const v    = ICEN[i];
+  const cat  = ICEN_CATS[ICEN_CI[i]];
+  const when = icenMonthLabel(i);
+  const yr   = icenYear(i);
+
+  document.querySelectorAll('.slider-tick').forEach((el) => {
+    const ty = parseInt(el.textContent, 10);
+    el.classList.toggle('active', yr >= ty && yr < ty + 10);
   });
-  badge.textContent = `${info.label} — ${info.desc}`;
-  multiplier = v / 100;
+
+  // Badge: mes + anomalía ICEN. Mecanismo: categoría oficial ENFEN + descripción física.
+  badge.textContent = `${when} · ${fmtICEN(v)}`;
+  multiplier = icenToMultiplier(v);
+  const pseudoV = multiplier * 100;
+  document.getElementById('mechTitle').textContent = cat;
+  document.getElementById('mechText').textContent  = getMechText(pseudoV).text;
+
+  // Valor en vivo de la región Niño Costero (el ICEN ES el índice costero 1+2 de ENFEN).
+  const costero = NINO_REGIONS.find(r => r.id === 'costero');
+  if (costero) {
+    costero.val  = `${fmtICEN(v)} · ${when}`;
+    costero.hint = `Categoría oficial ENFEN para ${when}: ${cat}.`;
+    const rp = document.getElementById('region-popup');
+    if (rp.classList.contains('visible') &&
+        document.getElementById('rpName').textContent === costero.name) {
+      openRegionPopup(costero);
+    }
+  }
+
   updateGlobe();
-  updateMechPanel(v);
 }
 
-slider.addEventListener('input', () => updateSlider(parseInt(slider.value)));
-updateSlider(0);
+slider.addEventListener('input', () => updateSlider(parseInt(slider.value, 10)));
+updateSlider(ICEN.length - 1);   // arranca en el mes más reciente (jul 2026)
 
 // ─────────────────────────────────────────────
 // BOTONES DE CONTROL

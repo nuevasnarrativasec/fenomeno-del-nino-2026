@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Fenómeno del Niño 2026 — ¿Y tú?</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root{
+    --bg:#050505;
+    --orange:#ee5522;
+    --orange-soft:#f06a2e;
+    --ink:#141414;
+    --paper:#ffffff;
+    --line:#7a7a7a;
+    --figure:#c8794e;
+  }
+
+  html,body{ background:var(--bg); }
+
+  body{
+    font-family: Georgia, 'Times New Roman', serif;
+    color:#f0e8df;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+
+  /* Intro hint (top bar) */
+  .topbar{
+    position:sticky; top:0; z-index:40;
+    background:linear-gradient(#050505 70%, rgba(5,5,5,0));
+    text-align:center;
+    padding:16px 12px 22px;
+    font-family:system-ui,-apple-system,sans-serif;
+    font-size:.72rem; letter-spacing:.06em;
+    color:#8a8378;
+  }
+  .topbar b{ color:#c9c0b4; font-weight:600; }
+  .topbar .chev{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:18px; height:18px; margin-left:6px; vertical-align:-4px;
+    background:var(--orange); color:#fff; border-radius:3px;
+    font-size:.7rem; font-weight:700;
+  }
+
+  /* Portada de entrada — mantiene el zigzag fuera de pantalla al cargar,
+     para que ningún cuadro aparezca hasta que el usuario haga scroll */
+  .hero{
+    min-height:100vh; min-height:100svh;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:60px 24px; gap:16px; position:relative;
+  }
+  .hero .kicker{
+    font-family:system-ui,-apple-system,sans-serif;
+    font-size:.72rem; letter-spacing:.28em; text-transform:uppercase; color:var(--orange-soft);
+    opacity: 0;
+  }
+  .hero h1{ font-size:clamp(2rem,6vw,3.6rem); line-height:1.06; color:#f4efe7; max-width:16ch; 
+  opacity: 0;}
+  .hero .lead{
+    font-family:system-ui,-apple-system,sans-serif;
+    font-size:1rem; color:#9a9184; max-width:42ch; line-height:1.6;
+    opacity: 0;
+  }
+  .hero .cue{
+    position:absolute; bottom:26px; left:50%; transform:translateX(-50%);
+    font-family:system-ui,-apple-system,sans-serif;
+    font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; color:#8a8378;
+    display:flex; flex-direction:column; align-items:center; gap:8px;
+  }
+  .hero .cue span{ font-size:1.1rem; animation:bob 1.5s ease-in-out infinite; color:var(--orange-soft); }
+  @keyframes bob{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(6px); } }
+
+  /* Scaled stage wrapper */
+  #stageWrap{ position:relative; width:100%; }
+  #stage{
+    position:absolute; left:50%; top:0;
+    width:793px; height:2720px;
+    transform:translateX(-50%);
+    transform-origin:top center;
+  }
+
+  /* Connector SVG sits behind everything */
+  #connector{ position:absolute; inset:0; width:793px; height:2720px; z-index:1; pointer-events:none; }
+  #connector .dotted{ fill:none; stroke:var(--line); stroke-width:1.4; stroke-dasharray:2 6; stroke-linecap:round; opacity:.85; }
+  #connector .tick{ stroke:var(--line); stroke-width:1.2; opacity:.7; }
+
+  /* Character circle */
+  .node{ position:absolute; z-index:5; }
+  .circle{
+    position:absolute; width:88px; height:88px; border-radius:50%;
+    border:2px solid #f4efe7; background:#0a0a0a;
+    display:flex; align-items:flex-end; justify-content:center;
+    overflow:hidden;
+    left:0; top:0; transform:translate(-50%,-50%);
+  }
+  .circle img{ height:90%; width:auto; max-width:86%; object-fit:contain; display:block; }
+  .namewrap{
+    position:absolute; left:0; text-align:center; width:180px;
+    transform:translateX(-50%);
+    font-family:system-ui,-apple-system,sans-serif;
+  }
+  .namewrap .nm{ color:#f2ede4; font-weight:700; font-size:.82rem; }
+  .namewrap .role{ color:var(--orange-soft); font-size:.68rem; letter-spacing:.04em; margin-top:1px; }
+
+  /* Orange square info button on the circle */
+  .infobtn{
+    position:absolute; width:26px; height:26px; z-index:8;
+    background:var(--orange); border:none; border-radius:4px;
+    color:#fff; font-weight:800; font-size:.82rem; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    transform:translate(-50%,-50%);
+    box-shadow:0 3px 10px rgba(0,0,0,.5);
+    transition:transform .15s ease, background .15s ease;
+    font-family:system-ui,-apple-system,sans-serif;
+  }
+  .infobtn:hover{ background:var(--orange-soft); transform:translate(-50%,-50%) scale(1.12); }
+
+  /* White information box */
+  .infobox{
+    position:absolute; z-index:6;
+    background:var(--paper); color:var(--ink);
+    padding:12px 14px; width:210px;
+    font-family:system-ui,-apple-system,sans-serif;
+    font-size:.78rem; line-height:1.42;
+    box-shadow:0 8px 26px rgba(0,0,0,.45);
+  }
+  .infobox .region{ font-weight:800; letter-spacing:.02em; }
+
+  /* Orange rounded question box, sits ON the dotted line */
+  .orangebox{
+    position:absolute; z-index:7;
+    background:var(--orange); color:#fff;
+    padding:12px 15px; width:210px; border-radius:12px;
+    font-family:system-ui,-apple-system,sans-serif;
+    font-size:.78rem; line-height:1.42;
+    transform:translateX(-50%);
+    box-shadow:0 10px 28px rgba(0,0,0,.5);
+  }
+  .orangebox .stmt{ color:#ffe9df; }
+  .orangebox .q{ display:block; margin-top:7px; font-weight:800; color:#fff; }
+
+  /* Cuadro naranja final del "Yo": contenido centrado y "¿Y tú?" grande */
+  .orangebox.final{ text-align:center; padding:20px 24px; border-radius:16px; }
+  .orangebox.final .stmt{ display:block; font-size:.9rem; }
+  .orangebox.final .q{ margin-top:14px; font-size:2.1rem; line-height:1.1; }
+
+  /* Reveal state (GSAP animates these in) */
+  .reveal{ opacity:0; }
+
+  /* ── Bottom section ── */
+  .figrow{ position:absolute; left:0; top:0; width:793px; z-index:5; }
+  .fig{
+    position:absolute; transform:translateX(-50%);
+    text-align:center; width:80px;
+    font-family:system-ui,-apple-system,sans-serif;
+  }
+  .fig img{ display:block; margin:0 auto; height:46px; width:auto; }
+  .fig.me img{ height:70px; }
+  /* etiquetas escalonadas (posicionadas de forma absoluta bajo la línea) */
+  .fig-lbl{
+    position:absolute; transform:translateX(-50%);
+    width:96px; text-align:center;
+    font-family:system-ui,-apple-system,sans-serif;
+    font-size:.60rem; line-height:1.25; color:#c9c0b4;
+  }
+  .fig-lbl.me{ width:auto; color:#fff; font-weight:800; font-size:1.55rem; letter-spacing:.04em; }
+
+  /* Legend for the popup / modal */
+  .modal-backdrop{
+    position:fixed; inset:0; z-index:100;
+    background:rgba(3,3,3,.72); backdrop-filter:blur(3px);
+    display:flex; align-items:center; justify-content:center;
+    padding:24px; opacity:0; pointer-events:none;
+    transition:opacity .22s ease;
+  }
+  .modal-backdrop.open{ opacity:1; pointer-events:auto; }
+  .modal{
+    position:relative; width:430px; max-width:100%;
+    background:#0d0d0f; border:1px solid #2a2118;
+    border-top:3px solid var(--orange);
+    border-radius:10px; padding:26px 26px 24px;
+    box-shadow:0 30px 80px rgba(0,0,0,.7);
+    transform:translateY(14px) scale(.98);
+    transition:transform .22s ease;
+    font-family:system-ui,-apple-system,sans-serif;
+  }
+  .modal-backdrop.open .modal{ transform:none; }
+  .modal .eyebrow{ font-size:.62rem; letter-spacing:.14em; text-transform:uppercase; color:var(--orange-soft); }
+  .modal h3{ font-family:Georgia,serif; font-size:1.15rem; color:#f5efe6; margin:4px 0 12px; }
+  .modal p{ font-size:.9rem; line-height:1.6; color:#c4bcb0; }
+  .modal .datatag{ color:var(--orange-soft); font-style:italic; }
+  .modal .close{
+    position:absolute; top:12px; right:14px;
+    background:none; border:none; color:#5a5348; font-size:1.5rem;
+    cursor:pointer; line-height:1; transition:color .15s;
+  }
+  .modal .close:hover{ color:#f5efe6; }
+
+  .end-note{
+    text-align:center; color:#6b6459; font-family:system-ui,sans-serif;
+    font-size:.72rem; padding:30px 16px 60px;
+  }
+
+  @media (max-width:520px){
+    .topbar{ font-size:.66rem; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="topbar">Para ver más información presiona el botón <span class="chev">›</span> sobre cada persona</div>
+
+  <section class="hero">
+    <p class="kicker">Especial multimedia</p>
+    <h1>Fenómeno de El Niño 2026</h1>
+    <p class="lead">Nueve personas de todo el país, un mismo fenómeno. Desliza para recorrer sus historias… y descubrir dónde encajas tú.</p>
+    <div class="cue">Desliza para comenzar <span>▾</span></div>
+  </section>
+
+  <div id="stageWrap">
+    <div id="stage">
+      <svg id="connector" viewBox="0 0 793 2720" preserveAspectRatio="none" aria-hidden="true"></svg>
+      <!-- nodes, boxes, figures injected by JS -->
+    </div>
+  </div>
+
+  <div class="end-note" id="endNote">— fin —</div>
+
+  <!-- Modal -->
+  <div class="modal-backdrop" id="modal">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+      <button class="close" id="mClose" aria-label="Cerrar">×</button>
+      <div class="eyebrow" id="mEyebrow"></div>
+      <h3 id="mTitle"></h3>
+      <p id="mBody"></p>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script>
+  /* ============================================================
+     DATOS DE CADA PERSONAJE
+     - cx, cy: centro del círculo (sistema de 793 x 2720)
+     - side: lado del cuadro blanco de información ('right' | 'left')
+     - info: {top} posición vertical del cuadro blanco
+     - orange: {tox, toy} centro del cuadro naranja, sobre la línea
+     ============================================================ */
+  const FIGURE = (color)=>`<svg viewBox="0 0 40 48"><circle cx="20" cy="11" r="8" fill="${color}"/><path d="M4 48c0-9 7-16 16-16s16 7 16 16z" fill="${color}"/></svg>`;
+
+  const STATIONS = [
+    { name:"María", age:34, role:"Ciudadana", region:"PIURA",
+      cx:150, cy:135, side:"right", infoTop:92,
+      info:"Vive en un asentamiento humano en las afueras de Piura. Su hija Xiomara, de 9 años, lleva tres días internada con dengue. Cree que la culpa es de un mosquito que picó a la niña en el patio de la casa.",
+      stmt:"No empezó con un mosquito.", q:"¿Con qué, entonces?",
+      orange:{tox:289, toy:285},
+      popE:"Dengue", popT:"El dengue y El Niño",
+      popB:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat." },
+
+    { name:"Nombre", age:41, role:"Ingeniero", region:"ÁNCASH",
+      cx:352, cy:352, side:"left", infoTop:308,
+      info:"Trabaja para una empresa contratista, operando maquinaria pesada para retirar huaicos y escombros de la vía tras las lluvias. Lleva dos semanas sin volver a su casa por la magnitud del daño.",
+      stmt:"No empezó con una carretera. La carretera solo muestra lo que hizo la lluvia.", q:"¿Y qué más hizo esa lluvia, además de romper caminos?",
+      orange:{tox:497, toy:475},
+      popE:"Infraestructura crítica", popT:"Huaicos y vías rotas",
+      popB:"Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." },
+
+    { name:"Nombre", age:29, role:"Transportista", region:"LAMBAYEQUE",
+      cx:600, cy:562, side:"left", infoTop:520,
+      info:"Chofer de una empresa de carga que transporta alimentos entre Chiclayo y el norte. Ese año, su ruta habitual se volvió zona de rescate.",
+      stmt:"No fue solo el retraso. En esta misma carretera, ese año, murieron más personas que en cualquier otro.", q:"¿Y esa misma lluvia, en la sierra, era la primera vez?",
+      orange:{tox:380, toy:690},
+      popE:"Fallecidos por El Niño", popT:"Las muertes en la carretera",
+      popB:"Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo." },
+
+    { name:"Nombre", age:47, role:"Promotor", region:"CAJAMARCA",
+      cx:188, cy:802, side:"right", infoTop:758,
+      info:"Vive en un caserío rural. Es promotor de defensa civil de su comunidad desde hace 15 años; ha visto el mismo río desbordarse más veces de las que puede contar.",
+      stmt:"No fue la primera vez. Cajamarca ya había vivido esto más veces que cualquier otro lugar del país.", q:"¿Y quién no pudo vender lo que la lluvia sí dejó crecer, más al sur?",
+      orange:{tox:425, toy:940},
+      popE:"Recurrencia de eventos", popT:"El desastre que se repite",
+      popB:"At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident." },
+
+    { name:"Nombre", age:52, role:"Comerciante", region:"LA LIBERTAD",
+      cx:632, cy:1042, side:"left", infoTop:998,
+      info:"Tiene un puesto de frutas en un mercado de Trujillo hace más de veinte años. Ese año no pudo vender mango, su producto más pedido, porque la cosecha de la región se malogró.",
+      stmt:"No fue que faltara el camión. Fue que la fruta nunca maduró.", q:"¿Y el mar? ¿También lo sintió?",
+      orange:{tox:390, toy:1165},
+      popE:"Rendimiento de mango", popT:"La cosecha que no maduró",
+      popB:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat." },
+
+    { name:"Nombre", age:58, role:"Acuicultor", region:"LA LIBERTAD",
+      cx:168, cy:1278, side:"right", infoTop:1234,
+      info:"Cría conchas de abanico en la bahía. Ese año, el calentamiento del mar diezmó sus cultivos y perdió casi toda la producción de la temporada.",
+      stmt:"No fue la lluvia la que mató mis conchas. Fue el mar — el mismo mar que provocó la lluvia.", q:"¿El mar hace lo mismo en todas partes?",
+      orange:{tox:264, toy:1400},
+      popE:"Concha de abanico", popT:"El mar demasiado caliente",
+      popB:"Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." },
+
+    { name:"Nombre", age:61, role:"Agricultora", region:"PUNO",
+      cx:352, cy:1502, side:"right", infoTop:1458,
+      info:"Cultiva en el altiplano. Ese año no llegó la lluvia esperada: la sequía secó los pastos y arruinó buena parte de su cosecha.",
+      stmt:"No. A mí el mismo mar no me trajo lluvia. Me la quitó.", q:"¿Y esa misma sequía trajo algo más, en otro rincón de la sierra?",
+      orange:{tox:460, toy:1615},
+      popE:"Sequías históricas", popT:"El sur que se seca",
+      popB:"Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo." },
+
+    { name:"Nombre", age:47, role:"Fruticultor", region:"AYACUCHO",
+      cx:562, cy:1722, side:"left", infoTop:1678,
+      info:"Trabaja un valle interandino cerca de Huamanga cultivando frutales. Una herida que no cerraba resultó ser leishmaniasis.",
+      stmt:"No empezó con una mosca de arena.", q:"¿Y en la ciudad, sintieron algo distinto ese mismo año?",
+      orange:{tox:397, toy:1858},
+      popE:"Leishmaniasis", popT:"La enfermedad del valle",
+      popB:"At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa." },
+
+    { name:"Nombre", age:44, role:"Directora", region:"LIMA PROVINCIAS",
+      cx:238, cy:1978, side:"right", infoTop:1934,
+      info:"Dirige un colegio rural en una provincia de Lima. Su escuela sirvió de refugio de emergencia varias veces ese año.",
+      stmt:"No fue una vez. Fue la emergencia más repetida de todo el país, ese año.", q:"¿Y en la ciudad más grande, qué pasó cuando la emergencia llegó de verdad?",
+      orange:{tox:317, toy:2145},
+      popE:"Emergencias El Niño vs. resto", popT:"El año que se multiplicó",
+      popB:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo." }
+  ];
+
+  /* Posición del silueta "Yo" (centro de la fila inferior) */
+  const YO = { cx:434, cy:2300 };
+
+  /* Fila horizontal de la parte inferior (izq. a der.).
+     El elemento central 'me' es la silueta blanca "Yo". */
+  const ROW = [
+    {lbl:"Dengue", img:"personaje-1.png"},
+    {lbl:"Infraestructura crítica", img:"personaje-2.png"},
+    {lbl:"Fallecidos El Niño (anteriores)", img:"personaje-3.png"},
+    {lbl:"Recurrencia eventos", img:"personaje-4.png"},
+    {lbl:"Rendimiento de mango", img:"personaje-5.png"},
+    {lbl:"Yo", me:true, img:"personaje-yo.png"},
+    {lbl:"Cosecha de concha de abanico", img:"personaje-6.png"},
+    {lbl:"Sequías históricas", img:"personaje-7.png"},
+    {lbl:"Leishmaniasis", img:"personaje-8.png"},
+    {lbl:"Emergencias en años de El Niño vs. resto", img:"personaje-9.png"}
+  ];
+
+  const IMG_BASE = "img/personajes/";   // carpeta de ilustraciones
+
+  const YO_STATION = {
+    region:"LIMA METROPOLITANA", role:"Yo",
+    info:"Trabaja repartiendo pedidos en moto en un distrito del Cono Norte. Nunca ha salido de Lima. Tuvo dengue por primera vez ese año.",
+    stmt:"Yo nunca vi el mar, ni la lluvia, ni la sequía. Pero me enfermé igual.", q:"¿Y tú?",
+    popE:"Lima Metropolitana", popT:"El Niño también llega a la ciudad",
+    popB:"Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+  };
+
+  /* ============================================================
+     LAYOUT VERTICAL  —  el espaciado se controla con GAP
+     Cada cy, cuadro blanco y cuadro naranja se calcula a partir de aquí,
+     así que subir GAP separa TODAS las estaciones de forma pareja y los
+     cuadros naranjas siguen cayendo exactamente sobre la línea punteada.
+     ============================================================ */
+  const START_Y = 150;   // centro vertical del primer círculo
+  const GAP = 420;       // ← distancia entre estaciones (da espacio a la secuencia por scroll)
+  const ORANGE_F = 0.58; // posición del cuadro naranja sobre el tramo a la sgte. estación
+  STATIONS.forEach((s,i)=>{ s.cy = START_Y + i*GAP; });
+  YO.cy = STATIONS[STATIONS.length-1].cy + Math.round(GAP*1.1);
+  STATIONS.forEach((s,i)=>{
+    s.infoTop = s.cy - 44;
+    const nx = (i < STATIONS.length-1) ? STATIONS[i+1].cx : YO.cx;
+    const ny = (i < STATIONS.length-1) ? STATIONS[i+1].cy : YO.cy;
+    s.orange = { tox: Math.round(s.cx + (nx - s.cx)*ORANGE_F),
+                 toy: Math.round(s.cy + (ny - s.cy)*ORANGE_F) };
+  });
+  const YO_INFO_TOP = YO.cy + 175;     // deja espacio para las etiquetas escalonadas
+  const STAGE_H = YO_INFO_TOP + 300;   // alto total del lienzo
+
+  /* ============================================================
+     CONSTRUCCIÓN DEL DOM
+     ============================================================ */
+  const stage = document.getElementById('stage');
+  const svg = document.getElementById('connector');
+  const SVGNS = "http://www.w3.org/2000/svg";
+  const INFO_W = 210, ORANGE_W = 210, CIRCLE_R = 44;
+
+  // El lienzo y el SVG crecen según STAGE_H (derivado de GAP)
+  stage.style.height = STAGE_H + 'px';
+  svg.setAttribute('viewBox', '0 0 793 ' + STAGE_H);
+  svg.style.height = STAGE_H + 'px';
+
+  function el(tag, cls, html){ const e=document.createElement(tag); if(cls)e.className=cls; if(html!=null)e.innerHTML=html; return e; }
+
+  // 1) Línea punteada en zig-zag por los centros de los círculos + bajada a "Yo"
+  const points = STATIONS.map(s=>[s.cx,s.cy]);
+  points.push([YO.cx, YO.cy]);
+  const polyD = "M " + points.map(p=>p.join(" ")).join(" L ");
+  const poly = document.createElementNS(SVGNS,'path');
+  poly.setAttribute('d', polyD); poly.setAttribute('class','dotted');
+  svg.appendChild(poly);
+
+  // 2) Estaciones (círculo + botón + nombre + cuadro blanco + cuadro naranja)
+  STATIONS.forEach((s, i)=>{
+    const node = el('div','node');
+
+    // círculo con la ilustración del personaje
+    const circle = el('div','circle reveal', `<img src="${IMG_BASE}personaje-${i+1}.png" alt="${s.role}">`);
+    circle.style.left = s.cx+'px'; circle.style.top = s.cy+'px';
+    node.appendChild(circle);
+
+    // botón naranja de info (aparece con fade junto al personaje)
+    const btn = el('button','infobtn reveal','›');
+    btn.style.left = (s.cx + CIRCLE_R*0.72)+'px';
+    btn.style.top  = (s.cy - CIRCLE_R*0.72)+'px';
+    btn.dataset.idx = i;
+    node.appendChild(btn);
+
+    // nombre + rol (aparece con fade junto al personaje)
+    const nw = el('div','namewrap reveal', `<div class="nm">${s.name} (${s.age})</div><div class="role">${s.role}</div>`);
+    nw.style.left = s.cx+'px';
+    nw.style.top  = (s.cy + CIRCLE_R + 12)+'px';
+    node.appendChild(nw);
+
+    // cuadro blanco de información
+    const ib = el('div','infobox reveal', `<span class="region">${s.region}.</span> ${s.info}`);
+    ib.style.top = s.infoTop+'px';
+    if(s.side==='right'){ ib.style.left = (s.cx + CIRCLE_R + 8)+'px'; }
+    else { ib.style.left = (s.cx - CIRCLE_R - 8 - INFO_W)+'px'; }
+    node.appendChild(ib);
+
+    // cuadro naranja (sobre la línea)
+    const ob = el('div','orangebox reveal', `<span class="stmt">${s.stmt}</span><span class="q">${s.q}</span>`);
+    ob.style.left = s.orange.tox+'px';
+    ob.style.top  = s.orange.toy+'px';
+    ob.style.transform = 'translate(-50%,-50%)';
+    ob._baseTransform = 'translate(-50%,-50%)';
+    node.appendChild(ob);
+
+    // guarda referencias para la secuencia de aparición
+    s._circle = circle; s._btn = btn; s._nw = nw; s._ib = ib; s._ob = ob;
+
+    stage.appendChild(node);
+  });
+
+  // 3) Fila inferior: figuras con los pies sobre la línea + etiquetas
+  //    escalonadas (dos niveles alternados) para que no se amontonen.
+  const figrow = el('div','figrow');
+  const ROW_Y = YO.cy;                 // altura de la línea (pies de las figuras)
+  const startX = 70, endX = 726;
+  const step = (endX - startX)/(ROW.length-1);
+  const FIG_H = 46, FIG_ME_H = 70;
+  const LBL_BASE = 42, LBL_TIER = 48;  // base y salto del escalonado
+  // nivel 0 = arriba, 1 = abajo (alterna para evitar choques horizontales)
+  const TIER = [0,1,0,1,0, 0, 0,1,0,1];
+  ROW.forEach((r, i)=>{
+    const x = startX + i*step;
+    // figura
+    const f = el('div','fig'+(r.me?' me':'')+' reveal');
+    f.style.left = x+'px';
+    f.style.top  = (ROW_Y - (r.me?FIG_ME_H:FIG_H))+'px';
+    f.innerHTML = `<img src="${IMG_BASE}${r.img}" alt="${r.lbl}">`;
+    figrow.appendChild(f);
+    if(r.me){ r._x = x; }
+    // etiqueta (posición escalonada, o grande y centrada si es "Yo")
+    const lab = el('div','fig-lbl'+(r.me?' me':'')+' reveal', r.lbl);
+    lab.style.left = x+'px';
+    lab.style.top  = (ROW_Y + (r.me ? 50 : LBL_BASE + TIER[i]*LBL_TIER))+'px';
+    figrow.appendChild(lab);
+  });
+  // línea punteada horizontal continua a la altura de los pies
+  const hline = document.createElementNS(SVGNS,'line');
+  hline.setAttribute('x1', 26); hline.setAttribute('y1', ROW_Y+2);
+  hline.setAttribute('x2', 767); hline.setAttribute('y2', ROW_Y+2);
+  hline.setAttribute('class','dotted'); svg.appendChild(hline);
+  stage.appendChild(figrow);
+
+  // 4) Estación "Yo": cuadro blanco + cuadro naranja (centrados bajo la fila)
+  const yoNode = el('div','node');
+  const yib = el('div','infobox reveal', `<span class="region">${YO_STATION.region}.</span> ${YO_STATION.info}`);
+  yib.style.width = '300px';
+  yib.style.left = (YO.cx - 150)+'px';
+  yib.style.top  = YO_INFO_TOP+'px';
+  yoNode.appendChild(yib);
+
+  const yob = el('div','orangebox final reveal', `<span class="stmt">${YO_STATION.stmt}</span><span class="q">${YO_STATION.q}</span>`);
+  yob.style.width = '320px';
+  yob.style.left = YO.cx+'px';
+  yob.style.top  = (YO_INFO_TOP + 138)+'px';
+  yob.style.transform = 'translateX(-50%)';
+  yob._baseTransform = 'translateX(-50%)';
+  yoNode.appendChild(yob);
+  stage.appendChild(yoNode);
+
+  // La silueta "Yo" NO lleva botón de popup (a diferencia del resto).
+  const yoFigEl = figrow.querySelector('.fig.me');
+
+  /* ============================================================
+     MODAL / POPUP
+     ============================================================ */
+  const modal = document.getElementById('modal');
+  const mEye = document.getElementById('mEyebrow');
+  const mTitle = document.getElementById('mTitle');
+  const mBody = document.getElementById('mBody');
+
+  function openPopup(data){
+    mEye.textContent = data.popE;
+    mTitle.textContent = data.popT;
+    mBody.innerHTML = data.popB;
+    modal.classList.add('open');
+  }
+  function closePopup(){ modal.classList.remove('open'); }
+
+  document.querySelectorAll('.infobtn').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      const idx = b.dataset.idx;
+      openPopup(idx==='yo' ? YO_STATION : STATIONS[+idx]);
+    });
+  });
+  document.getElementById('mClose').addEventListener('click', closePopup);
+  modal.addEventListener('click', e=>{ if(e.target===modal) closePopup(); });
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape') closePopup(); });
+
+  /* ============================================================
+     ESCALADO RESPONSIVE + SCROLLTRIGGER
+     ============================================================ */
+  const STAGE_W = 793;
+  const wrap = document.getElementById('stageWrap');
+  let curScale = 1;   // escala actual (para desfasar los reveals en px reales)
+
+  function fit(){
+    const avail = Math.min(window.innerWidth - 16, STAGE_W);
+    curScale = avail / STAGE_W;
+    stage.style.transform = `translateX(-50%) scale(${curScale})`;
+    wrap.style.height = (STAGE_H * curScale) + 'px';
+    if(window.ScrollTrigger) ScrollTrigger.refresh();
+  }
+
+  window.addEventListener('resize', fit);
+  fit();
+
+  function revealAll(){ document.querySelectorAll('.reveal').forEach(n=> n.style.opacity=1); }
+
+  if(window.gsap && window.ScrollTrigger){
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Secuencia escalonada por scroll. Para cada personaje, todos los
+    // elementos usan el MISMO ancla (su círculo) y aparecen con un desfase
+    // creciente (offset en px de scroll), de modo que el orden es siempre:
+    //   personaje + nombre/cargo + flecha  →  cuadro blanco  →  cuadro naranja
+    // y recién después entra el siguiente personaje. Así la información no
+    // sale de golpe: hay que seguir scrolleando para revelar cada parte.
+    // toggleActions 'play none none reverse' => se deshace al volver a subir.
+    const STEP = 150;      // px de scroll extra entre cada aparición dentro de un personaje
+    const START = 'top 78%';
+
+    function revealAt(node, anchor, offset){
+      if(!node) return;
+      gsap.set(node, { opacity:0 });
+      // El desfase se multiplica por la escala actual para que el ORDEN se
+      // conserve también cuando el lienzo se reduce en pantallas chicas.
+      const start = offset>0 ? (()=> 'top+=' + (offset*curScale) + ' 78%') : START;
+      gsap.to(node, {
+        opacity:1, duration:.7, ease:'power2.out',
+        scrollTrigger:{ trigger: anchor, start, toggleActions:'play none none reverse' }
+      });
+    }
+
+    // 1) Personajes del zigzag
+    STATIONS.forEach(s=>{
+      revealAt(s._circle, s._circle, 0);       // el personaje…
+      revealAt(s._nw,     s._circle, 0);       // …con su nombre y cargo
+      revealAt(s._btn,    s._circle, 0);       // …y su flecha de popup
+      revealAt(s._ib,     s._circle, STEP);    // luego el cuadro blanco
+      revealAt(s._ob,     s._circle, STEP*2);  // luego el cuadro naranja
+    });
+
+    // 2) Fila inferior + estación "Yo" (sin botón de popup)
+    document.querySelectorAll('.figrow .reveal').forEach(f=> revealAt(f, yoFigEl, 0));
+    revealAt(yib, yoFigEl, STEP);              // primero el cuadro blanco del "Yo"
+    revealAt(yob, yoFigEl, STEP*2);            // y tras unos scroll, el naranja
+
+    ScrollTrigger.refresh();
+  } else {
+    // Fallback: si GSAP no cargó (sin conexión / CDN bloqueado),
+    // mostramos todo de forma estática para no dejar la página en blanco.
+    revealAll();
+  }
+  </script>
+</body>
+</html>
