@@ -253,141 +253,142 @@ const SHEET_ID = ''; // ← PEGA EL ID DE TU GOOGLE SHEET AQUÍ
 // Se usan automáticamente si SHEET_ID está vacío o si hay un error de red.
 
 const PERU_REGIONS_DEFAULT = [
-  { region:'Tumbes',        tipo:'warm',    contexto:'Tumbes es la región más afectada por El Niño en el Perú. Las lluvias pueden superar el 1 000 % del promedio histórico, generando inundaciones catastróficas que destruyen cultivos, viviendas e infraestructura vial.' },
-  { region:'Piura',         tipo:'warm',    contexto:'Piura es el epicentro histórico del fenómeno: en 1983 y 1998 el río Piura desbordó arrasando zonas urbanas. El calentamiento marino eleva la evaporación y genera lluvias torrenciales que pueden durar meses.' },
-  { region:'Lambayeque',    tipo:'warm',    contexto:'Las lluvias del Niño inundan los valles del Chancay y La Leche, golpeando el arroz, el azúcar y las agroexportaciones. Las ciudades de Chiclayo y Ferreñafe quedan expuestas a huaicos y cortes viales.' },
-  { region:'La Libertad',   tipo:'warm',    contexto:'El Niño genera lluvias intensas en los valles costeros del Santa, Moche y Virú, afectando la agroindustria exportadora. Los huaicos cortan la Panamericana y elevan el riesgo de inundaciones en Trujillo.' },
-  { region:'Áncash',        tipo:'warm',    contexto:'La costa ancashina recibe lluvias anómalas que generan aluviones en quebradas secas. La sierra experimenta variabilidad hídrica con posibles sequías parciales en cabeceras de cuenca.' },
-  { region:'Lima',          tipo:'warm',    contexto:'Lima, normalmente muy seca, puede recibir lluvias inusuales que reactivan quebradas como el Huaycoloro. Los huaicos en el cono este y la saturación del alcantarillado son los principales riesgos.' },
-  { region:'Callao',        tipo:'warm',    contexto:'El Callao enfrenta marejadas más intensas, lluvias inusuales y oleaje anómalo. La infraestructura portuaria puede sufrir interrupciones operativas durante eventos fuertes.' },
-  { region:'Ica',           tipo:'warm',    contexto:'Ica combina calor extremo con lluvias inusuales que pueden dañar el espárrago y la uva de exportación. El río Ica puede desbordarse en eventos intensos, afectando los valles agrícolas.' },
-  { region:'Arequipa',      tipo:'neutral', contexto:'Arequipa tiene un impacto moderado: la costa recibe algo más de calor mientras la sierra muestra variabilidad hídrica. El río Chili puede presentar crecidas puntuales sin llegar a ser catastróficas.' },
-  { region:'Moquegua',      tipo:'neutral', contexto:'Moquegua presenta un impacto leve a moderado. Las lluvias pueden ser más erráticas y el calor costero se intensifica, pero los efectos son considerablemente menores que en la costa norte.' },
-  { region:'Tacna',         tipo:'neutral', contexto:'Tacna experimenta variaciones menores: algo más de calor y lluvias más irregulares. El impacto es generalmente moderado en comparación con el norte y la sierra sur.' },
-  { region:'Cajamarca',     tipo:'neutral', contexto:'Cajamarca puede experimentar lluvias por encima del promedio en algunos valles y déficit en otros. La variabilidad regional es alta: zonas altas con más precipitación, valles occidentales con escasez.' },
-  { region:'Amazonas',      tipo:'cold',    contexto:'La selva alta de Amazonas experimenta una paradoja: mientras la costa se inunda, la Amazonía padece sequía. El Marañón y sus afluentes bajan de nivel, afectando la navegación y la pesca fluvial.' },
-  { region:'San Martín',    tipo:'cold',    contexto:'San Martín muestra reducción de lluvias que afecta el cacao, el café y el arroz. Los ríos Mayo y Huallaga bajan significativamente, afectando el transporte y el riego en la región.' },
-  { region:'Loreto',        tipo:'cold',    contexto:'Loreto es la región amazónica más afectada: el Amazonas y sus tributarios pueden alcanzar mínimos históricos, cortando comunidades aisladas de sus fuentes de alimento y movilidad fluvial.' },
-  { region:'Ucayali',       tipo:'cold',    contexto:'El Ucayali experimenta sequía moderada. El río Ucayali baja su nivel, afectando el transporte fluvial. La mayor irradiación solar intensifica el calor y aumenta el riesgo de incendios forestales.' },
-  { region:'Huánuco',       tipo:'neutral', contexto:'Huánuco presenta impacto mixto: la selva alta puede padecer menor precipitación mientras las zonas andinas experimentan variabilidad estacional. El café y el cacao son los cultivos más expuestos.' },
-  { region:'Pasco',         tipo:'neutral', contexto:'Pasco muestra variabilidad climática con sequías parciales en zonas altas. La minería puede verse afectada por fluctuaciones en la disponibilidad de agua para procesos metalúrgicos.' },
-  { region:'Junín',         tipo:'neutral', contexto:'Junín experimenta reducción moderada de lluvias en sierra y selva central. El lago Junín puede bajar su nivel. La trucha y la producción de papa son los sectores más sensibles.' },
-  { region:'Huancavelica',  tipo:'cold',    contexto:'Huancavelica padece sequía durante El Niño: las lluvias de la sierra sur disminuyen, afectando la ganadería altoandina y los cultivos de papa. Los reservorios del Mantaro ven reducido su caudal hidroeléctrico.' },
-  { region:'Ayacucho',      tipo:'cold',    contexto:'Ayacucho es una de las regiones más golpeadas por la sequía. Las lluvias caen muy por debajo del promedio, afectando gravemente la agricultura de subsistencia y la ganadería local.' },
-  { region:'Apurímac',      tipo:'cold',    contexto:'Apurímac sufre déficit hídrico severo. Los ríos Apurímac y Pachachaca bajan su nivel. La papa, el maíz y la producción ganadera son los más afectados por la falta de lluvias.' },
-  { region:'Cusco',         tipo:'cold',    contexto:'Cusco puede experimentar sequía en sus zonas andinas, afectando el agro y el agua para consumo. El Camino Inca puede cerrarse por riesgo de huaicos y los atractivos naturales se ven afectados.' },
-  { region:'Puno',          tipo:'cold',    contexto:'Puno padece sequía intensa y mayor riesgo de heladas. El lago Titicaca puede bajar su nivel. La ganadería de camélidos y la quinua son los más afectados, junto con los cultivos de papa.' },
-  { region:'Madre de Dios', tipo:'neutral', contexto:'Madre de Dios experimenta reducción moderada de lluvias. El río Madre de Dios baja su nivel, afectando el transporte, la pesca y las comunidades indígenas que dependen del bosque amazónico.' },
+  { region:"Tumbes", tipo:"warm", contexto:"Vives en la región con las lluvias más extremas del país durante El Niño —pueden superar el 1,000% del promedio histórico, según SENAMHI—. Las inundaciones dañan cultivos, viviendas y carreteras cada vez que llega el fenómeno. La buena noticia: la mayoría de tus cultivos tiene riego, así que no dependes solo de la lluvia. Lo más frágil es la obra pública: más de la mitad de los proyectos de prevención en tu región terminaron abandonados o paralizados, según el IPE." },
+  { region:"Piura", tipo:"warm", contexto:"Eres de la región que más se repite en las crisis de El Niño: en 2017 y en 2023-2024 tuviste el mayor número de fallecidos y viviendas destruidas del país, según INDECI. El dengue también se dispara con las lluvias —los casos se multiplicaron por más de 6 en el último episodio (MINSA)—. Y hay un golpe silencioso: el puerto de Paita, motor pesquero de tu región, prácticamente dejó de recibir anchoveta en 2023 (PRODUCE)." },
+  { region:"Lambayeque", tipo:"warm", contexto:"Tu región tiene la tasa de fallecidos por El Niño más alta del país en proporción a su gente, y la segunda en viviendas destruidas, según INDECI. Las lluvias intensas y los cortes viales son el riesgo constante. El dengue también sube con fuerza en años Niño (MINSA). Es una de las regiones donde más vale prepararse antes de la temporada de lluvias, no durante." },
+  { region:"La Libertad", tipo:"warm", contexto:"Los huaicos que cortan la Panamericana y las inundaciones en los valles de Trujillo son tu principal riesgo: tienes la tasa más alta de viviendas destruidas del país en años Niño (INDECI). El dengue puede multiplicarse por cientos en un mal año —de 162 a casi 50,000 casos en el último episodio (MINSA)—, así que cuidar el agua estancada en casa es clave. Más de la mitad de las obras de prevención de tu región siguen abandonadas o paralizadas (IPE)." },
+  { region:"Áncash", tipo:"warm", contexto:"Tu costa recibe lluvias que generan aluviones incluso en quebradas normalmente secas, mientras la sierra puede sufrir sequías parciales en las cabeceras de cuenca —los dos extremos en una sola región (SENAMHI). El dengue y la leishmaniasis suben con fuerza en años Niño (MINSA). El puerto de Chimbote, uno de los grandes de la pesca nacional, perdió más de 40% de su desembarque de anchoveta en el último episodio (PRODUCE)." },
+  { region:"Lima Metropolitana", tipo:"warm", contexto:"Tu ciudad, normalmente seca, puede recibir lluvias inusuales que reactivan quebradas como el Huaycoloro y generan huaicos en el cono este, además de saturar el alcantarillado. El dengue tiene saltos fuertes en años Niño. Un dato importante: tu impacto per cápita se diluye por ser 10 millones de habitantes, pero en cifras absolutas Lima Metropolitana tiene más obras públicas paralizadas que casi cualquier otra región del país (Contraloría)." },
+  { region:"Lima Provincias", tipo:"warm", contexto:"Los valles agrícolas de tu región —Cañete, Huaral, Huaura, Barranca— son de los más golpeados del país en proporción a su gente: la tasa de viviendas destruidas y fallecidos en años Niño está entre las más altas del Perú (INDECI), muy por encima de Lima Metropolitana. 6 de cada 10 proyectos de inversión pública en tu región terminan abandonados o paralizados (IPE)." },
+  { region:"Callao", tipo:"warm", contexto:"Las marejadas y el oleaje anómalo son tu riesgo principal, con posibles interrupciones en la actividad portuaria. MINCETUR te identifica como la región más expuesta del país en exportaciones comprometidas por El Niño en los tres episodios históricos analizados. Es, sobre todo, un riesgo económico más que de destrucción física directa." },
+  { region:"Ica", tipo:"warm", contexto:"El calor extremo y las lluvias inusuales son tu principal riesgo climático, con el río Ica en riesgo de desbordarse. Case todos tus cultivos tienen riego, así que la dependencia de lluvia es prácticamente nula. El dengue sí sube con fuerza en años Niño —de 5,084 a más de 30,000 casos en el último episodio (MINSA)—." },
+  { region:"Arequipa", tipo:"neutral", contexto:"Tu impacto es más moderado que el de la costa norte: la costa recibe algo más de calor, mientras la sierra muestra variabilidad en las lluvias. Donde sí hay una señal clara es en la violencia de género: los casos atendidos en los CEM de tu región vienen en aumento sostenido desde hace varios años, aunque no está claro que El Niño sea la causa principal." },
+  { region:"Moquegua", tipo:"cold", contexto:"Tu región tiene un impacto leve a moderado en general, considerablemente menor que la costa norte. El riesgo más concreto que sí te toca de cerca es el abastecimiento de gas: tu macrorregión (Sur) tiene el peor déficit de almacenamiento de GLP del país frente a su demanda, según el Ministerio de Energía y Minas." },
+  { region:"Tacna", tipo:"cold", contexto:"Tu impacto suele ser menor comparado con el resto del país, aunque no estás exenta: tu región concentra parte del mayor déficit de almacenamiento de GLP del país (Sur), lo que te deja más expuesta si El Niño interrumpe el transporte de combustible. Las lluvias por debajo del promedio, entre noviembre y mayo, son tu riesgo climático principal." },
+  { region:"Cajamarca", tipo:"warm", contexto:"Eres de la región que más se mueve en casi todos los frentes cuando llega El Niño: subieron a la vez el dengue, la leishmaniasis, la violencia de género atendida en los CEM y las obras públicas paralizadas, en el mismo período (fuentes: MINSA, MIMP, Contraloría). Más del 80% de tu agricultura depende exclusivamente de la lluvia, sin riego (IPE) —por eso el golpe económico te llega fuerte incluso sin grandes inundaciones—. Cajamarca lideró la exposición de exportaciones agropecuarias del país en el episodio más reciente (MINCETUR)." },
+  { region:"Amazonas", tipo:"cold", contexto:"Tu región combina selva alta con alta dependencia de lluvia sin riego —más del 80% de tu agricultura (IPE)—, lo que te hace vulnerable tanto a sequías como a excesos de lluvia. Tienes, además, uno de los niveles de desnutrición crónica infantil más altos del país (BCRP), una vulnerabilidad que ya existía antes de El Niño y que el fenómeno puede agravar." },
+  { region:"San Martín", tipo:"cold", contexto:"Tu comportamiento frente a El Niño es de los más heterogéneos del país: a veces hay más lluvia, a veces menos, sin un patrón tan claro como en la costa. Más del 80% de tu agricultura depende de lluvia sin riego (IPE), así que cualquier variación te afecta directamente en la chacra." },
+  { region:"Loreto", tipo:"cold", contexto:"Eres la región amazónica más golpeada por El Niño: el río Amazonas y sus afluentes pueden llegar a mínimos históricos, aislando comunidades de su transporte y su alimento. Tienes de los niveles más altos de anemia y desnutrición infantil del país (BCRP), vulnerabilidades que se agravan cuando el río baja. Casi el 94% de tu agricultura depende solo de lluvia (IPE)." },
+  { region:"Ucayali", tipo:"warm", contexto:"El río baja su nivel y afecta el transporte fluvial y la pesca, tu principal fuente de alimento e ingreso en muchas comunidades. Casi el 98% de tu agricultura depende exclusivamente de lluvia, sin riego (IPE) — de las tasas más altas del país." },
+  { region:"Huánuco", tipo:"warm", contexto:"Tu selva alta puede sufrir menor precipitación mientras las zonas andinas muestran variabilidad. Más del 90% de tu agricultura depende de lluvia sin riego (IPE), y casi 3 de cada 4 proyectos de inversión pública en tu región terminaron abandonados o paralizados (IPE) — de las tasas más altas del país." },
+  { region:"Pasco", tipo:"neutral", contexto:"Tu región combina variabilidad climática con sequías parciales en las zonas altas. Más del 95% de tu agricultura depende solo de lluvia (IPE), y la mitad de tus proyectos de inversión pública terminaron abandonados o paralizados." },
+  { region:"Junín", tipo:"neutral", contexto:"Tienes reducción moderada de lluvias tanto en sierra como en selva central, aunque en años de Niño Costero también puedes recibir exceso puntual. Más del 80% de tu agricultura depende de lluvia sin riego (IPE), y casi 3 de cada 4 proyectos de inversión pública terminaron abandonados o paralizados — de las tasas más altas del país." },
+  { region:"Huancavelica", tipo:"cold", contexto:"Tu región es una de las más golpeadas por sequía histórica en el Perú, con más de las tres cuartas partes de tu agricultura dependiendo solo de lluvia (IPE). Tienes, además, uno de los niveles de desnutrición crónica infantil más altos del país (BCRP) — una vulnerabilidad crónica que antecede a El Niño." },
+  { region:"Ayacucho", tipo:"cold", contexto:"Eres una de las regiones más golpeadas por la sequía: las lluvias caen muy por debajo del promedio y afectan directamente tus cultivos y tu ganadería. Casi la mitad de tu agricultura depende solo de lluvia (IPE), y más de 6 de cada 10 proyectos de inversión pública terminaron abandonados o paralizados." },
+  { region:"Apurímac", tipo:"cold", contexto:"El maíz y la ganadería son los más golpeados por la falta de lluvias en tu región. Más de la mitad de tu agricultura depende exclusivamente de lluvia (IPE). El Plan Nacional ante El Niño te identifica con población en riesgo alto por déficit hídrico, junto con Cusco y Puno." },
+  { region:"Cusco", tipo:"cold", contexto:"Tu sierra puede sufrir sequías marcadas que afectan cultivos y ganadería andina. El Plan Nacional ante El Niño te ubica como la segunda región con más población en riesgo por déficit hídrico del país (más de 160,000 personas), después de Puno." },
+  { region:"Puno", tipo:"cold", contexto:"Eres la región con más población en riesgo por déficit hídrico de todo el país —cerca de 690,000 personas, según el Plan Nacional ante El Niño—. La ganadería de camélidos y la quinua son las más golpeadas por la falta de lluvias. Ojo: si ves cifras de violencia de género que suben fuerte en tu región en 2023, no es por El Niño — coincide con las protestas y el estado de emergencia de esos meses." },
+  { region:"Madre de Dios", tipo:"cold", contexto:"El 100% de tu agricultura depende exclusivamente de lluvia, la tasa más alta del país (IPE). Tienes, además, uno de los niveles de anemia infantil más altos del Perú (BCRP). El turismo y la minería informal también se ven afectados por los cambios en el régimen de lluvias, según el MINAM." },
 ];
 
 const PROFESSIONS_DEFAULT = [
-  'Agricultura / Ganadería',
-  'Pesca / Acuicultura',
-  'Construcción / Obras civiles',
-  'Tecnología / Software / IT',
-  'Salud / Medicina',
-  'Educación / Docencia',
-  'Transporte / Logística',
-  'Comercio / Ventas',
-  'Turismo / Hospitalidad',
-  'Finanzas / Banca / Seguros',
-  'Energía / Minería',
-  'Sector público / Gobierno',
-  'Arte / Cultura / Medios',
-  'Estudiante',
-  'Jubilado/a',
-  'Otro',
+  "Agricultura / Ganadería",
+  "Pesca / Acuicultura",
+  "Construcción / Obras civiles",
+  "Tecnología / Software / IT",
+  "Salud / Medicina",
+  "Educación / Docencia",
+  "Transporte / Logística",
+  "Comercio / Ventas",
+  "Turismo / Hospitalidad",
+  "Finanzas / Banca / Seguros",
+  "Energía / Minería",
+  "Sector público / Gobierno",
+  "Arte / Cultura / Medios",
+  "Estudiante",
+  "Jubilado/a",
+  "Otro",
 ];
 
 const PROF_IMPACTS_DEFAULT = {
-  'Agricultura / Ganadería': {
-    warm: 'Las lluvias extremas saturan el suelo y favorecen enfermedades fúngicas. En la costa norte peruana los cultivos de arroz, limón y mango pueden perderse masivamente. Los campos quedan anegados semanas y los contratos de exportación se vuelven imposibles de cumplir.',
-    cold: 'La sequía en sierra y selva reduce drásticamente el agua de riego. Las pérdidas de papa, maíz y quinua pueden superar el 40 % en regiones como Puno y Ayacucho. La falta de forraje también golpea la ganadería de camélidos y bovinos.',
-    neutral: 'La variabilidad de lluvias desordena los calendarios de siembra. Seguir los pronósticos ENSO del Senamhi con 3 meses de anticipación es hoy tan importante como el calendario agrícola tradicional.',
+  "Agricultura / Ganadería": {
+    warm: "Las lluvias extremas saturan el suelo y traen enfermedades fúngicas. Si estás en la costa norte, cultivos como arroz, limón y mango pueden perderse por semanas de anegamiento. El sector agropecuario cayó 2.9% durante El Niño Costero 2023, la mayor caída desde 1992 (BCRP). La costa norte, que concentra hasta la mitad de la producción de palta del país, fue la más golpeada.",
+    cold: "La sequía en sierra y selva reduce drásticamente el agua de riego. Puedes perder más del 40% de tu cosecha de papa, maíz o quinua, y el forraje escaso golpea a tu ganado. Según SENAMHI, la sequía de 1992 —la más severa registrada— redujo hasta 57% el área sembrada en regiones como Puno.",
+    neutral: "La variabilidad de lluvias desordena tu calendario de siembra. Seguir los pronósticos del SENAMHI con 3 meses de anticipación es hoy tan importante como el calendario tradicional. Si tu región depende de lluvia sin riego (secano), tu vulnerabilidad es mayor — el IPE calcula que eso supera el 90% en Madre de Dios, Ucayali, Puno y Pasco.",
   },
-  'Pesca / Acuicultura': {
-    warm: 'El Niño calienta el Pacífico y desplaza los cardúmenes de anchoveta, jurel y caballa hacia el sur y en profundidad. Las capturas industriales pueden caer entre 50 y 80 %. Los langostineros del norte ven sus piscigranjas inundadas.',
-    cold: 'La menor precipitación afecta la piscicultura continental (trucha en Junín y Puno). Los ríos amazónicos con aguas bajas dificultan la pesca de subsistencia en Loreto y Ucayali.',
-    neutral: 'Las anomalías del ENSO alteran las rutas de migración aunque sean moderadas. Los reportes del IMARPE anticipan caladeros con semanas de anticipación — úsalos.',
+  "Pesca / Acuicultura": {
+    warm: "El mar se calienta y los cardúmenes de anchoveta se van al sur y a mayor profundidad — tus capturas pueden caer entre 50% y 80%. En 2023 la pesca nacional cayó 19.7% y la anchoveta se redujo a la mitad (BCRP). Si tienes langostinos en el norte, la inundación de piscigranjas es tu riesgo más directo.",
+    cold: "Si trabajas en piscicultura de sierra (trucha) o pesca de río en la selva, la menor lluvia te afecta directo: ríos más bajos, menos pesca de subsistencia. El desembarque nacional de anchoveta cayó a su nivel más bajo en 13 años en 2023 (PRODUCE) — el puerto de Paita, en Piura, pasó de 35 mil toneladas a solo 12.",
+    neutral: "Las anomalías del mar alteran las rutas de los cardúmenes incluso en años moderados. Los reportes del IMARPE anticipan zonas de pesca con semanas de anticipación — vale la pena seguirlos de cerca antes de salir a faenar.",
   },
-  'Construcción / Obras civiles': {
-    warm: 'Las lluvias intensas paralizan obras en toda la costa norte. Los huaicos destruyen avances en carreteras y puentes. En Lima, las quebradas activan el riesgo de aluvión en el cono este. Quienes trabajan por jornada pueden perder semanas de ingresos.',
-    cold: 'La sequía en sierra puede agrietar suelos y complicar cimentaciones. La escasez de agua en obras de la selva central limita el curado de estructuras y ralentiza cronogramas.',
-    neutral: 'El clima impredecible puede retrasar cualquier proyecto. Incluir días adicionales en el cronograma y cláusulas climáticas en contratos es cada vez más indispensable.',
+  "Construcción / Obras civiles": {
+    warm: "Las lluvias paralizan obras en toda la costa norte y los huaicos destruyen avances en carreteras y puentes. Si trabajas por jornal, puedes perder semanas de ingreso. Dato curioso: a nivel nacional el efecto neto en construcción suele ser casi nulo (BCRP) — lo que se pierde en plena lluvia se recupera después, en la reconstrucción.",
+    cold: "La sequía en sierra puede agrietar suelos y complicar tus cimentaciones. En la selva central, la escasez de agua limita el curado de estructuras y atrasa tus cronogramas.",
+    neutral: "El clima impredecible puede retrasar cualquier obra. Incluir días adicionales en el cronograma y cláusulas climáticas en tus contratos es cada vez más necesario. Un dato para tenerlo presente: 6 de cada 10 proyectos públicos de prevención en el Perú terminan abandonados o paralizados (IPE).",
   },
-  'Tecnología / Software / IT': {
-    warm: 'Las inundaciones en ciudades costeras cortan electricidad e internet por 48–72 horas. Las empresas necesitan planes de continuidad: respaldo en la nube, conexión 4G/satelital y flujos de trabajo que soporten cortes prolongados.',
-    cold: 'La sequía puede reducir la generación hidroeléctrica del sistema interconectado. La crisis en sectores agrícolas y pesqueros reduce la inversión digital de clientes PYME. Diversificar la cartera por región mitiga el riesgo.',
-    neutral: 'La dependencia de infraestructura eléctrica vulnerable es el mayor riesgo. Migrar servicios críticos a la nube y documentar planes de continuidad son inversiones con retorno inmediato.',
+  "Tecnología / Software / IT": {
+    warm: "Las inundaciones en ciudades costeras cortan luz e internet por 48-72 horas. Si tu trabajo depende de estar conectado, necesitas un plan B: respaldo en la nube, conexión 4G o satelital, y flujos de trabajo que aguanten cortes largos.",
+    cold: "La sequía reduce la generación hidroeléctrica del sistema nacional, lo que puede afectarte con cortes de luz. Si atiendes clientes agrícolas o pesqueros, prepárate: la crisis en esos sectores baja su inversión digital.",
+    neutral: "Tu mayor riesgo es depender de infraestructura eléctrica vulnerable. Migrar servicios críticos a la nube y documentar un plan de continuidad es una inversión que se paga sola. Ojo: la brecha digital rural sigue dejando fuera justo a quienes más lo necesitan (OIT).",
   },
-  'Salud / Medicina': {
-    warm: 'Las inundaciones costeñas disparan epidemias de dengue, leptospirosis y enfermedades gastrointestinales. Los hospitales de Piura, Tumbes y Chiclayo colapsan. El personal trabaja en condiciones extremas con accesos cortados por huaicos.',
-    cold: 'La sequía en sierra y selva eleva la desnutrición y las infecciones respiratorias por polvo. La escasez de agua afecta la higiene básica en comunidades rurales de Puno, Ayacucho y Loreto.',
-    neutral: 'El cambio en patrones climáticos altera la distribución de vectores. Intensificar la vigilancia epidemiológica antes del fenómeno permite anticipar picos de demanda de atención.',
+  "Salud / Medicina": {
+    warm: "Las inundaciones disparan el dengue, la leptospirosis y las enfermedades gastrointestinales. Si trabajas en Piura, Tumbes o Chiclayo, prepárate para hospitales saturados y accesos cortados por huaicos. Hay 409 establecimientos de salud del país en riesgo muy alto por inundaciones (CENEPRED).",
+    cold: "La sequía en sierra y selva eleva la desnutrición y las infecciones respiratorias por polvo. La escasez de agua también complica la higiene básica en comunidades rurales de Puno, Ayacucho y Loreto.",
+    neutral: "El cambio en el clima altera dónde aparecen los vectores de enfermedades. Reforzar la vigilancia epidemiológica antes de que llegue el fenómeno te permite anticipar los picos de atención. La anemia infantil en Puno (57.9%) y la desnutrición en Huancavelica (29.9%) ya eran altas antes de El Niño — y el fenómeno las agrava (BCRP).",
   },
-  'Educación / Docencia': {
-    warm: 'Las inundaciones cierran colegios durante semanas en la costa norte. La transición a clases virtuales se dificulta por los cortes de electricidad. Tener materiales offline y planes pedagógicos de contingencia es clave.',
-    cold: 'En zonas rurales de la sierra sur, la sequía reduce la asistencia escolar. Los calendarios académicos necesitan flexibilidad para recuperar el tiempo perdido sin penalizar al alumnado.',
-    neutral: 'Incorporar El Niño como tema transversal — desde ciencias hasta historia — es una oportunidad pedagógica de alto impacto y relevancia actual.',
+  "Educación / Docencia": {
+    warm: "Las inundaciones cierran colegios semanas enteras en la costa norte, y pasar a clases virtuales se complica por los cortes de luz. Tener materiales offline y un plan de contingencia pedagógico es clave. Hay 1,884 instituciones educativas del país en riesgo muy alto por inundaciones (CENEPRED).",
+    cold: "En zonas rurales de la sierra sur, la sequía reduce la asistencia escolar — muchas familias priorizan el trabajo de campo. Tu calendario académico necesita flexibilidad para recuperar el tiempo perdido sin castigar a tus alumnos.",
+    neutral: "Incorporar El Niño como tema transversal —desde ciencias hasta historia— es una oportunidad pedagógica real y de actualidad para tus clases.",
   },
-  'Transporte / Logística': {
-    warm: 'Los huaicos destruyen la Panamericana Norte y las carreteras hacia Cajamarca y La Libertad. Los costos de flete se disparan. El Puerto de Paita puede cerrar por oleaje durante eventos intensos.',
-    cold: 'Los ríos amazónicos con caudal bajo dificultan el transporte fluvial en Loreto y Ucayali. Las barcazas quedan varadas y las comunidades se aíslan de sus fuentes de abastecimiento.',
-    neutral: 'Mapear rutas alternativas antes de que llegue el fenómeno y mantener stocks de seguridad para clientes clave son las ventajas competitivas más prácticas.',
+  "Transporte / Logística": {
+    warm: "Los huaicos destruyen la Panamericana Norte y las vías hacia Cajamarca y La Libertad — tus fletes se encarecen. El puerto de Paita puede cerrar por oleaje en eventos fuertes. Hay 423 puentes del país en riesgo muy alto por huaicos (CENEPRED).",
+    cold: "Si trabajas con transporte fluvial en Loreto o Ucayali, los ríos bajos son tu peor enemigo: las barcazas quedan varadas y las comunidades se aíslan de su abastecimiento.",
+    neutral: "Mapear rutas alternativas antes de que llegue el fenómeno y mantener stock de seguridad para tus clientes clave son las ventajas más prácticas que puedes tener.",
   },
-  'Comercio / Ventas': {
-    warm: 'Los locales inundados, la pérdida de stock y la caída del poder adquisitivo reducen las ventas en la costa norte. Los canales online y el stock de productos básicos son el mejor respaldo durante la emergencia.',
-    cold: 'La sequía eleva el precio de los alimentos básicos en sierra y selva, comprimiendo el consumo. El gasto discrecional cae. Diferenciarse por servicio — no solo por precio — es la estrategia más resiliente.',
-    neutral: 'El Niño orienta el consumo hacia bienes de primera necesidad. Adaptar el inventario con mayor rotación de productos básicos puede darte ventaja competitiva durante el fenómeno.',
+  "Comercio / Ventas": {
+    warm: "Locales inundados, stock perdido y menor poder adquisitivo bajan tus ventas en la costa norte. Tener canal online y stock de productos básicos es tu mejor respaldo durante la emergencia. El impacto en comercio es más lento pero persistente: tarda más de un año en sentirse del todo (BCRP).",
+    cold: "La sequía sube el precio de los alimentos básicos en sierra y selva, y el gasto discrecional de tus clientes cae. Diferenciarte por servicio —no solo por precio— es la estrategia más resistente.",
+    neutral: "El Niño empuja el consumo hacia lo esencial. Ajustar tu inventario con más rotación de productos básicos puede darte ventaja. Casi 7 de cada 10 empresas exportadoras afectadas por El Niño son mypes, aunque representan poco del valor exportado (MINCETUR) — son las más vulnerables.",
   },
-  'Turismo / Hospitalidad': {
-    warm: 'Las inundaciones generan cancelaciones masivas en la costa norte. Machu Picchu y el Camino Inca pueden cerrarse por huaicos. Las temporadas altas se convierten en períodos de altísima incertidumbre para el sector.',
-    cold: 'La sequía afecta los atractivos naturales del altiplano: el lago Titicaca baja, los ríos para canotaje pierden caudal. La transparencia con los visitantes sobre las condiciones reales fideliza más que el silencio.',
-    neutral: 'Ofrecer actividades alternativas para clima adverso y paquetes flexibles con cancelación gratuita hará tu propuesta más resiliente y competitiva.',
+  "Turismo / Hospitalidad": {
+    warm: "Las inundaciones generan cancelaciones masivas en la costa norte, y Machu Picchu o el Camino Inca pueden cerrar por huaicos. Tu temporada alta se puede volver la más incierta del año.",
+    cold: "La sequía afecta tus atractivos naturales del altiplano: el lago Titicaca baja, los ríos para canotaje pierden caudal. Ser transparente con tus visitantes sobre las condiciones reales fideliza más que quedarte callado.",
+    neutral: "Ofrecer actividades alternativas para clima adverso y paquetes flexibles con cancelación gratuita hace tu propuesta más resiliente y competitiva.",
   },
-  'Finanzas / Banca / Seguros': {
-    warm: 'Las inundaciones generan alta siniestralidad, más créditos de emergencia y mayor morosidad en carteras agrícolas y comerciales del norte. Hay oportunidades reales en seguros paramétricos y líneas de emergencia climática.',
-    cold: 'La sequía deprime la producción agrícola y la generación del Mantaro. Las carteras de crédito en sierra sur y selva elevan su riesgo. El monitoreo del ENSO debe integrarse en los modelos de evaluación crediticia.',
-    neutral: 'El riesgo climático es ahora central en el análisis de crédito y portafolio. Incorporarlo proactivamente es ventaja competitiva frente a instituciones que lo tratan como factor exógeno.',
+  "Finanzas / Banca / Seguros": {
+    warm: "Las inundaciones generan más siniestros, más créditos de emergencia y más morosidad en carteras agrícolas y comerciales del norte. También hay oportunidad real en seguros paramétricos y líneas de emergencia climática. Los daños de los eventos más severos han llegado a superar el 10% del PBI de ese año (SENAMHI).",
+    cold: "La sequía deprime la producción agrícola y la generación eléctrica del Mantaro. Si manejas cartera en sierra sur o selva, tu riesgo de crédito sube — el monitoreo del clima ya debería estar en tus modelos.",
+    neutral: "El riesgo climático es hoy central en cualquier análisis de crédito o portafolio. El Niño Costero 2023 le restó 1.1 puntos al crecimiento del PBI (BCRP) y es persistentemente inflacionario: el efecto en precios de alimentos tarda unos 9 meses en llegar a su pico.",
   },
-  'Energía / Minería': {
-    warm: 'Las lluvias benefician las centrales del Mantaro a corto plazo, pero los deslizamientos amenazan la infraestructura de transmisión en montaña. Las operaciones mineras al aire libre en la sierra norte quedan paralizadas.',
-    cold: 'La sequía en la cuenca del Mantaro reduce la generación hidroeléctrica y puede causar racionamiento en el SINAC. Las operaciones que dependen del agua para procesamiento sufren paros y pérdidas cuantiosas.',
-    neutral: 'La variabilidad hídrica exige monitoreo constante de reservorios. Contratos de energía spot y planes alternativos de abastecimiento de agua son coberturas cada vez más indispensables.',
+  "Energía / Minería": {
+    warm: "Las lluvias benefician a corto plazo la generación del Mantaro, pero los deslizamientos amenazan las líneas de transmisión en zona de montaña. Si operas minería a tajo abierto en la sierra norte, prepárate para paralizaciones.",
+    cold: "La sequía en la cuenca del Mantaro reduce la generación hidroeléctrica y puede traer racionamiento. Si tu operación depende de agua para procesar mineral, los paros por escasez son un riesgo real.",
+    neutral: "La variabilidad hídrica exige que monitorees tus reservorios de cerca. Contratos de energía spot y planes alternativos de agua son coberturas cada vez más necesarias.",
   },
-  'Sector público / Gobierno': {
-    warm: 'El Niño activa los protocolos del SINAGERD. La coordinación entre el COEN, los gobiernos regionales y las municipalidades es la prioridad absoluta. Los presupuestos de emergencia deben estar pre-aprobados antes del inicio del fenómeno.',
-    cold: 'La sequía en sierra y selva exige coordinar entre el ANA, el Minagri y los gobiernos regionales planes de seguridad hídrica y alimentaria. Actuar antes de que el fenómeno alcance su pico es siempre más eficiente.',
-    neutral: 'La preparación preventiva — planes aprobados, recursos pre-asignados y comunicación ciudadana anticipada — es siempre la inversión más efectiva ante el fenómeno.',
+  "Sector público / Gobierno": {
+    warm: "El Niño activa los protocolos del SINAGERD — coordinar entre el COEN, tu gobierno regional y las municipalidades pasa a ser prioridad absoluta. Tener presupuesto de emergencia pre-aprobado antes de que llegue el fenómeno marca la diferencia.",
+    cold: "La sequía en sierra y selva exige coordinar con la ANA y el Minagri planes de seguridad hídrica y alimentaria. Actuar antes del pico del fenómeno siempre sale más barato que actuar después.",
+    neutral: "La preparación preventiva —planes aprobados, recursos ya asignados, comunicación ciudadana anticipada— es siempre la inversión más rentable. Un dato preocupante: solo 12 de los 24 gobiernos regionales del país han reportado formalmente sus zonas afectadas por sequía al MINAM.",
   },
-  'Arte / Cultura / Medios': {
-    warm: 'Las inundaciones generan alta demanda de cobertura mediática en Perú. El periodismo de campo en zonas afectadas tiene alto impacto nacional. Las interrupciones de eventos culturales en la costa norte son el principal efecto directo.',
-    cold: 'La sequía en sierra y selva y sus efectos en comunidades indígenas son un tema de alta relevancia periodística. El documental y el periodismo de datos sobre el ENSO tienen audiencia global creciente.',
-    neutral: 'El Niño es una historia con enorme potencial narrativo en Perú. Desde la visualización de datos hasta el testimonio personal, hay un mercado creciente para contenidos que expliquen sus impactos con rigor y emoción.',
+  "Arte / Cultura / Medios": {
+    warm: "Las inundaciones generan alta demanda de cobertura mediática, y el periodismo de campo en zonas afectadas tiene impacto real. Los eventos culturales en la costa norte suelen suspenderse. El Ministerio de Cultura ha protegido 121 sitios prehispánicos y 20 museos frente a las lluvias del FEN.",
+    cold: "La sequía en sierra y selva, y su efecto en comunidades indígenas, es un tema de alto valor periodístico. El documental y el periodismo de datos sobre El Niño tienen audiencia creciente.",
+    neutral: "El Niño es una historia con enorme potencial narrativo. Desde visualización de datos hasta testimonio personal, hay espacio creciente para contar sus impactos con rigor y también con emoción.",
   },
-  'Estudiante': {
-    warm: 'Las inundaciones pueden cerrar tu institución semanas. Tener materiales offline, conocer los protocolos de evacuación y seguir al Senamhi son los primeros pasos. El Niño también ofrece material de primer nivel para proyectos académicos.',
-    cold: 'La sequía en tu región puede afectar la asistencia escolar y los recursos básicos de tu comunidad. Documentar los efectos del Niño en tu entorno puede ser la base de un proyecto académico o periodístico relevante.',
-    neutral: 'Estás en el mejor momento para estudiar el Niño de primera mano. Su impacto multidimensional ofrece material para investigación con proyección real.',
+  "Estudiante": {
+    warm: "Las inundaciones pueden cerrar tu colegio o universidad varias semanas. Tener materiales offline y conocer los protocolos de evacuación es lo primero. También es un buen momento para un proyecto académico: el tema no te va a faltar.",
+    cold: "La sequía en tu región puede afectar tu asistencia a clases y los recursos básicos de tu comunidad. Documentar cómo El Niño afecta tu entorno puede ser la base de un buen trabajo académico.",
+    neutral: "Estás en un buen momento para estudiar El Niño de primera mano — su impacto en tantos frentes da material real para investigar. Ojo con un riesgo real: en las comunidades más golpeadas, la crisis climática puede empujar a chicos y chicas a dejar el colegio para trabajar (OIT).",
   },
-  'Jubilado/a': {
-    warm: 'Las personas mayores son especialmente vulnerables ante inundaciones: menor movilidad, mayor exposición a enfermedades y difícil acceso a centros de salud. Un plan familiar de evacuación y contacto frecuente con vecinos es esencial.',
-    cold: 'El frío intenso de la sierra y la sequía son riesgos de salud reales. Las heladas en Puno, Cusco y Ayacucho son más frecuentes durante el Niño. Mantenerse abrigado, hidratado y en contacto con tu red de apoyo puede salvar vidas.',
-    neutral: 'Los cambios climáticos del Niño pueden afectar tu comodidad y salud diaria. Mantenerte informado/a con el Senamhi y tener preparado un kit básico de emergencia son pasos simples con gran valor.',
+  "Jubilado/a": {
+    warm: "Eres parte de un grupo especialmente vulnerable ante las inundaciones: menos movilidad, más exposición a enfermedades, acceso más difícil a centros de salud. Tener un plan familiar de evacuación y mantenerte en contacto con tus vecinos es esencial.",
+    cold: "El frío intenso de la sierra y la sequía son riesgos reales para tu salud — las heladas en Puno, Cusco y Ayacucho se hacen más frecuentes con El Niño. Abrigarte, hidratarte y mantener tu red de apoyo cerca puede salvarte la vida.",
+    neutral: "Los cambios de clima del fenómeno pueden afectar tu bienestar diario. Seguir al SENAMHI y tener un kit básico de emergencia listo son pasos simples con mucho valor.",
   },
-  'Otro': {
-    warm: 'El Niño trae lluvias intensas e inundaciones que afectan prácticamente todas las actividades en la costa norte. Un kit de emergencia, rutas de evacuación conocidas y comunicación familiar frecuente son el primer paso.',
-    cold: 'La sequía en sierra y selva puede afectar el suministro de agua, los alimentos y la energía en tu región. Anticipar estas necesidades reduce significativamente el impacto cuando el fenómeno está en su pico.',
-    neutral: 'El Niño genera incertidumbre climática que se traduce en variaciones de precios y disponibilidad de servicios. Mantenerse informado/a con anticipación te permite prepararte antes de que el evento alcance su intensidad.',
+  "Otro": {
+    warm: "El Niño trae lluvias e inundaciones que afectan casi todas las actividades en la costa norte. Un kit de emergencia, rutas de evacuación conocidas y comunicación familiar frecuente son tu primer paso. A nivel país, hay más de 14 millones de personas en riesgo muy alto por lluvias intensas (Plan Nacional ante El Niño).",
+    cold: "La sequía en sierra y selva puede afectar tu agua, tus alimentos y tu energía. Anticipar estas necesidades reduce mucho el golpe cuando el fenómeno llega a su pico. Más de un millón de personas están en riesgo muy alto por déficit hídrico en el país, sobre todo en Puno, Cusco y Apurímac.",
+    neutral: "El Niño genera incertidumbre que se traduce en precios y disponibilidad de servicios menos predecibles. Mantenerte informado con anticipación te da ventaja. Si vives en el sur o norte del país, ten presente que esas zonas tienen el peor abastecimiento de gas del país frente a su demanda (MINEM).",
   },
 };
 
 const AGE_NOTES_DEFAULT = {
-  '15-20': 'A tu edad, el Niño puede interrumpir tus estudios, pero también es una oportunidad única para documentar sus efectos en tu comunidad y construir experiencia real en un tema que marcará tu generación.',
-  '21-30': 'En la etapa de inicio profesional, la flexibilidad es tu mayor ventaja. Adaptar tu trabajo a modalidad remota o diversificar hacia sectores menos expuestos al clima puede proteger tu carrera durante el fenómeno.',
-  '31-40': 'Con responsabilidades laborales y familiares, el Niño exige planificación: un fondo de emergencia de 2–3 meses y un plan familiar de contingencia son las inversiones más concretas que puedes hacer hoy.',
-  '41-55': 'Tu experiencia viviendo eventos climáticos anteriores es un activo. Quienes ya saben cómo responde su entorno ante el Niño toman mejores decisiones. Comparte ese conocimiento con tu equipo y familia.',
-  '56+': 'En esta etapa es importante priorizar la salud y la red de apoyo. Ante eventos extremos, no subestimes las señales de alerta y mantén contacto frecuente con familiares o vecinos de confianza.',
+  "15-20": "A tu edad, El Niño puede interrumpir tus estudios por semanas, pero también es una oportunidad real para documentar sus efectos en tu comunidad. Perú tiene la mayor inseguridad alimentaria de la región en hogares jóvenes (BCRP) — vale la pena que sepas identificar las señales de alerta cerca de ti.",
+  "21-30": "En esta etapa de inicio profesional, tu mayor ventaja es la flexibilidad. Si puedes, adapta tu trabajo a modalidad remota o mira sectores menos expuestos al clima mientras dure el fenómeno — te protege el ingreso sin frenar tu carrera.",
+  "31-40": "Con trabajo y familia a cargo, El Niño exige planificar: un fondo de emergencia de 2 a 3 meses y un plan familiar de contingencia son las inversiones más concretas que puedes hacer ahora. Si trabajas en una empresa exportadora, ten en cuenta que casi 1,800 empresas peruanas tienen exposición directa al fenómeno (MINCETUR).",
+  "41-55": "Tu experiencia con fenómenos anteriores es un activo real — sabes cómo responde tu entorno y eso te da ventaja para decidir rápido. Compártelo con tu equipo y tu familia. Si El Niño te obliga a buscar trabajo en otro lugar, ten presente que la migración interna es uno de los mecanismos históricos de ajuste frente al fenómeno (OIT).",
+  "56+": "En esta etapa, prioriza tu salud y tu red de apoyo. No subestimes las señales de alerta y mantente en contacto frecuente con familiares o vecinos de confianza. La OIT advierte que las personas mayores en trabajo agrícola o de subsistencia tienen menos margen para reinventarse rápido si El Niño golpea su fuente de ingreso.",
 };
 
 // ─── ESTADO (se sobrescribe al cargar el Sheet) ──────────────────────────────
@@ -486,7 +487,9 @@ function initImpactPanel() {
   });
 
   const regionSel  = document.getElementById('ipRegion');
-  const regionList = sheetRegions || PERU_REGIONS_DEFAULT;
+  const regionList = (sheetRegions || PERU_REGIONS_DEFAULT)
+    .slice()
+    .sort((a, b) => a.region.localeCompare(b.region, 'es'));
   regionList.forEach(r => {
     const o = document.createElement('option');
     o.value = r.region; o.textContent = r.region;
