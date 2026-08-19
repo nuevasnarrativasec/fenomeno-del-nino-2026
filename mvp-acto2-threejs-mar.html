@@ -809,7 +809,7 @@
   <div id="bottom-bar">
     <div class="bar-section">
       <button class="ctrl-btn" id="rotateBtn">⟳ Rotar</button>
-      <button class="ctrl-btn" id="oceanBtn" title="Mostrar temperatura del mar en el Pacífico">Temperatura del mar</button>
+      <button class="ctrl-btn" id="oceanBtn" title="Mostrar temperatura del mar en el Pacífico">Temperatura mar</button>
       <button class="ctrl-btn" id="currentsBtn" title="Mostrar corrientes oceánicas animadas">Corrientes</button>
       <button class="ctrl-btn region-btn" id="regionsBtn" title="Señalar las regiones Niño 3.4 y Niño 1+2 sobre el mapa">Regiones Niño</button>
     </div>
@@ -1467,6 +1467,33 @@ const NINO_REGION_PATHS = [
   { color: '#f0603a', points: boxPerimeter(0, -10,  -90,  -80) }, // Niño 1+2
 ];
 
+// Relleno semitransparente de cada caja. Se inyectan como features GeoJSON en la
+// misma capa de polígonos que los países (ver updateRegionsLayer). La bandera
+// __nino permite que los accesores de color/altura/hover los traten aparte.
+// El anillo se construye en [lng,lat] (orden GeoJSON) interpolando cada arista
+// para que el relleno siga la curvatura del globo, igual que el contorno.
+function boxFillRing(latN, latS, lngW, lngE, step = 2) {
+  const ring = [];
+  for (let lng = lngW; lng <= lngE; lng += step) ring.push([lng, latN]); // norte O→E
+  for (let lat = latN; lat >= latS; lat -= step) ring.push([lngE, lat]); // este  N→S
+  for (let lng = lngE; lng >= lngW; lng -= step) ring.push([lng, latS]); // sur   E→O
+  for (let lat = latS; lat <= latN; lat += step) ring.push([lngW, lat]); // oeste S→N
+  ring.push([lngW, latN]);                                               // cierre
+  return ring;
+}
+function ninoFillFeature(fillColor, latN, latS, lngW, lngE) {
+  return {
+    __nino: true,
+    fillColor,
+    geometry: { type: 'Polygon', coordinates: [boxFillRing(latN, latS, lngW, lngE)] },
+    properties: {},
+  };
+}
+const NINO_REGION_FILLS = [
+  ninoFillFeature('rgba(74,163,230,0.16)',  5,  -5, -170, -120), // Niño 3.4
+  ninoFillFeature('rgba(240,96,58,0.20)',   0, -10,  -90,  -80), // Niño 1+2
+];
+
 // Etiquetas como elementos HTML (usan la fuente del navegador → la "ñ" se
 // renderiza bien; la capa de texto WebGL de three-globe no incluye ese glifo).
 const NINO_REGION_LABEL_ELS = [
@@ -1540,6 +1567,7 @@ function countryOf(f) {
 }
 
 function capColor(f) {
+  if (f.__nino) return f.fillColor;          // relleno de región Niño
   const iso   = isoOf(f);
   const fname = nameOf(f);
   const a     = getAnomaly(iso, multiplier, fname);
@@ -1549,8 +1577,11 @@ function capColor(f) {
 // Mapa plano: altura constante para todos los polígonos (sin extrusión 3D).
 // Un valor pequeño mantiene la capa de países justo sobre la textura del globo.
 const FLAT_ALT = 0.006;
+// El relleno de región va ligeramente por encima de los países (0.006) pero por
+// debajo del contorno trazado (pathPointAlt 0.014), para no tapar la línea.
+const NINO_FILL_ALT = 0.008;
 function altitude(f) {
-  return FLAT_ALT;
+  return f.__nino ? NINO_FILL_ALT : FLAT_ALT;
 }
 
 // ─────────────────────────────────────────────
@@ -1580,7 +1611,7 @@ const ttAnom    = document.getElementById('ttAnomaly');
 const ttNote    = document.getElementById('ttNote');
 
 function handleHover(f) {
-  if (!f) { tooltip.classList.remove('visible'); return; }
+  if (!f || f.__nino) { tooltip.classList.remove('visible'); return; }
   const province = nameOf(f);
   const country  = countryOf(f);
   const iso      = isoOf(f);
@@ -1666,7 +1697,14 @@ function refreshOceanThrottled() {
 
 function updateRegionsLayer() {
   if (!world) return;
+  // Contorno trazado de cada caja + relleno semitransparente inyectado en la
+  // capa de polígonos (países + rellenos de región cuando la capa está activa).
   world.pathsData(showRegions ? NINO_REGION_PATHS : []);
+  if (geojson) {
+    world.polygonsData(showRegions
+      ? [...geojson.features, ...NINO_REGION_FILLS]
+      : geojson.features);
+  }
   // Reconstruye la capa HTML: siempre las historias, + las etiquetas de región
   // cuando la capa está activa.
   world.htmlElementsData(showRegions ? [...STORIES, ...NINO_REGION_LABEL_ELS] : STORIES);
@@ -1707,8 +1745,8 @@ function initGlobe(data) {
     // Polígonos de países/regiones
     .polygonsData(geojson.features)
     .polygonCapColor(capColor)
-    .polygonSideColor(() => 'rgba(4,8,15,0.4)')
-    .polygonStrokeColor(() => 'rgba(4,8,15,0.7)')
+    .polygonSideColor(f => f.__nino ? 'rgba(0,0,0,0)' : 'rgba(4,8,15,0.4)')
+    .polygonStrokeColor(f => f.__nino ? 'rgba(0,0,0,0)' : 'rgba(4,8,15,0.7)')
     .polygonAltitude(altitude)
     .onPolygonHover(handleHover)
     .polygonsTransitionDuration(500)
