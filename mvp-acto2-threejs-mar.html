@@ -261,22 +261,7 @@
       padding-top: 6px;
     }
 
-    /* ── PANEL DE REGIONES NIÑO (visible al activar la capa) ── */
-    #regions-panel {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      width: 258px;
-      background: rgba(4, 8, 15, 0.92);
-      border: 1px solid #1e2a3e;
-      border-radius: 10px;
-      padding: 14px 16px 12px;
-      z-index: 22;
-      backdrop-filter: blur(8px);
-      display: none;
-    }
-    #regions-panel.visible { display: block; }
-
+    /* ── ESTILOS COMPARTIDOS DE REGIÓN NIÑO (usados por el popup) ── */
     .reg-title {
       font-family: sans-serif;
       font-size: 0.62rem;
@@ -551,16 +536,103 @@
       color: #2a3040;
     }
 
-    /* ── ETIQUETAS DE REGIÓN NIÑO (HTML, no WebGL) ── */
-    .region-label {
+    /* ── BOTÓN-ETIQUETA DE REGIÓN NIÑO (chip clicable) ── */
+    .region-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transform: translate(-50%, -50%);
+      background: rgba(4, 8, 15, 0.85);
+      border: 1px solid rgba(255,255,255,0.20);
+      border-radius: 15px;
+      padding: 4px 9px 4px 7px;
+      cursor: pointer;
+      pointer-events: auto;
+      white-space: nowrap;
       font-family: sans-serif;
-      font-size: 0.72rem;
+      backdrop-filter: blur(4px);
+      box-shadow: 0 2px 9px rgba(0,0,0,0.45);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .region-chip:hover {
+      border-color: rgba(255,255,255,0.55);
+      box-shadow: 0 2px 14px rgba(0,0,0,0.6);
+    }
+    .rc-dot {
+      width: 9px; height: 9px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      box-shadow: 0 0 7px currentColor;
+    }
+    .rc-text { display: flex; flex-direction: column; line-height: 1.12; }
+    .rc-name {
+      font-size: 0.75rem;
       font-weight: 700;
       letter-spacing: 0.02em;
-      white-space: nowrap;
-      transform: translate(-50%, -50%);
+    }
+    .rc-code {
+      font-size: 0.55rem;
+      color: #8a94a8;
+      margin-top: 1px;
+    }
+    .rc-info {
+      font-size: 0.72rem;
+      color: #7a8496;
+      margin-left: 1px;
+    }
+
+    /* ── POPUP DE REGIÓN NIÑO (se abre al pulsar cada botón) ── */
+    #region-popup {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 300px;
+      background: rgba(4, 8, 15, 0.97);
+      border: 1px solid #1e2a3e;
+      border-radius: 12px;
+      padding: 18px 20px 15px;
+      z-index: 26;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+      opacity: 0;
       pointer-events: none;
-      text-shadow: 0 0 4px rgba(4,8,15,0.95), 0 0 8px rgba(4,8,15,0.9);
+      transform: translate(-50%, -50%) scale(0.96);
+      transition: opacity 0.28s ease, transform 0.28s ease;
+    }
+    #region-popup.visible {
+      opacity: 1;
+      pointer-events: all;
+      transform: translate(-50%, -50%) scale(1);
+    }
+    .region-popup-close {
+      position: absolute;
+      top: 11px;
+      right: 13px;
+    }
+    .rp-head {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 3px;
+    }
+    .rp-swatch { margin-top: 0; width: 15px; height: 15px; }
+    .rp-name {
+      font-family: sans-serif;
+      font-size: 0.94rem;
+      font-weight: 700;
+      color: #f0e8df;
+    }
+    .rp-code {
+      font-family: sans-serif;
+      font-size: 0.68rem;
+      color: #8a94a8;
+      margin-bottom: 7px;
+    }
+    .rp-tag2 {
+      font-family: sans-serif;
+      font-size: 0.66rem;
+      color: #6a7080;
+      margin-bottom: 2px;
     }
 
     /* ── MARCADORES EN EL GLOBO ── */
@@ -757,32 +829,20 @@
     <div class="curr-hint">Las corrientes cambian con el slider de intensidad</div>
   </div>
 
-  <!-- Panel de regiones Niño (visible al activar la capa) -->
-  <div id="regions-panel">
-    <div class="reg-title">Regiones de vigilancia</div>
-
-    <div class="reg-item">
-      <div class="reg-swatch" style="background:#4aa3e6"></div>
-      <div class="reg-body">
-        <div class="reg-name">Niño 3.4 — Pacífico central</div>
-        <div class="reg-tag">El Niño global · lo vigila NOAA</div>
-        <div class="reg-desc">Termómetro del Pacífico central: mide qué tan potente es El Niño global (ENSO).</div>
-        <div class="reg-val" style="color:#4aa3e6">+1,4 °C &nbsp;·&nbsp; jul 2026</div>
-      </div>
+  <!-- Popup de región Niño (Global / Costero) — se abre al pulsar cada botón -->
+  <div id="region-popup">
+    <button class="popup-close region-popup-close" onclick="closeRegionPopup()">×</button>
+    <div class="reg-title">Región de vigilancia</div>
+    <div class="rp-head">
+      <span class="reg-swatch rp-swatch" id="rpSwatch"></span>
+      <span class="rp-name" id="rpName">—</span>
     </div>
-
-    <div class="reg-item">
-      <div class="reg-swatch" style="background:#f0603a"></div>
-      <div class="reg-body">
-        <div class="reg-name">Niño 1+2 — frente al Perú</div>
-        <div class="reg-tag">El Niño Costero · lo vigila ENFEN</div>
-        <div class="reg-desc">Termómetro frente a Perú y Ecuador: el mar que más directamente influye sobre nuestra costa.</div>
-        <div class="reg-val" style="color:#f0603a">+2,9 °C &nbsp;·&nbsp; jul 2026</div>
-      </div>
-    </div>
-
-    <div class="reg-hint">Miden regiones distintas del Pacífico. Hoy la señal costera (Niño 1+2) es más intensa que la del Pacífico central (Niño 3.4).</div>
-    <div class="reg-source">Fuentes: NOAA CPC · ENFEN / Senamhi (jul 2026)</div>
+    <div class="rp-code" id="rpCode">—</div>
+    <div class="rp-tag2" id="rpTag">—</div>
+    <div class="reg-desc" id="rpDesc">—</div>
+    <div class="reg-val"  id="rpVal">—</div>
+    <div class="reg-hint" id="rpHint">—</div>
+    <div class="reg-source" id="rpSource">—</div>
   </div>
 
   <!-- Popup de historia personal -->
@@ -1494,11 +1554,34 @@ const NINO_REGION_FILLS = [
   ninoFillFeature('rgba(240,96,58,0.20)',   0, -10,  -90,  -80), // Niño 1+2
 ];
 
-// Etiquetas como elementos HTML (usan la fuente del navegador → la "ñ" se
-// renderiza bien; la capa de texto WebGL de three-globe no incluye ese glifo).
-const NINO_REGION_LABEL_ELS = [
-  { isRegionLabel: true, lat: 8.5, lng: -145, text: 'Niño 3.4', color: '#8fd0ff' },
-  { isRegionLabel: true, lat: 3.5, lng: -85,  text: 'Niño 1+2', color: '#ffb098' },
+// Regiones Niño como elementos HTML clicables (usan la fuente del navegador → la
+// "ñ" se renderiza bien). Cada una es un botón-etiqueta sobre su caja; al pulsarlo
+// abre un popup con su descripción (ver openRegionPopup / htmlElement).
+const NINO_REGIONS = [
+  {
+    isRegionLabel: true, id: 'global',
+    lat: 8.5, lng: -145,
+    name: 'Niño Global',
+    code: 'Niño 3.4 · Pacífico central',
+    tag: 'Índice ENSO · lo vigila NOAA',
+    desc: 'Termómetro del Pacífico central: mide qué tan potente es El Niño global (ENSO). Es la señal que usa el mundo para declarar un evento El Niño.',
+    val: '+1,4 °C · jul 2026',
+    color: '#4aa3e6', labelColor: '#8fd0ff',
+    hint: 'Mide una región distinta a la costera: hoy su señal es más moderada que la del Niño Costero.',
+    source: 'Fuente: NOAA CPC (jul 2026)',
+  },
+  {
+    isRegionLabel: true, id: 'costero',
+    lat: 3.5, lng: -85,
+    name: 'Niño Costero',
+    code: 'Niño 1+2 · frente al Perú',
+    tag: 'Índice costero · lo vigila ENFEN',
+    desc: 'Termómetro frente a Perú y Ecuador: el mar que más directamente influye sobre nuestra costa.',
+    val: '+2,9 °C · jul 2026',
+    color: '#f0603a', labelColor: '#ffb098',
+    hint: 'Hoy la señal costera (Niño 1+2) es más intensa que la del Pacífico central (Niño Global / 3.4).',
+    source: 'Fuente: ENFEN / Senamhi (jul 2026)',
+  },
 ];
 
 // ─────────────────────────────────────────────
@@ -1669,6 +1752,25 @@ function closeStory() {
   document.querySelectorAll('.story-dot').forEach(d => d.classList.remove('active'));
 }
 
+// ── Popup de región Niño (Global / Costero) ──
+function openRegionPopup(d) {
+  document.getElementById('rpSwatch').style.background = d.color;
+  document.getElementById('rpName').textContent   = d.name;
+  document.getElementById('rpCode').textContent   = d.code;
+  document.getElementById('rpTag').textContent    = d.tag;
+  document.getElementById('rpDesc').textContent   = d.desc;
+  const val = document.getElementById('rpVal');
+  val.textContent = d.val;
+  val.style.color = d.color;
+  document.getElementById('rpHint').textContent   = d.hint;
+  document.getElementById('rpSource').textContent = d.source;
+  document.getElementById('region-popup').classList.add('visible');
+}
+function closeRegionPopup() {
+  const p = document.getElementById('region-popup');
+  if (p) p.classList.remove('visible');
+}
+
 function prevStory() {
   const idx = currentStoryIdx < 0 ? 0 : (currentStoryIdx - 1 + STORIES.length) % STORIES.length;
   openStory(idx);
@@ -1707,8 +1809,8 @@ function updateRegionsLayer() {
   }
   // Reconstruye la capa HTML: siempre las historias, + las etiquetas de región
   // cuando la capa está activa.
-  world.htmlElementsData(showRegions ? [...STORIES, ...NINO_REGION_LABEL_ELS] : STORIES);
-  document.getElementById('regions-panel').classList.toggle('visible', showRegions);
+  world.htmlElementsData(showRegions ? [...STORIES, ...NINO_REGIONS] : STORIES);
+  if (!showRegions) closeRegionPopup();
 }
 
 function updateCurrentsLayer() {
@@ -1777,11 +1879,20 @@ function initGlobe(data) {
     .htmlAltitude(0.016)
     .htmlElement(d => {
       if (d.isRegionLabel) {
-        const lbl = document.createElement('div');
-        lbl.className = 'region-label';
-        lbl.textContent = d.text;
-        lbl.style.color = d.color;
-        return lbl;
+        const chip = document.createElement('div');
+        chip.className = 'region-chip';
+        chip.innerHTML = `
+          <span class="rc-dot" style="background:${d.color};color:${d.color}"></span>
+          <span class="rc-text">
+            <span class="rc-name" style="color:${d.labelColor}">${d.name}</span>
+            <span class="rc-code">${d.code}</span>
+          </span>
+          <span class="rc-info">ⓘ</span>`;
+        chip.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openRegionPopup(d);
+        });
+        return chip;
       }
       const el = document.createElement('div');
       el.className = 'story-marker';
