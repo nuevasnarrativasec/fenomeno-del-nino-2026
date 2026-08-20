@@ -386,6 +386,19 @@
   svg.setAttribute('viewBox', '0 0 793 ' + STAGE_H);
   svg.style.height = STAGE_H + 'px';
 
+  // clipPath que "dibuja" la línea punteada conforme se hace scroll.
+  // El rect crece en Y para ir destapando el trazo de arriba hacia abajo.
+  // Por defecto queda a altura completa (fallback si GSAP no carga).
+  const _defs = document.createElementNS(SVGNS,'defs');
+  const _clip = document.createElementNS(SVGNS,'clipPath');
+  _clip.setAttribute('id','lineDraw');
+  _clip.setAttribute('clipPathUnits','userSpaceOnUse');
+  const clipRect = document.createElementNS(SVGNS,'rect');
+  clipRect.setAttribute('x','0'); clipRect.setAttribute('y','0');
+  clipRect.setAttribute('width','793');
+  clipRect.setAttribute('height', STAGE_H);
+  _clip.appendChild(clipRect); _defs.appendChild(_clip); svg.appendChild(_defs);
+
   function el(tag, cls, html){ const e=document.createElement(tag); if(cls)e.className=cls; if(html!=null)e.innerHTML=html; return e; }
 
   // 1) Línea punteada en zig-zag por los centros de los círculos + bajada a "Yo"
@@ -394,6 +407,7 @@
   const polyD = "M " + points.map(p=>p.join(" ")).join(" L ");
   const poly = document.createElementNS(SVGNS,'path');
   poly.setAttribute('d', polyD); poly.setAttribute('class','dotted');
+  poly.setAttribute('clip-path','url(#lineDraw)');
   svg.appendChild(poly);
 
   // 2) Estaciones (círculo + botón + nombre + cuadro blanco + cuadro naranja)
@@ -468,7 +482,7 @@
   const hline = document.createElementNS(SVGNS,'line');
   hline.setAttribute('x1', 26); hline.setAttribute('y1', ROW_Y+2);
   hline.setAttribute('x2', 767); hline.setAttribute('y2', ROW_Y+2);
-  hline.setAttribute('class','dotted'); svg.appendChild(hline);
+  hline.setAttribute('class','dotted'); hline.setAttribute('clip-path','url(#lineDraw)'); svg.appendChild(hline);
   stage.appendChild(figrow);
 
   // 4) Estación "Yo": cuadro blanco + cuadro naranja (centrados bajo la fila)
@@ -539,6 +553,14 @@
 
   if(window.gsap && window.ScrollTrigger){
     gsap.registerPlugin(ScrollTrigger);
+
+    // La línea punteada se dibuja de arriba hacia abajo siguiendo el scroll.
+    clipRect.setAttribute('height','0');
+    gsap.to(clipRect, {
+      attr:{ height: STAGE_H },
+      ease:'none',
+      scrollTrigger:{ trigger: wrap, start:'top 80%', end:'bottom 80%', scrub:0.5 }
+    });
 
     // Secuencia escalonada por scroll. Para cada personaje, todos los
     // elementos usan el MISMO ancla (su círculo) y aparecen con un desfase
