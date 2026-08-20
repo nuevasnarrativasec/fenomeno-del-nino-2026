@@ -156,7 +156,7 @@
     text-align:center; width:80px;
     font-family:system-ui,-apple-system,sans-serif;
   }
-  .fig img{ display:block; margin:0 auto; height:46px; width:auto; }
+  .fig img{ display:block; margin:0 auto; height:80px; width:auto; }
   .fig.me img{ height:70px; }
   /* etiquetas escalonadas (posicionadas de forma absoluta bajo la línea) */
   .fig-lbl{
@@ -454,7 +454,7 @@
     // figura
     const f = el('div','fig'+(r.me?' me':'')+' reveal');
     f.style.left = x+'px';
-    f.style.top  = (ROW_Y - (r.me?FIG_ME_H:FIG_H))+'px';
+    f.style.top  = r.me ? '3935px' : (ROW_Y - FIG_H)+'px';
     f.innerHTML = `<img src="${IMG_BASE}${r.img}" alt="${r.lbl}">`;
     figrow.appendChild(f);
     if(r.me){ r._x = x; }
