@@ -433,10 +433,13 @@
     circle.style.left = s.cx+'px'; circle.style.top = s.cy+'px';
     node.appendChild(circle);
 
-    // botón naranja de info (aparece con fade junto al personaje)
+    // Posición horizontal del cuadro blanco (fuente única para cuadro y botón)
+    const ibLeft = s.side==='right' ? (s.cx + CIRCLE_R + 8) : (s.cx - CIRCLE_R - 8 - INFO_W);
+
+    // botón de info: anclado a la esquina superior derecha del cuadro (.infobox)
     const btn = el('button','infobtn reveal','›');
-    btn.style.left = (s.cx + CIRCLE_R*0.72)+'px';
-    btn.style.top  = (s.cy - CIRCLE_R*0.72)+'px';
+    btn.style.left = (ibLeft + INFO_W)+'px';   // borde derecho del cuadro
+    btn.style.top  = (s.infoTop)+'px';         // borde superior del cuadro
     btn.dataset.idx = i;
     node.appendChild(btn);
 
@@ -449,8 +452,7 @@
     // cuadro blanco de información
     const ib = el('div','infobox reveal', `<span class="region">${s.region}.</span> ${s.info}`);
     ib.style.top = s.infoTop+'px';
-    if(s.side==='right'){ ib.style.left = (s.cx + CIRCLE_R + 8)+'px'; }
-    else { ib.style.left = (s.cx - CIRCLE_R - 8 - INFO_W)+'px'; }
+    ib.style.left = ibLeft+'px';
     node.appendChild(ib);
 
     // cuadro naranja (sobre la línea)
@@ -600,11 +602,11 @@
 
     // 1) Personajes del zigzag
     STATIONS.forEach(s=>{
-      revealAt(s._circle, s._circle, 0);       // el personaje…
-      revealAt(s._nw,     s._circle, 0);       // …con su nombre y cargo
-      revealAt(s._btn,    s._circle, 0);       // …y su flecha de popup
-      revealAt(s._ib,     s._circle, STEP);    // luego el cuadro blanco
-      revealAt(s._ob,     s._circle, STEP*2);  // luego el cuadro naranja
+      revealAt(s._circle, s._circle, 0);         // el personaje…
+      revealAt(s._nw,     s._circle, 0);         // …con su nombre y cargo
+      revealAt(s._ib,     s._circle, STEP);      // luego el cuadro blanco
+      revealAt(s._btn,    s._circle, STEP*1.5);  // …y después su botón de info
+      revealAt(s._ob,     s._circle, STEP*2);    // por último el cuadro naranja
     });
 
     // 2) Fila inferior + estación "Yo" (sin botón de popup)
