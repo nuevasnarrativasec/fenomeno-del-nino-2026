@@ -40,7 +40,7 @@
   .topbar .chev{
     display:inline-flex; align-items:center; justify-content:center;
     width:18px; height:18px; margin-left:6px; vertical-align:-4px;
-    background:var(--orange); color:#fff; border-radius:3px;
+    background:#ee0c0c; color:#fff; border-radius:3px;
     font-size:.7rem; font-weight:700;
   }
 
@@ -107,7 +107,7 @@
   /* Orange square info button on the circle */
   .infobtn{
     position:absolute; width:26px; height:26px; z-index:8;
-    background:var(--orange); border:none; border-radius:4px;
+    background:#ee0c0c; border:none; border-radius:4px;
     color:#fff; font-weight:800; font-size:.82rem; cursor:pointer;
     display:flex; align-items:center; justify-content:center;
     transform:translate(-50%,-50%);
@@ -115,7 +115,7 @@
     transition:transform .15s ease, background .15s ease;
     font-family:system-ui,-apple-system,sans-serif;
   }
-  .infobtn:hover{ background:var(--orange-soft); transform:translate(-50%,-50%) scale(1.12); }
+  .infobtn:hover{ background:#ee0c0c; transform:translate(-50%,-50%) scale(1.12); }
 
   /* White information box */
   .infobox{
@@ -205,6 +205,20 @@
 
   @media (max-width:520px){
     .topbar{ font-size:.66rem; }
+  }
+
+  /* ===== Efecto pulse del botón de info (añadido, no altera lo previo) =====
+     Usa solo box-shadow: no toca transform (centrado/hover) ni opacity
+     (reveal por scroll con GSAP), así que no interfiere con lo ya hecho. */
+  @keyframes infobtnPulse{
+    0%   { transform:translate(-50%,-50%) scale(.8);    box-shadow:0 3px 10px rgba(0,0,0,.5), 0 0 0 0   rgba(238,12,12,.55); }
+    70%  { transform:translate(-50%,-50%) scale(1.06); box-shadow:0 3px 10px rgba(0,0,0,.5), 0 0 0 10px rgba(238,12,12,0);  }
+    100% { transform:translate(-50%,-50%) scale(.8);    box-shadow:0 3px 10px rgba(0,0,0,.5), 0 0 0 0   rgba(238,12,12,0);   }
+  }
+  .infobtn{ animation: infobtnPulse 2s ease-out infinite; }
+  .infobtn:hover{ animation-play-state:paused; transform:translate(-50%,-50%) scale(1.12) !important; }
+  @media (prefers-reduced-motion: reduce){
+    .infobtn{ animation:none; }
   }
 </style>
 </head>
