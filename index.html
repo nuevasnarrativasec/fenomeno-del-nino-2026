@@ -84,6 +84,7 @@
   /* Connector SVG sits behind everything */
   #connector{ position:absolute; inset:0; width:1120px; height:2720px; z-index:1; pointer-events:none; }
   #connector .dotted{ fill:none; stroke:var(--line); stroke-width:1.4; stroke-dasharray:2 6; stroke-linecap:round; opacity:.85; }
+  #connector .arrow{ fill:#cdc4b8; opacity:.9; }
   #connector .tick{ stroke:var(--line); stroke-width:1.2; opacity:.7; }
 
   /* Character circle */
@@ -151,7 +152,7 @@
   .final-q{
     position:absolute; z-index:7; transform:translate(-50%,-50%);
     font-family:system-ui,-apple-system,sans-serif;
-    color:#f7f2ea; font-weight:800; font-size:2.4rem; line-height:1;
+    color:#f7f2ea; font-weight:800; font-size:3rem; line-height:1;
     letter-spacing:.01em; white-space:nowrap;
   }
   /* Texto inferior de la sección final */
@@ -302,7 +303,7 @@
       popE:"Dengue", popT:"El dengue y El Niño",
       popB:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat." },
 
-    { name:"Nombre", age:41, role:"Ingeniero", region:"ÁNCASH",
+    { name:"Carlos", age:41, role:"Ingeniero", region:"ÁNCASH",
       cx:352, cy:352, side:"left", infoTop:308,
       info:"Trabaja para una empresa contratista, operando maquinaria pesada para retirar huaicos y escombros de la vía tras las lluvias. Lleva dos semanas sin volver a su casa por la magnitud del daño.",
       stmt:"No empezó con una carretera. La carretera solo muestra lo que hizo la lluvia.", q:"¿Y qué más hizo esa lluvia, además de romper caminos?",
@@ -310,7 +311,7 @@
       popE:"Infraestructura crítica", popT:"Huaicos y vías rotas",
       popB:"Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." },
 
-    { name:"Nombre", age:29, role:"Transportista", region:"LAMBAYEQUE",
+    { name:"Pablo", age:29, role:"Transportista", region:"LAMBAYEQUE",
       cx:600, cy:562, side:"left", infoTop:520,
       info:"Chofer de una empresa de carga que transporta alimentos entre Chiclayo y el norte. Ese año, su ruta habitual se volvió zona de rescate.",
       stmt:"No fue solo el retraso. En esta misma carretera, ese año, murieron más personas que en cualquier otro.", q:"¿Y esa misma lluvia, en la sierra, era la primera vez?",
@@ -318,7 +319,7 @@
       popE:"Fallecidos por El Niño", popT:"Las muertes en la carretera",
       popB:"Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo." },
 
-    { name:"Nombre", age:47, role:"Promotor", region:"CAJAMARCA",
+    { name:"Daniel", age:47, role:"Promotor", region:"CAJAMARCA",
       cx:188, cy:802, side:"right", infoTop:758,
       info:"Vive en un caserío rural. Es promotor de defensa civil de su comunidad desde hace 15 años; ha visto el mismo río desbordarse más veces de las que puede contar.",
       stmt:"No fue la primera vez. Cajamarca ya había vivido esto más veces que cualquier otro lugar del país.", q:"¿Y quién no pudo vender lo que la lluvia sí dejó crecer, más al sur?",
@@ -326,7 +327,7 @@
       popE:"Recurrencia de eventos", popT:"El desastre que se repite",
       popB:"At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident." },
 
-    { name:"Nombre", age:52, role:"Comerciante", region:"LA LIBERTAD",
+    { name:"Isabel", age:52, role:"Comerciante", region:"LA LIBERTAD",
       cx:632, cy:1042, side:"left", infoTop:998,
       info:"Tiene un puesto de frutas en un mercado de Trujillo hace más de veinte años. Ese año no pudo vender mango, su producto más pedido, porque la cosecha de la región se malogró.",
       stmt:"No fue que faltara el camión. Fue que la fruta nunca maduró.", q:"¿Y el mar? ¿También lo sintió?",
@@ -334,7 +335,7 @@
       popE:"Rendimiento de mango", popT:"La cosecha que no maduró",
       popB:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat." },
 
-    { name:"Nombre", age:58, role:"Acuicultor", region:"LA LIBERTAD",
+    { name:"Héctor", age:58, role:"Acuicultor", region:"LA LIBERTAD",
       cx:168, cy:1278, side:"right", infoTop:1234,
       info:"Cría conchas de abanico en la bahía. Ese año, el calentamiento del mar diezmó sus cultivos y perdió casi toda la producción de la temporada.",
       stmt:"No fue la lluvia la que mató mis conchas. Fue el mar — el mismo mar que provocó la lluvia.", q:"¿El mar hace lo mismo en todas partes?",
@@ -342,7 +343,7 @@
       popE:"Concha de abanico", popT:"El mar demasiado caliente",
       popB:"Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." },
 
-    { name:"Nombre", age:61, role:"Agricultora", region:"PUNO",
+    { name:"Estela", age:61, role:"Agricultora", region:"PUNO",
       cx:352, cy:1502, side:"right", infoTop:1458,
       info:"Cultiva en el altiplano. Ese año no llegó la lluvia esperada: la sequía secó los pastos y arruinó buena parte de su cosecha.",
       stmt:"No. A mí el mismo mar no me trajo lluvia. Me la quitó.", q:"¿Y esa misma sequía trajo algo más, en otro rincón de la sierra?",
@@ -350,7 +351,7 @@
       popE:"Sequías históricas", popT:"El sur que se seca",
       popB:"Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo." },
 
-    { name:"Nombre", age:47, role:"Fruticultor", region:"AYACUCHO",
+    { name:"Tomás", age:47, role:"Fruticultor", region:"AYACUCHO",
       cx:562, cy:1722, side:"left", infoTop:1678,
       info:"Trabaja un valle interandino cerca de Huamanga cultivando frutales. Una herida que no cerraba resultó ser leishmaniasis.",
       stmt:"No empezó con una mosca de arena.", q:"¿Y en la ciudad, sintieron algo distinto ese mismo año?",
@@ -358,7 +359,7 @@
       popE:"Leishmaniasis", popT:"La enfermedad del valle",
       popB:"At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa." },
 
-    { name:"Nombre", age:44, role:"Directora", region:"LIMA PROVINCIAS",
+    { name:"Cecilia", age:44, role:"Directora", region:"LIMA PROVINCIAS",
       cx:238, cy:1978, side:"right", infoTop:1934,
       info:"Dirige un colegio rural en una provincia de Lima. Su escuela sirvió de refugio de emergencia varias veces ese año.",
       stmt:"No fue una vez. Fue la emergencia más repetida de todo el país, ese año.", q:"¿Y en la ciudad más grande, qué pasó cuando la emergencia llegó de verdad?",
@@ -378,11 +379,11 @@
     {lbl:"Fallecidos El Niño (anteriores)", img:"personaje-3.png"},
     {lbl:"Recurrencia eventos", img:"personaje-4.png"},
     {lbl:"Rendimiento de mango", img:"personaje-5.png"},
-    {lbl:"Yo", me:true, img:"personaje-yo.png"},
     {lbl:"Cosecha de concha de abanico", img:"personaje-6.png"},
     {lbl:"Sequías históricas", img:"personaje-7.png"},
     {lbl:"Leishmaniasis", img:"personaje-8.png"},
-    {lbl:"Emergencias en años de El Niño vs. resto", img:"personaje-9.png"}
+    {lbl:"Emergencias en años de El Niño vs. resto", img:"personaje-9.png"},
+    {lbl:"Yo", me:true, img:"personaje-yo.png"}
   ];
 
   const IMG_BASE = "img/personajes/";   // carpeta de ilustraciones
@@ -410,7 +411,8 @@
   const STAGE_W = 1120;
   const CX_OFFSET = 178;
   STATIONS.forEach(s=> s.cx += CX_OFFSET);
-  YO.cx += CX_OFFSET;
+  const YO_X = 1000;   // "Yo" al extremo derecho: destino del zig-zag y de la fila
+  YO.cx = YO_X;
   STATIONS.forEach((s,i)=>{ s.cy = START_Y + i*GAP; });
   YO.cy = STATIONS[STATIONS.length-1].cy + Math.round(GAP*1.1);
   STATIONS.forEach((s,i)=>{
@@ -421,10 +423,12 @@
                  toy: Math.round(s.cy + (ny - s.cy)*ORANGE_F) };
   });
   // Sección final (bajo la fila de figuras), medidos desde la línea de pies YO.cy
-  const FINAL_Q_DY   = 250;   // título "¿Y tú?"
-  const FINAL_BOX_DY = 470;   // caja roja con el dato
-  const FINAL_CAP_DY = 660;   // texto inferior
-  const STAGE_H = YO.cy + FINAL_CAP_DY + 120;   // alto total del lienzo
+  // Sección final: fila horizontal (Yo a la derecha), ¿Y tú?, caja roja y Lorem.
+  // El cuadro naranja de esta zona es el de la estación de Cecilia (última estación).
+  const YT_X    = 580, YT_DY = 330;                          // "¿Y tú?" (centro X, desfase Y bajo la fila)
+  const RBOX_CX = 580, RBOX_W = 300, RBOX_DY = YT_DY + 185;  // caja roja del dato, bajo "¿Y tú?"
+  const CAP_DY  = RBOX_DY + 150;                             // texto Lorem, bajo la caja roja
+  const STAGE_H = YO.cy + CAP_DY + 130;                      // alto total del lienzo
 
   /* ============================================================
      CONSTRUCCIÓN DEL DOM
@@ -456,24 +460,23 @@
 
   // 1) Línea punteada en zig-zag por los centros de los círculos + bajada a "Yo"
   const points = STATIONS.map(s=>[s.cx,s.cy]);
-  points.push([YO.cx, YO.cy]);
+  points.push([YO.cx, YO.cy]);   // termina en el "Yo" (la línea pasa por la caja naranja de Cecilia)
   const polyD = "M " + points.map(p=>p.join(" ")).join(" L ");
   const poly = document.createElementNS(SVGNS,'path');
   poly.setAttribute('d', polyD); poly.setAttribute('class','dotted');
   poly.setAttribute('clip-path','url(#lineDraw)');
   svg.appendChild(poly);
 
-  // 1b) Bajada punteada vertical de la sección final, con huecos para el
-  //     título "¿Y tú?" y la caja. Comparte el clip para dibujarse con el scroll.
-  function vseg(y1, y2){
-    const l = document.createElementNS(SVGNS,'line');
-    l.setAttribute('x1', YO.cx); l.setAttribute('y1', y1);
-    l.setAttribute('x2', YO.cx); l.setAttribute('y2', y2);
-    l.setAttribute('class','dotted'); l.setAttribute('clip-path','url(#lineDraw)');
-    svg.appendChild(l);
+  // 1b) Conectores punteados de la sección final (se dibujan con el scroll).
+  function dline(pts){
+    const d = "M " + pts.map(pt=>pt.join(" ")).join(" L ");
+    const pth = document.createElementNS(SVGNS,'path');
+    pth.setAttribute('d', d); pth.setAttribute('class','dotted');
+    pth.setAttribute('clip-path','url(#lineDraw)'); svg.appendChild(pth);
   }
-  vseg(YO.cy + 20,                YO.cy + FINAL_Q_DY - 46);   // pies → arriba del título
-  vseg(YO.cy + FINAL_Q_DY + 46,   YO.cy + FINAL_BOX_DY - 14); // debajo del título → tope de la caja
+  const BEND_X = 870;  // codo de la diagonal "Yo" → "¿Y tú?" (menor = más inclinada)
+  dline([[YO_X, YO.cy + 12], [BEND_X, YO.cy + YT_DY], [YT_X + 80, YO.cy + YT_DY]]);  // "Yo" → "¿Y tú?" (diagonal + horizontal)
+  dline([[YT_X, YO.cy + YT_DY + 46], [YT_X, YO.cy + RBOX_DY - 14]]);               // "¿Y tú?" → caja roja
 
   // 2) Estaciones (círculo + botón + nombre + cuadro blanco + cuadro naranja)
   STATIONS.forEach((s, i)=>{
@@ -524,67 +527,77 @@
   //    escalonadas (dos niveles alternados) para que no se amontonen.
   const figrow = el('div','figrow');
   const ROW_Y = YO.cy;                 // altura de la línea (pies de las figuras)
-  const startX = 90, endX = 1030;
-  const step = (endX - startX)/(ROW.length-1);
-  const FIG_H = 46, FIG_ME_H = 70;
-  const LBL_BASE = 72, LBL_TIER = 48;  // base y salto del escalonado (deja sitio al número)
+  const N9 = 9;                        // variables numeradas (1..9)
+  const startX = 70, endX9 = 800;      // extensión de las 9 variables
+  const step = (endX9 - startX)/(N9 - 1);
+  const FIG_H = 46, FIG_ME_OFF = 36;   // desfases para apoyar los pies sobre la línea
+  const LBL_BASE = 72;                 // etiquetas en una sola fila alineada
   const NUM_DY = 20;                   // número grande justo bajo la figura
-  let figNum = 0;                      // contador visible (el "Yo" no cuenta)
-  // nivel 0 = arriba, 1 = abajo (alterna para evitar choques horizontales)
-  const TIER = [0,1,0,1,0, 0, 0,1,0,1];
+  const xOf = (r,i)=> r.me ? YO_X : (startX + i*step);   // "Yo" al extremo derecho
+  let figNum = 0;
   ROW.forEach((r, i)=>{
-    const x = startX + i*step;
+    const x = xOf(r,i);
     // figura
     const f = el('div','fig'+(r.me?' me':'')+' reveal');
     f.style.left = x+'px';
-    f.style.top  = r.me ? '3935px' : (ROW_Y - FIG_H)+'px';
+    f.style.top  = (ROW_Y - (r.me ? FIG_ME_OFF : FIG_H))+'px';
     f.innerHTML = `<img src="${IMG_BASE}${r.img}" alt="${r.lbl}">`;
     figrow.appendChild(f);
     if(r.me){ r._x = x; }
-    // número grande (1..9) debajo de la figura; el "Yo" no lleva número
     if(!r.me){
+      // número grande (1..9)
       figNum++;
       const num = el('div','fig-num reveal', String(figNum));
       num.style.left = x+'px';
       num.style.top  = (ROW_Y + NUM_DY)+'px';
       figrow.appendChild(num);
+      // etiqueta alineada (el "Yo" no lleva etiqueta)
+      const lab = el('div','fig-lbl reveal', r.lbl);
+      lab.style.left = x+'px';
+      lab.style.top  = (ROW_Y + LBL_BASE)+'px';
+      figrow.appendChild(lab);
     }
-    // etiqueta (posición escalonada, o grande y centrada si es "Yo")
-    const lab = el('div','fig-lbl'+(r.me?' me':'')+' reveal', r.lbl);
-    lab.style.left = x+'px';
-    lab.style.top  = (ROW_Y + (r.me ? 50 : LBL_BASE))+'px';
-    figrow.appendChild(lab);
   });
   // línea punteada horizontal continua a la altura de los pies
   const hline = document.createElementNS(SVGNS,'line');
-  hline.setAttribute('x1', 40); hline.setAttribute('y1', ROW_Y+2);
-  hline.setAttribute('x2', 1080); hline.setAttribute('y2', ROW_Y+2);
+  hline.setAttribute('x1', 35); hline.setAttribute('y1', ROW_Y+2);
+  hline.setAttribute('x2', 1085); hline.setAttribute('y2', ROW_Y+2);
   hline.setAttribute('class','dotted'); hline.setAttribute('clip-path','url(#lineDraw)'); svg.appendChild(hline);
+  // flechas ▷ entre figuras consecutivas (incluye el salto hacia el "Yo")
+  for(let i=0;i<ROW.length-1;i++){
+    const x1 = xOf(ROW[i],i), x2 = xOf(ROW[i+1],i+1);
+    const mx = (x1 + x2)/2, my = ROW_Y + 2;
+    const tri = document.createElementNS(SVGNS,'path');
+    tri.setAttribute('d', `M ${mx-5} ${my-6} L ${mx+6} ${my} L ${mx-5} ${my+6} Z`);
+    tri.setAttribute('class','arrow'); tri.setAttribute('clip-path','url(#lineDraw)');
+    svg.appendChild(tri);
+  }
   stage.appendChild(figrow);
 
-  // 4) Estación "Yo" — sección final: título "¿Y tú?" + caja del dato + texto
+  // 4) Sección final — "¿Y tú?" + caja roja del dato + texto Lorem.
+  //    (el cuadro naranja de esta zona lo aporta la estación de Cecilia)
   const yoNode = el('div','node');
 
-  // título "¿Y tú?" (blanco, fuera de la caja)
+  // "¿Y tú?"
   const yq = el('div','final-q reveal','¿Y tú?');
-  yq.style.left = YO.cx+'px';
-  yq.style.top  = (YO.cy + FINAL_Q_DY)+'px';
+  yq.style.left = YT_X+'px';
+  yq.style.top  = (YO.cy + YT_DY)+'px';
   yoNode.appendChild(yq);
 
   // caja roja con el dato
   const yob = el('div','orangebox final reveal',
     `<span class="stmt"><strong>9 variables de las 10</strong> que constituyen una catástrofe la viven millones de peruanos.</span>`);
-  yob.style.width = '300px';
-  yob.style.left = YO.cx+'px';
-  yob.style.top  = (YO.cy + FINAL_BOX_DY)+'px';
+  yob.style.width = RBOX_W+'px';
+  yob.style.left  = RBOX_CX+'px';
+  yob.style.top   = (YO.cy + RBOX_DY)+'px';
   yob.style.transform = 'translateX(-50%)';
   yob._baseTransform = 'translateX(-50%)';
   yoNode.appendChild(yob);
 
-  // texto inferior
+  // texto Lorem
   const ycap = el('div','final-caption reveal','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.');
-  ycap.style.left = YO.cx+'px';
-  ycap.style.top  = (YO.cy + FINAL_CAP_DY)+'px';
+  ycap.style.left = RBOX_CX+'px';
+  ycap.style.top  = (YO.cy + CAP_DY)+'px';
   yoNode.appendChild(ycap);
 
   stage.appendChild(yoNode);
@@ -682,9 +695,9 @@
 
     // 2) Fila inferior + estación "Yo" (sin botón de popup)
     document.querySelectorAll('.figrow .reveal').forEach(f=> revealAt(f, yoFigEl, 0));
-    revealAt(yq,   yoFigEl, STEP);             // primero el título "¿Y tú?"
-    revealAt(yob,  yoFigEl, STEP*2);           // luego la caja del dato
-    revealAt(ycap, yoFigEl, STEP*3);           // y por último el texto inferior
+    revealAt(yq,   yoFigEl, STEP);             // "¿Y tú?"
+    revealAt(yob,  yoFigEl, STEP*2);           // caja roja del dato
+    revealAt(ycap, yoFigEl, STEP*3);           // texto Lorem
 
     ScrollTrigger.refresh();
   } else {
