@@ -76,13 +76,13 @@
   #stageWrap{ position:relative; width:100%; }
   #stage{
     position:absolute; left:50%; top:0;
-    width:793px; height:2720px;
+    width:1120px; height:2720px;
     transform:translateX(-50%);
     transform-origin:top center;
   }
 
   /* Connector SVG sits behind everything */
-  #connector{ position:absolute; inset:0; width:793px; height:2720px; z-index:1; pointer-events:none; }
+  #connector{ position:absolute; inset:0; width:1120px; height:2720px; z-index:1; pointer-events:none; }
   #connector .dotted{ fill:none; stroke:var(--line); stroke-width:1.4; stroke-dasharray:2 6; stroke-linecap:round; opacity:.85; }
   #connector .tick{ stroke:var(--line); stroke-width:1.2; opacity:.7; }
 
@@ -166,7 +166,7 @@
   .reveal{ opacity:0; }
 
   /* ── Bottom section ── */
-  .figrow{ position:absolute; left:0; top:0; width:793px; z-index:5; }
+  .figrow{ position:absolute; left:0; top:0; width:1120px; z-index:5; }
   .fig{
     position:absolute; transform:translateX(-50%);
     text-align:center; width:80px;
@@ -182,6 +182,19 @@
     font-size:.60rem; line-height:1.25; color:#c9c0b4;
   }
   .fig-lbl.me{ width:auto; color:#fff; font-weight:800; font-size:1.55rem; letter-spacing:.04em; }
+  /* Número grande (1..9) bajo cada figura */
+  .fig-num{
+    position: absolute;
+    transform: translateX(-50%);
+    width: 60px;
+    text-align: center;
+    font-family: system-ui, -apple-system, sans-serif;
+    font-weight: 800;
+    font-size: 1.3rem;
+    letter-spacing: .02em;
+    color: var(--orange-soft);
+    margin-top: 16px;
+  }
 
   /* Legend for the popup / modal */
   .modal-backdrop{
@@ -251,7 +264,7 @@
 
   <div id="stageWrap">
     <div id="stage">
-      <svg id="connector" viewBox="0 0 793 2720" preserveAspectRatio="none" aria-hidden="true"></svg>
+      <svg id="connector" viewBox="0 0 1120 2720" preserveAspectRatio="none" aria-hidden="true"></svg>
       <!-- nodes, boxes, figures injected by JS -->
     </div>
   </div>
@@ -391,6 +404,13 @@
   const START_Y = 150;   // centro vertical del primer círculo
   const GAP = 420;       // ← distancia entre estaciones (da espacio a la secuencia por scroll)
   const ORANGE_F = 0.58; // posición del cuadro naranja sobre el tramo a la sgte. estación
+
+  // Lienzo más ancho: da aire a la fila inferior para alinear las etiquetas en
+  // una sola fila. El zig-zag se recentra desplazando todos los cx por igual.
+  const STAGE_W = 1120;
+  const CX_OFFSET = 178;
+  STATIONS.forEach(s=> s.cx += CX_OFFSET);
+  YO.cx += CX_OFFSET;
   STATIONS.forEach((s,i)=>{ s.cy = START_Y + i*GAP; });
   YO.cy = STATIONS[STATIONS.length-1].cy + Math.round(GAP*1.1);
   STATIONS.forEach((s,i)=>{
@@ -416,7 +436,7 @@
 
   // El lienzo y el SVG crecen según STAGE_H (derivado de GAP)
   stage.style.height = STAGE_H + 'px';
-  svg.setAttribute('viewBox', '0 0 793 ' + STAGE_H);
+  svg.setAttribute('viewBox', '0 0 ' + STAGE_W + ' ' + STAGE_H);
   svg.style.height = STAGE_H + 'px';
 
   // clipPath que "dibuja" la línea punteada conforme se hace scroll.
@@ -428,7 +448,7 @@
   _clip.setAttribute('clipPathUnits','userSpaceOnUse');
   const clipRect = document.createElementNS(SVGNS,'rect');
   clipRect.setAttribute('x','0'); clipRect.setAttribute('y','0');
-  clipRect.setAttribute('width','793');
+  clipRect.setAttribute('width', String(STAGE_W));
   clipRect.setAttribute('height', STAGE_H);
   _clip.appendChild(clipRect); _defs.appendChild(_clip); svg.appendChild(_defs);
 
@@ -504,10 +524,12 @@
   //    escalonadas (dos niveles alternados) para que no se amontonen.
   const figrow = el('div','figrow');
   const ROW_Y = YO.cy;                 // altura de la línea (pies de las figuras)
-  const startX = 70, endX = 726;
+  const startX = 90, endX = 1030;
   const step = (endX - startX)/(ROW.length-1);
   const FIG_H = 46, FIG_ME_H = 70;
-  const LBL_BASE = 42, LBL_TIER = 48;  // base y salto del escalonado
+  const LBL_BASE = 72, LBL_TIER = 48;  // base y salto del escalonado (deja sitio al número)
+  const NUM_DY = 20;                   // número grande justo bajo la figura
+  let figNum = 0;                      // contador visible (el "Yo" no cuenta)
   // nivel 0 = arriba, 1 = abajo (alterna para evitar choques horizontales)
   const TIER = [0,1,0,1,0, 0, 0,1,0,1];
   ROW.forEach((r, i)=>{
@@ -519,16 +541,24 @@
     f.innerHTML = `<img src="${IMG_BASE}${r.img}" alt="${r.lbl}">`;
     figrow.appendChild(f);
     if(r.me){ r._x = x; }
+    // número grande (1..9) debajo de la figura; el "Yo" no lleva número
+    if(!r.me){
+      figNum++;
+      const num = el('div','fig-num reveal', String(figNum));
+      num.style.left = x+'px';
+      num.style.top  = (ROW_Y + NUM_DY)+'px';
+      figrow.appendChild(num);
+    }
     // etiqueta (posición escalonada, o grande y centrada si es "Yo")
     const lab = el('div','fig-lbl'+(r.me?' me':'')+' reveal', r.lbl);
     lab.style.left = x+'px';
-    lab.style.top  = (ROW_Y + (r.me ? 50 : LBL_BASE + TIER[i]*LBL_TIER))+'px';
+    lab.style.top  = (ROW_Y + (r.me ? 50 : LBL_BASE))+'px';
     figrow.appendChild(lab);
   });
   // línea punteada horizontal continua a la altura de los pies
   const hline = document.createElementNS(SVGNS,'line');
-  hline.setAttribute('x1', 26); hline.setAttribute('y1', ROW_Y+2);
-  hline.setAttribute('x2', 767); hline.setAttribute('y2', ROW_Y+2);
+  hline.setAttribute('x1', 40); hline.setAttribute('y1', ROW_Y+2);
+  hline.setAttribute('x2', 1080); hline.setAttribute('y2', ROW_Y+2);
   hline.setAttribute('class','dotted'); hline.setAttribute('clip-path','url(#lineDraw)'); svg.appendChild(hline);
   stage.appendChild(figrow);
 
@@ -591,7 +621,7 @@
   /* ============================================================
      ESCALADO RESPONSIVE + SCROLLTRIGGER
      ============================================================ */
-  const STAGE_W = 793;
+  // STAGE_W definido arriba (lienzo ancho para la fila inferior)
   const wrap = document.getElementById('stageWrap');
   let curScale = 1;   // escala actual (para desfasar los reveals en px reales)
 
