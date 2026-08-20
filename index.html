@@ -141,10 +141,26 @@
   .orangebox .stmt{ color:#ffe9df; }
   .orangebox .q{ display:block; margin-top:7px; font-weight:800; color:#fff; }
 
-  /* Cuadro naranja final del "Yo": contenido centrado y "¿Y tú?" grande */
-  .orangebox.final{ text-align:center; padding:20px 24px; border-radius:16px; }
-  .orangebox.final .stmt{ display:block; font-size:.9rem; }
-  .orangebox.final .q{ margin-top:14px; font-size:2.1rem; line-height:1.1; }
+  /* Caja roja final del "Yo" (el dato) */
+  .orangebox.final{ text-align:center; padding:18px 22px; border-radius:14px;
+    background:#e5271b; box-shadow:0 12px 30px rgba(0,0,0,.55); }
+  .orangebox.final .stmt{ display:block; font-size:.9rem; color:#ffe1d8; line-height:1.5; }
+  .orangebox.final .stmt strong{ color:#fff; font-weight:800; }
+
+  /* Título "¿Y tú?" (blanco, fuera de la caja) */
+  .final-q{
+    position:absolute; z-index:7; transform:translate(-50%,-50%);
+    font-family:system-ui,-apple-system,sans-serif;
+    color:#f7f2ea; font-weight:800; font-size:2.4rem; line-height:1;
+    letter-spacing:.01em; white-space:nowrap;
+  }
+  /* Texto inferior de la sección final */
+  .final-caption{
+    position:absolute; z-index:6; transform:translateX(-50%);
+    width:440px; text-align:center;
+    font-family:system-ui,-apple-system,sans-serif;
+    color:#e7ddd0; font-size:1.05rem; line-height:1.5;
+  }
 
   /* Reveal state (GSAP animates these in) */
   .reveal{ opacity:0; }
@@ -384,8 +400,11 @@
     s.orange = { tox: Math.round(s.cx + (nx - s.cx)*ORANGE_F),
                  toy: Math.round(s.cy + (ny - s.cy)*ORANGE_F) };
   });
-  const YO_INFO_TOP = YO.cy + 175;     // deja espacio para las etiquetas escalonadas
-  const STAGE_H = YO_INFO_TOP + 300;   // alto total del lienzo
+  // Sección final (bajo la fila de figuras), medidos desde la línea de pies YO.cy
+  const FINAL_Q_DY   = 250;   // título "¿Y tú?"
+  const FINAL_BOX_DY = 470;   // caja roja con el dato
+  const FINAL_CAP_DY = 660;   // texto inferior
+  const STAGE_H = YO.cy + FINAL_CAP_DY + 120;   // alto total del lienzo
 
   /* ============================================================
      CONSTRUCCIÓN DEL DOM
@@ -423,6 +442,18 @@
   poly.setAttribute('d', polyD); poly.setAttribute('class','dotted');
   poly.setAttribute('clip-path','url(#lineDraw)');
   svg.appendChild(poly);
+
+  // 1b) Bajada punteada vertical de la sección final, con huecos para el
+  //     título "¿Y tú?" y la caja. Comparte el clip para dibujarse con el scroll.
+  function vseg(y1, y2){
+    const l = document.createElementNS(SVGNS,'line');
+    l.setAttribute('x1', YO.cx); l.setAttribute('y1', y1);
+    l.setAttribute('x2', YO.cx); l.setAttribute('y2', y2);
+    l.setAttribute('class','dotted'); l.setAttribute('clip-path','url(#lineDraw)');
+    svg.appendChild(l);
+  }
+  vseg(YO.cy + 20,                YO.cy + FINAL_Q_DY - 46);   // pies → arriba del título
+  vseg(YO.cy + FINAL_Q_DY + 46,   YO.cy + FINAL_BOX_DY - 14); // debajo del título → tope de la caja
 
   // 2) Estaciones (círculo + botón + nombre + cuadro blanco + cuadro naranja)
   STATIONS.forEach((s, i)=>{
@@ -501,21 +532,31 @@
   hline.setAttribute('class','dotted'); hline.setAttribute('clip-path','url(#lineDraw)'); svg.appendChild(hline);
   stage.appendChild(figrow);
 
-  // 4) Estación "Yo": cuadro blanco + cuadro naranja (centrados bajo la fila)
+  // 4) Estación "Yo" — sección final: título "¿Y tú?" + caja del dato + texto
   const yoNode = el('div','node');
-  const yib = el('div','infobox reveal', `<span class="region">${YO_STATION.region}.</span> ${YO_STATION.info}`);
-  yib.style.width = '300px';
-  yib.style.left = (YO.cx - 150)+'px';
-  yib.style.top  = YO_INFO_TOP+'px';
-  yoNode.appendChild(yib);
 
-  const yob = el('div','orangebox final reveal', `<span class="stmt">${YO_STATION.stmt}</span><span class="q">${YO_STATION.q}</span>`);
-  yob.style.width = '320px';
+  // título "¿Y tú?" (blanco, fuera de la caja)
+  const yq = el('div','final-q reveal','¿Y tú?');
+  yq.style.left = YO.cx+'px';
+  yq.style.top  = (YO.cy + FINAL_Q_DY)+'px';
+  yoNode.appendChild(yq);
+
+  // caja roja con el dato
+  const yob = el('div','orangebox final reveal',
+    `<span class="stmt"><strong>9 variables de las 10</strong> que constituyen una catástrofe la viven millones de peruanos.</span>`);
+  yob.style.width = '300px';
   yob.style.left = YO.cx+'px';
-  yob.style.top  = (YO_INFO_TOP + 138)+'px';
+  yob.style.top  = (YO.cy + FINAL_BOX_DY)+'px';
   yob.style.transform = 'translateX(-50%)';
   yob._baseTransform = 'translateX(-50%)';
   yoNode.appendChild(yob);
+
+  // texto inferior
+  const ycap = el('div','final-caption reveal','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.');
+  ycap.style.left = YO.cx+'px';
+  ycap.style.top  = (YO.cy + FINAL_CAP_DY)+'px';
+  yoNode.appendChild(ycap);
+
   stage.appendChild(yoNode);
 
   // La silueta "Yo" NO lleva botón de popup (a diferencia del resto).
@@ -611,8 +652,9 @@
 
     // 2) Fila inferior + estación "Yo" (sin botón de popup)
     document.querySelectorAll('.figrow .reveal').forEach(f=> revealAt(f, yoFigEl, 0));
-    revealAt(yib, yoFigEl, STEP);              // primero el cuadro blanco del "Yo"
-    revealAt(yob, yoFigEl, STEP*2);            // y tras unos scroll, el naranja
+    revealAt(yq,   yoFigEl, STEP);             // primero el título "¿Y tú?"
+    revealAt(yob,  yoFigEl, STEP*2);           // luego la caja del dato
+    revealAt(ycap, yoFigEl, STEP*3);           // y por último el texto inferior
 
     ScrollTrigger.refresh();
   } else {
