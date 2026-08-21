@@ -58,7 +58,7 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      margin-bottom: 22px;
+      margin-bottom: 40px;
     }
 
     .slider-mid {
@@ -106,7 +106,7 @@
       left: 0;
       right: 0;
       height: 12px;
-      margin-top: 7px;
+      margin-top: 22px;
       pointer-events: none;
     }
 
@@ -137,6 +137,7 @@
       font-size: 0.70rem;
       line-height: 1.5;
       color: #4a5568;
+      display: none;
     }
     .mech-tag {
       color: #e09070;
@@ -161,11 +162,11 @@
       z-index: 1;
     }
 
-    /* ── TOOLTIP ── */
+    /* ── TOOLTIP ── (hover país/región · lado derecho) */
     #tooltip {
       position: absolute;
       top: 20px;
-      left: 20px;
+      right: 20px;
       background: rgba(4, 8, 15, 0.92);
       border: 1px solid #1e2a3e;
       border-radius: 8px;
@@ -184,6 +185,104 @@
     #tooltip .t-country { font-family: sans-serif; font-size: 0.68rem; color: #4a5568; margin-bottom: 6px; }
     #tooltip .t-anomaly { font-size: 1.6rem; font-family: sans-serif; font-weight: 700; }
     #tooltip .t-note    { font-size: 0.72rem; font-family: sans-serif; color: #6a7080; margin-top: 4px; line-height: 1.4; }
+
+    /* ── PANEL EXPLICATIVO DE REGIONES (esquina superior izquierda) ── */
+    #regions-info {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: rgba(4, 8, 15, 0.92);
+      border: 1px solid #1e2a3e;
+      border-radius: 8px;
+      padding: 13px 16px;
+      z-index: 20;
+      max-width: 262px;
+      backdrop-filter: blur(6px);
+    }
+    #regions-info .ri-title {
+      font-family: sans-serif;
+      font-size: 0.63rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #5a6070;
+      margin-bottom: 8px;
+    }
+    #regions-info .ri-intro {
+      font-family: sans-serif;
+      font-size: 0.72rem;
+      line-height: 1.5;
+      color: #9aa0b0;
+      margin-bottom: 11px;
+    }
+    #regions-info .ri-row {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 6px;
+      font-family: sans-serif;
+      font-size: 0.70rem;
+      line-height: 1.35;
+    }
+    #regions-info .ri-row:last-child { margin-bottom: 0; }
+    #regions-info .ri-dot {
+      width: 9px; height: 9px;
+      border-radius: 2px;
+      flex-shrink: 0;
+      align-self: center;
+      box-shadow: 0 0 5px currentColor;
+    }
+    #regions-info .ri-code { color: #f0e8df; font-weight: 700; white-space: nowrap; }
+    #regions-info .ri-desc { color: #8a8878; }
+
+    /* ── PICOS DE TEMPERATURA EN EL SLIDER ── */
+    .slider-peaks {
+      position: absolute;
+      left: 0; right: 0;
+      top: 50%;
+      height: 0;
+      pointer-events: none;
+      z-index: 4;
+    }
+    .slider-peak {
+      position: absolute;
+      top: 0;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      pointer-events: auto;
+    }
+    .slider-peak .pk-diamond {
+      width: 10px; height: 10px;
+      margin-top: -5px;
+      transform: rotate(45deg);
+      background: #ff6a2a;
+      border: 1px solid #ffd7b0;
+      box-shadow: 0 0 7px rgba(255,106,42,0.9);
+      transition: transform 0.15s, box-shadow 0.15s;
+          border-radius: 20px;
+    }
+    .slider-peak:hover .pk-diamond {
+      transform: rotate(45deg) scale(1.4);
+      box-shadow: 0 0 14px rgba(255,106,42,1);
+    }
+    .slider-peak .pk-year {
+      margin-top: 7px;
+      font-family: sans-serif;
+      font-size: 0.6rem;
+      font-weight: 700;
+      color: #d78a55;
+      white-space: nowrap;
+      transition: color 0.15s;
+    }
+    .slider-peak:hover .pk-year { color: #ffb27a; }
+    /* El pico del extremo derecho alinea su año hacia la izquierda para no cortarse */
+    .slider-peak.pk-last .pk-year { transform: translateX(-38%); }
+
+    .pk-last{
+      display: none;
+    }
 
     /* ── LEYENDA ── */
     #legend {
@@ -785,6 +884,7 @@
       <span class="slider-label">Ene 1980</span>
       <div class="slider-mid">
         <input type="range" id="intensitySlider" min="0" max="558" value="558" step="1" />
+        <div class="slider-peaks" id="sliderPeaks"></div>
         <div class="slider-ticks" id="sliderTicks"></div>
       </div>
       <span class="slider-label">Jul 2026</span>
@@ -807,6 +907,16 @@
     <div class="loading-text">Fenómeno El Niño</div>
     <div class="loading-bar-wrap"><div class="loading-bar" id="loadingBar"></div></div>
     <div class="loading-step" id="loadingStep">Descargando datos geográficos…</div>
+  </div>
+
+  <!-- Panel explicativo de regiones de vigilancia (esquina superior izquierda) -->
+  <div id="regions-info">
+    <div class="ri-title">Regiones de vigilancia del Niño</div>
+    <div class="ri-intro">El Pacífico ecuatorial se divide en cuatro regiones de monitoreo: Niño 1+2, Niño 3, Niño 3.4 y Niño 4.</div>
+    <div class="ri-row"><span class="ri-dot" style="background:#f0603a;color:#f0603a"></span><span><span class="ri-code">Niño 1+2:</span> <span class="ri-desc">costa de Perú y Ecuador.</span></span></div>
+    <div class="ri-row"><span class="ri-dot" style="background:#ff8200;color:#ff8200"></span><span><span class="ri-code">Niño 3:</span> <span class="ri-desc">Pacífico ecuatorial oriental.</span></span></div>
+    <div class="ri-row"><span class="ri-dot" style="background:#4aa3e6;color:#4aa3e6"></span><span><span class="ri-code">Niño 3.4:</span> <span class="ri-desc">Pacífico ecuatorial central.</span></span></div>
+    <div class="ri-row"><span class="ri-dot" style="background:#f0c020;color:#f0c020"></span><span><span class="ri-code">Niño 4:</span> <span class="ri-desc">Pacífico ecuatorial occidental.</span></span></div>
   </div>
 
   <!-- Tooltip hover país/región -->
@@ -884,9 +994,9 @@
   <div id="bottom-bar">
     <div class="bar-section">
       <button class="ctrl-btn" id="rotateBtn">⟳ Rotar</button>
-      <button class="ctrl-btn" id="oceanBtn" title="Mostrar temperatura del mar en el Pacífico">🌊 Temperatura mar</button>
-      <button class="ctrl-btn" id="currentsBtn" title="Mostrar corrientes oceánicas animadas">↔ Corrientes</button>
-      <button class="ctrl-btn region-btn" id="regionsBtn" title="Señalar las regiones Niño 3.4 y Niño 1+2 sobre el mapa">🎯 Regiones Niño</button>
+      <button class="ctrl-btn" id="oceanBtn" title="Mostrar temperatura del mar en el Pacífico">Temperatura mar</button>
+      <button class="ctrl-btn region-btn" id="regionsBtn" title="Señalar las regiones Niño 3.4 y Niño 1+2 sobre el mapa">Regiones Niño</button>
+      <button class="ctrl-btn" id="currentsBtn" title="Mostrar corrientes oceánicas animadas">Corrientes</button>      
     </div>
     <div class="bar-section center">
       <button class="ctrl-btn nav-arrow" id="prevStory">‹</button>
@@ -1551,10 +1661,17 @@ function boxPerimeter(latN, latS, lngW, lngE, step = 2) {
   return pts;
 }
 
-// Región Niño 3.4: 5°N–5°S, 170°O–120°O · Región Niño 1+2: 0°–10°S, 90°O–80°O
+// Las cuatro regiones de vigilancia del ENSO sobre el Pacífico ecuatorial.
+// Niño 4: 5°N–5°S, 160°E–150°O (occidental, cruza el antimeridiano → 160..210)
+// Niño 3.4: 5°N–5°S, 170°O–120°O (central) · Niño 3: 5°N–5°S, 150°O–90°O (oriental)
+// Niño 1+2: 0°–10°S, 90°O–80°O (costa de Perú/Ecuador)
 const NINO_REGION_PATHS = [
-  { color: '#4aa3e6', points: boxPerimeter(5, -5, -170, -120) },  // Niño 3.4
+  { color: '#f0c020', points: boxPerimeter(5,  -5,  160,  210) }, // Niño 4
+  { color: '#ff8200', points: boxPerimeter(5,  -5, -150,  -90) }, // Niño 3
   { color: '#f0603a', points: boxPerimeter(0, -10,  -90,  -80) }, // Niño 1+2
+  // Niño 3.4 se dibuja al final y a mayor altura (alt/stroke): su contorno queda
+  // POR ENCIMA de Niño 4 y Niño 3 para que se lea como la región que engloba a ambas.
+  { color: '#4aa3e6', alt: 0.024, stroke: 2.8, points: boxPerimeter(5, -5, -170, -120) }, // Niño 3.4
 ];
 
 // Relleno semitransparente de cada caja. Se inyectan como features GeoJSON en la
@@ -1579,9 +1696,15 @@ function ninoFillFeature(fillColor, latN, latS, lngW, lngE) {
     properties: {},
   };
 }
+// Niño 4, Niño 3 y Niño 1+2 llevan relleno; Niño 3.4 va solo como contorno
+// (se superpone a la 3 y la 4, así que su relleno enturbiaría el color).
 const NINO_REGION_FILLS = [
-  ninoFillFeature('rgba(74,163,230,0.16)',  5,  -5, -170, -120), // Niño 3.4
-  ninoFillFeature('rgba(240,96,58,0.20)',   0, -10,  -90,  -80), // Niño 1+2
+  // Niño 4 cruza el antimeridiano; su relleno se parte en 180° para que el
+  // teselado del globo no lo interprete "por el lado largo".
+  ninoFillFeature('rgba(240,200,40,0.18)',  5,  -5,  160,  180), // Niño 4 (oeste)
+  ninoFillFeature('rgba(240,200,40,0.18)',  5,  -5, -180, -150), // Niño 4 (este)
+  ninoFillFeature('rgba(255,130,0,0.20)',   5,  -5, -150,  -90), // Niño 3  (naranja)
+  ninoFillFeature('rgba(240,96,58,0.22)',   0, -10,  -90,  -80), // Niño 1+2 (rojo)
 ];
 
 // Regiones Niño como elementos HTML clicables (usan la fuente del navegador → la
@@ -1589,8 +1712,20 @@ const NINO_REGION_FILLS = [
 // abre un popup con su descripción (ver openRegionPopup / htmlElement).
 const NINO_REGIONS = [
   {
+    isRegionLabel: true, id: 'nino4',
+    lat: 8, lng: -177,
+    name: 'Niño 4',
+    code: 'Niño 4 · Pacífico occidental',
+    tag: 'Región de vigilancia ENSO',
+    desc: 'Pacífico ecuatorial occidental-central (160°E–150°O). Vigila la reserva de agua cálida del oeste; sus variaciones anticipan cómo evolucionará un evento.',
+    val: 'Pacífico ecuatorial occidental',
+    color: '#f0c020', labelColor: '#ffe38a',
+    hint: 'Cuando el calor se desplaza de la Niño 4 hacia la 3.4 y la 3, El Niño se intensifica hacia el este.',
+    source: 'Definición NOAA / CPC',
+  },
+  {
     isRegionLabel: true, id: 'global',
-    lat: 8.5, lng: -145,
+    lat: 12, lng: -145,
     name: 'Niño Global',
     code: 'Niño 3.4 · Pacífico central',
     tag: 'Índice ENSO · lo vigila NOAA',
@@ -1599,6 +1734,18 @@ const NINO_REGIONS = [
     color: '#4aa3e6', labelColor: '#8fd0ff',
     hint: 'Mide una región distinta a la costera: hoy su señal es más moderada que la del Niño Costero.',
     source: 'Fuente: NOAA CPC (jul 2026)',
+  },
+  {
+    isRegionLabel: true, id: 'nino3',
+    lat: 8, lng: -105,
+    name: 'Niño 3',
+    code: 'Niño 3 · Pacífico oriental',
+    tag: 'Región de vigilancia ENSO',
+    desc: 'Pacífico ecuatorial oriental (150°O–90°O). Fue la región de referencia histórica de El Niño; complementa la lectura de la 3.4 hacia el este.',
+    val: 'Pacífico ecuatorial oriental',
+    color: '#ff8200', labelColor: '#ffbb70',
+    hint: 'Junto con la Niño 1+2 refleja el calentamiento del Pacífico frente a Sudamérica.',
+    source: 'Definición NOAA / CPC',
   },
   {
     isRegionLabel: true, id: 'costero',
@@ -1907,8 +2054,8 @@ function initGlobe(data) {
     .pathPointLat(p => p[0])
     .pathPointLng(p => p[1])
     .pathColor(d => [d.color, d.color])
-    .pathStroke(2.2)
-    .pathPointAlt(0.014)
+    .pathStroke(d => d.stroke || 2.2)
+    .pathPointAlt(d => d.alt ?? 0.014)
     .pathTransitionDuration(0)
     // Marcadores HTML de historias (+ etiquetas de región, ver htmlElement)
     .htmlElementsData(STORIES)
@@ -2077,6 +2224,28 @@ function updateSlider(i) {
 }
 
 slider.addEventListener('input', () => updateSlider(parseInt(slider.value, 10)));
+
+// ── Picos de temperatura: los meses con los valores ICEN más altos de la serie
+// (eventos cálidos fuertes/extraordinarios). Se resaltan como rombos naranjas
+// sobre el riel para que el usuario los ubique al instante; al hacer clic, el
+// slider salta a ese mes. Índices: jun 1983, nov 1997, oct 2015, jul 2023, jul 2026.
+const PEAK_IDX = [41, 214, 429, 522, 558];
+const peaksEl  = document.getElementById('sliderPeaks');
+PEAK_IDX.forEach(i => {
+  const pos = i / (ICEN.length - 1);
+  const d = document.createElement('div');
+  d.className = 'slider-peak' + (i === ICEN.length - 1 ? ' pk-last' : '');
+  d.style.left = (pos * 100).toFixed(2) + '%';
+  d.title = `Pico · ${icenMonthLabel(i)} · ${fmtICEN(ICEN[i])}`;
+  d.innerHTML = `<span class="pk-diamond"></span><span class="pk-year">${icenYear(i)}</span>`;
+  d.addEventListener('click', (e) => {
+    e.stopPropagation();
+    slider.value = i;
+    updateSlider(i);
+  });
+  peaksEl.appendChild(d);
+});
+
 updateSlider(ICEN.length - 1);   // arranca en el mes más reciente (jul 2026)
 
 // ─────────────────────────────────────────────
