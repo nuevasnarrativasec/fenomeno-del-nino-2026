@@ -5,8 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Fenómeno del Niño 2026 — ¿Y tú?</title>
 <link rel="stylesheet" href="./css/style.css">
+<style>
+  /* ── Cambios de comportamiento (añadidos, no alteran lo previo) ── */
+
+  /* 1) El topbar se oculta al llegar al #hero-main */
+  .topbar{ transition:opacity .35s ease, transform .35s ease; }
+  .topbar.is-hidden{ opacity:0; transform:translateY(-110%); pointer-events:none; }
+
+  /* 2) En el #stageWrap no se muestra NADA (ni la línea punteada) hasta que
+        el usuario comienza a hacer scroll. Al soltarse el gate, todo el stage
+        entra con un fundido suave para que no aparezca de golpe. */
+  #stageWrap{ transition:opacity .9s ease; }
+  body.pre-scroll #stageWrap{ opacity:0 !important; }
+</style>
 </head>
-<body>
+<body class="pre-scroll">
 
   <div class="topbar">Para ver más información presiona el botón <span class="chev">›</span> sobre cada persona</div>
 
@@ -21,7 +34,7 @@
     </div>
   </div>
 
-  <section class="hero">
+  <section class="hero" id="hero-main">
     <img src="./img/logo-comercio.png" alt="" width="100%" class="logo-comercio">
     <h1>
         El Niño:
@@ -434,16 +447,17 @@
     // sale de golpe: hay que seguir scrolleando para revelar cada parte.
     // toggleActions 'play none none reverse' => se deshace al volver a subir.
     const STEP = 150;      // px de scroll extra entre cada aparición dentro de un personaje
-    const START = 'top 78%';
+    const START = 'top 35%';  // cada estación se revela cuando sube al tercio superior:
+                              // así en el primer scroll solo aparece la 1ª (María) y no varias a la vez
 
     function revealAt(node, anchor, offset){
       if(!node) return;
       gsap.set(node, { opacity:0 });
       // El desfase se multiplica por la escala actual para que el ORDEN se
       // conserve también cuando el lienzo se reduce en pantallas chicas.
-      const start = offset>0 ? (()=> 'top+=' + (offset*curScale) + ' 78%') : START;
+      const start = offset>0 ? (()=> 'top+=' + (offset*curScale) + ' 35%') : START;
       gsap.to(node, {
-        opacity:1, duration:.7, ease:'power2.out',
+        opacity:1, duration:1, ease:'power2.out',
         scrollTrigger:{ trigger: anchor, start, toggleActions:'play none none reverse' }
       });
     }
@@ -469,6 +483,47 @@
     // mostramos todo de forma estática para no dejar la página en blanco.
     revealAll();
   }
+  </script>
+
+  <!-- ============================================================
+       Comportamiento adicional (bloque independiente, no toca lo previo)
+       1) Ocultar el topbar al llegar al #hero-main
+       2) No mostrar ningún elemento del #stageWrap hasta el primer scroll
+       ============================================================ -->
+  <script>
+  (function(){
+    var body     = document.body;
+    var topbar   = document.querySelector('.topbar');
+    var heroMain = document.getElementById('hero-main');
+
+    /* ── 2) Nada visible en el stage hasta que se empieza a hacer scroll ── */
+    function releasePreScroll(){
+      if(window.scrollY > 0){
+        body.classList.remove('pre-scroll');
+        // Recalcula los ScrollTriggers para el estado real tras el primer scroll
+        if(window.ScrollTrigger) window.ScrollTrigger.refresh();
+        window.removeEventListener('scroll', releasePreScroll);
+      }
+    }
+    if(window.scrollY > 0){
+      // La página cargó ya desplazada (p. ej. recarga a media altura)
+      body.classList.remove('pre-scroll');
+    } else {
+      window.addEventListener('scroll', releasePreScroll, { passive:true });
+    }
+
+    /* ── 1) Ocultar el topbar cuando el #hero-main llega arriba ── */
+    function updateTopbar(){
+      if(!topbar || !heroMain) return;
+      var top = heroMain.getBoundingClientRect().top;
+      var h   = topbar.offsetHeight || 0;
+      if(top <= h) topbar.classList.add('is-hidden');
+      else         topbar.classList.remove('is-hidden');
+    }
+    window.addEventListener('scroll', updateTopbar, { passive:true });
+    window.addEventListener('resize', updateTopbar);
+    updateTopbar();
+  })();
   </script>
 </body>
 </html>

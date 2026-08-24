@@ -77,13 +77,15 @@
 
   /* Portada de entrada — mantiene el zigzag fuera de pantalla al cargar,
      para que ningún cuadro aparezca hasta que el usuario haga scroll */
-  .hero{
-    background: url(../img/bg-header.jpg) no-repeat center center/cover;
+  .hero{    
     min-height:100vh; min-height:100svh;
     display:flex; flex-direction:column; align-items:center; justify-content:center;
     text-align:center; padding:60px 24px; gap:16px; position:relative;
   }
-    .hero::before{
+    #hero-main{
+        background: url(../img/bg-header.jpg) no-repeat center center/cover;        
+    }
+    #hero-main::before{
         background: #050505;
         background: linear-gradient(180deg, rgba(5, 5, 5, 1) 0%, rgba(5, 5, 5, 0.9) 50%, rgba(255, 255, 255, 0) 100%);
         width: 100%;
@@ -92,7 +94,7 @@
         position: absolute;
         top: 0;
     }
-    .hero::after{
+    #hero-main::after{
         background: #050505;
         background: linear-gradient(0deg, rgba(5, 5, 5, 1) 0%, rgba(5, 5, 5, 0.9) 50%, rgba(255, 255, 255, 0) 100%);
         width: 100%;
