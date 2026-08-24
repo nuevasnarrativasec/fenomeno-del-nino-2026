@@ -217,8 +217,8 @@
     font-family:system-ui,-apple-system,sans-serif;
   }
   .modal-backdrop.open .modal{ transform:none; }
-  .modal .eyebrow{ font-size:.62rem; letter-spacing:.14em; text-transform:uppercase; color:var(--orange-soft); }
-  .modal h3{ font-family:Georgia,serif; font-size:1.15rem; color:#f5efe6; margin:4px 0 12px; }
+  .modal .eyebrow{ font-size:.62rem; letter-spacing:.14em; text-transform:uppercase; color:var(--orange-soft); display: none;}
+  .modal h3{ font-family:Georgia,serif; font-size:1.15rem; color:#f5efe6; margin:4px 0 12px; display: none;}
   .modal p{ font-size:.9rem; line-height:1.6; color:#c4bcb0; }
   .modal .datatag{ color:var(--orange-soft); font-style:italic; }
   .modal .close{
@@ -297,75 +297,75 @@
   const STATIONS = [
     { name:"María", age:34, role:"Ciudadana", region:"PIURA",
       cx:150, cy:135, side:"right", infoTop:92,
-      info:"Vive en un asentamiento humano en las afueras de Piura. Su hija Xiomara, de 9 años, lleva tres días internada con dengue. Cree que la culpa es de un mosquito que picó a la niña en el patio de la casa.",
-      stmt:"No empezó con un mosquito.", q:"¿Con qué, entonces?",
+      info:"Vivo en un asentamiento humano en las afueras de Piura. Mi hija Xiomara, de 9 años, lleva tres días internada con dengue. Creo que la culpa es de un mosquito que la picó en el patio de la casa.",
+      q:"¿Y si no fue el mosquito, sino la misma lluvia que golpeaba más al sur?",
       orange:{tox:289, toy:285},
       popE:"Dengue", popT:"El dengue y El Niño",
-      popB:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat." },
+      popB:"Los casos de dengue en Piura casi se multiplicaron por 7 en 2023: de 12,150 pasaron a más de 79 mil." },
 
     { name:"Carlos", age:41, role:"Ingeniero", region:"ÁNCASH",
       cx:352, cy:352, side:"left", infoTop:308,
-      info:"Trabaja para una empresa contratista, operando maquinaria pesada para retirar huaicos y escombros de la vía tras las lluvias. Lleva dos semanas sin volver a su casa por la magnitud del daño.",
-      stmt:"No empezó con una carretera. La carretera solo muestra lo que hizo la lluvia.", q:"¿Y qué más hizo esa lluvia, además de romper caminos?",
+      info:"Trabajo para una empresa contratista en Áncash, operando maquinaria pesada para retirar huaicos y escombros de la vía tras las lluvias. Llevo dos semanas sin volver a casa por la magnitud del daño.",
+      q:"¿Y si esa misma lluvia, más al norte, costó algo más que caminos?",
       orange:{tox:497, toy:475},
       popE:"Infraestructura crítica", popT:"Huaicos y vías rotas",
-      popB:"Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." },
+      popB:"Áncash es el segundo departamento del país con carreteras y puentes destruidos por El Niño: casi 21 km por cada 100 mil habitantes." },
 
     { name:"Pablo", age:29, role:"Transportista", region:"LAMBAYEQUE",
       cx:600, cy:562, side:"left", infoTop:520,
-      info:"Chofer de una empresa de carga que transporta alimentos entre Chiclayo y el norte. Ese año, su ruta habitual se volvió zona de rescate.",
-      stmt:"No fue solo el retraso. En esta misma carretera, ese año, murieron más personas que en cualquier otro.", q:"¿Y esa misma lluvia, en la sierra, era la primera vez?",
+      info:"Soy chofer de una empresa de carga que transporta alimentos entre Chiclayo y el norte. Ese año, mi ruta habitual se volvió zona de rescate.",
+      q:"¿Cuántas veces se repite esto cada año?",
       orange:{tox:380, toy:690},
       popE:"Fallecidos por El Niño", popT:"Las muertes en la carretera",
-      popB:"Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo." },
+      popB:"En años de El Niño, en Lambayeque mueren 47 veces más personas que en un año normal — la cifra más alta de todo el país." },
 
     { name:"Daniel", age:47, role:"Promotor", region:"CAJAMARCA",
       cx:188, cy:802, side:"right", infoTop:758,
-      info:"Vive en un caserío rural. Es promotor de defensa civil de su comunidad desde hace 15 años; ha visto el mismo río desbordarse más veces de las que puede contar.",
-      stmt:"No fue la primera vez. Cajamarca ya había vivido esto más veces que cualquier otro lugar del país.", q:"¿Y quién no pudo vender lo que la lluvia sí dejó crecer, más al sur?",
+      info:"Vivo en un caserío rural de Cajamarca. Soy promotor de defensa civil de mi comunidad desde hace 15 años; he visto el mismo río desbordarse más veces de las que puedo contar.",
+      q:"¿En otra parte del Perú también se arruinaron sus cosechas?",
       orange:{tox:425, toy:940},
       popE:"Recurrencia de eventos", popT:"El desastre que se repite",
-      popB:"At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident." },
+      popB:"En 2023, Cajamarca tuvo 55 emergencias por lluvia por cada 100 mil habitantes, la tasa más alta de todo el país." },
 
     { name:"Isabel", age:52, role:"Comerciante", region:"LA LIBERTAD",
       cx:632, cy:1042, side:"left", infoTop:998,
-      info:"Tiene un puesto de frutas en un mercado de Trujillo hace más de veinte años. Ese año no pudo vender mango, su producto más pedido, porque la cosecha de la región se malogró.",
-      stmt:"No fue que faltara el camión. Fue que la fruta nunca maduró.", q:"¿Y el mar? ¿También lo sintió?",
+      info:"Tengo un puesto de frutas en un mercado de Trujillo hace más de veinte años. Ese año no pude vender mango, mi producto más pedido, porque la cosecha de la región se malogró.",
+      q:"¿Y si la cosecha no estuviera en la tierra, sino en el mar?",
       orange:{tox:390, toy:1165},
       popE:"Rendimiento de mango", popT:"La cosecha que no maduró",
-      popB:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat." },
+      popB:"Caída de 20.2% en 2017 y 25.9% en 2023 — el único cultivo de los nueve medidos con caída repetida en los dos años de El Niño." },
 
     { name:"Héctor", age:58, role:"Acuicultor", region:"LA LIBERTAD",
       cx:168, cy:1278, side:"right", infoTop:1234,
-      info:"Cría conchas de abanico en la bahía. Ese año, el calentamiento del mar diezmó sus cultivos y perdió casi toda la producción de la temporada.",
-      stmt:"No fue la lluvia la que mató mis conchas. Fue el mar — el mismo mar que provocó la lluvia.", q:"¿El mar hace lo mismo en todas partes?",
+      info:"Tengo una concesión de conchas de abanico en la bahía de Sechura desde hace quince años. Es la peor cosecha que recuerdo.",
+      q:"¿Y si el problema no es el agua que llega, sino la que nunca llegó?",
       orange:{tox:264, toy:1400},
       popE:"Concha de abanico", popT:"El mar demasiado caliente",
-      popB:"Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." },
+      popB:"La cosecha de conchas de abanico en Sechura se redujo a menos de la octava parte en un solo año (de 7 205.8 a 838.9 toneladas)." },
 
     { name:"Estela", age:61, role:"Agricultora", region:"PUNO",
       cx:352, cy:1502, side:"right", infoTop:1458,
-      info:"Cultiva en el altiplano. Ese año no llegó la lluvia esperada: la sequía secó los pastos y arruinó buena parte de su cosecha.",
-      stmt:"No. A mí el mismo mar no me trajo lluvia. Me la quitó.", q:"¿Y esa misma sequía trajo algo más, en otro rincón de la sierra?",
+      info:"Cultivo papa nativa en una chacra a más de 3,800 metros de altura, sin acceso a riego. Ese año la lluvia de temporada nunca llegó.",
+      q:"¿Y esa sequía tocó algo más, en otro rincón de la sierra?",
       orange:{tox:460, toy:1615},
       popE:"Sequías históricas", popT:"El sur que se seca",
-      popB:"Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo." },
+      popB:"En Puno, prácticamente 19 de cada 20 chacras dependen solo de la lluvia para regarse, sin ninguna otra fuente de agua. En el verano de 1983, categoría 'extremadamente seco'." },
 
     { name:"Tomás", age:47, role:"Fruticultor", region:"AYACUCHO",
       cx:562, cy:1722, side:"left", infoTop:1678,
-      info:"Trabaja un valle interandino cerca de Huamanga cultivando frutales. Una herida que no cerraba resultó ser leishmaniasis.",
-      stmt:"No empezó con una mosca de arena.", q:"¿Y en la ciudad, sintieron algo distinto ese mismo año?",
+      info:"Trabajo un valle interandino cerca de Huamanga cultivando frutales. Una herida que no cerraba resultó ser leishmaniasis.",
+      q:"¿Y qué pasa cuando una emergencia alcanza a toda una comunidad?",
       orange:{tox:397, toy:1858},
       popE:"Leishmaniasis", popT:"La enfermedad del valle",
-      popB:"At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa." },
+      popB:"Los casos de leishmaniasis en Ayacucho subieron más de un tercio en un año: de 119 a 161." },
 
     { name:"Cecilia", age:44, role:"Directora", region:"LIMA PROVINCIAS",
       cx:238, cy:1978, side:"right", infoTop:1934,
-      info:"Dirige un colegio rural en una provincia de Lima. Su escuela sirvió de refugio de emergencia varias veces ese año.",
-      stmt:"No fue una vez. Fue la emergencia más repetida de todo el país, ese año.", q:"¿Y en la ciudad más grande, qué pasó cuando la emergencia llegó de verdad?",
+      info:"Dirijo un colegio rural en una provincia de Lima. Mi escuela sirvió de refugio de emergencia varias veces ese año.",
+      q:"¿Hasta dónde puede llegar una emergencia como esta?",
       orange:{tox:317, toy:2145},
       popE:"Emergencias El Niño vs. resto", popT:"El año que se multiplicó",
-      popB:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo." }
+      popB:"En sus años de El Niño, Lima Provincias tuvo casi 12 veces más emergencias que en un año normal — la cifra más alta de todo el país." }
   ];
 
   /* Posición del silueta "Yo" (centro de la fila inferior) */
@@ -390,10 +390,10 @@
 
   const YO_STATION = {
     region:"LIMA METROPOLITANA", role:"Yo",
-    info:"Trabaja repartiendo pedidos en moto en un distrito del Cono Norte. Nunca ha salido de Lima. Tuvo dengue por primera vez ese año.",
-    stmt:"Yo nunca vi el mar, ni la lluvia, ni la sequía. Pero me enfermé igual.", q:"¿Y tú?",
+    info:"Trabajo repartiendo pedidos en moto en un distrito del Cono Norte. Nunca he salido de Lima. Tuve dengue por primera vez ese año.",
+    q:"Y tú, ¿estás seguro de que El Niño nunca te ha afectado?",
     popE:"Lima Metropolitana", popT:"El Niño también llega a la ciudad",
-    popB:"Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+    popB:"Más de la mitad de los proyectos para prevenir desastres en Lima Metropolitana están abandonados o paralizados."
   };
 
   /* ============================================================
@@ -510,7 +510,7 @@
     node.appendChild(ib);
 
     // cuadro naranja (sobre la línea)
-    const ob = el('div','orangebox reveal', `<span class="stmt">${s.stmt}</span><span class="q">${s.q}</span>`);
+    const ob = el('div','orangebox reveal', `<span class="q" style="margin-top:0">${s.q}</span>`);
     ob.style.left = s.orange.tox+'px';
     ob.style.top  = s.orange.toy+'px';
     ob.style.transform = 'translate(-50%,-50%)';
