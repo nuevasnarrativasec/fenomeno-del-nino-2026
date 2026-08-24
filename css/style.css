@@ -1,0 +1,327 @@
+* {
+    box-sizing: border-box;    
+    font-style: normal;
+    font-weight: normal;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+  :root{
+    --bg:#050505;
+    --orange:#ee5522;
+    --orange-soft:#f06a2e;
+    --ink:#141414;
+    --paper:#ffffff;
+    --line:#7a7a7a;
+    --figure:#c8794e;
+  }
+
+  html,body{ background:var(--bg); }
+
+@font-face {
+    font-family: 'Monoglyphic Light';
+    src: url('../fonts/Monoglyphic-Light.woff2') format('woff2'),
+        url('../fonts/Monoglyphic-Light.woff') format('woff');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Monoglyphic Regular';
+    src: url('../fonts/Monoglyphic-Regular.woff2') format('woff2'),
+        url('../fonts/Monoglyphic-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Monoglyphic Bold';
+    src: url('../fonts/Monoglyphic-Bold.woff2') format('woff2'),
+        url('../fonts/Monoglyphic-Bold.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+
+
+
+  body{
+    font-family: Georgia, 'Times New Roman', serif;
+    color:#f0e8df;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+
+  /* Intro hint (top bar) */
+  .topbar{
+    position:sticky; top:0; z-index:40;
+    background:linear-gradient(#050505 70%, rgba(5,5,5,0));
+    text-align:center;
+    padding:16px 12px 22px;
+    font-family:system-ui,-apple-system,sans-serif;
+    font-size:.72rem; letter-spacing:.06em;
+    color:#8a8378;
+  }
+  .topbar b{ color:#c9c0b4; font-weight:600; }
+  .topbar .chev{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:18px; height:18px; margin-left:6px; vertical-align:-4px;
+    background:#ee0c0c; color:#fff; border-radius:3px;
+    font-size:.7rem; font-weight:700;
+  }
+
+  /* Portada de entrada — mantiene el zigzag fuera de pantalla al cargar,
+     para que ningún cuadro aparezca hasta que el usuario haga scroll */
+  .hero{
+    background: url(../img/bg-header.jpg) no-repeat center center/cover;
+    min-height:100vh; min-height:100svh;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:60px 24px; gap:16px; position:relative;
+  }
+    .hero::before{
+        background: #050505;
+        background: linear-gradient(180deg, rgba(5, 5, 5, 1) 0%, rgba(5, 5, 5, 0.9) 50%, rgba(255, 255, 255, 0) 100%);
+        width: 100%;
+        height: 150px;
+        content: "";
+        position: absolute;
+        top: 0;
+    }
+    .hero::after{
+        background: #050505;
+        background: linear-gradient(0deg, rgba(5, 5, 5, 1) 0%, rgba(5, 5, 5, 0.9) 50%, rgba(255, 255, 255, 0) 100%);
+        width: 100%;
+        height: 150px;
+        content: "";
+        position: absolute;
+        bottom: 0;
+    }
+  img.logo-comercio{ max-width:150px; width:100%; height:auto; margin-bottom:12px; display: block;}
+  .hero .kicker{
+    font-family:system-ui,-apple-system,sans-serif;
+    font-size:.72rem; letter-spacing:.28em; text-transform:uppercase; color:var(--orange-soft);
+  }
+    .hero h1{ 
+        font-size:clamp(2rem,6vw,5.6rem); line-height:1.06; color:#f4efe7; max-width:16ch; 
+        font-family: 'Monoglyphic Bold';
+        color: #FF0000;
+        max-width: 800px;
+        text-shadow: 1px 1px 31px #000000;
+    }
+        .hero h1 span{
+            display: block;
+            font-family: 'Monoglyphic Regular';
+            font-size: clamp(1.2rem, 6vw, 5.6rem);
+            color: #F0E8DF;
+            line-height: 1;
+            text-shadow: none;
+        }
+    img.flecha-bajar{
+        display: block;
+        margin: 0 auto;
+        width: 40px;
+        height: auto;
+        margin-top: 90px;
+    }
+    p.bajada{
+        color: #fff;
+        font: 1.1rem/1.4 'Monoglyphic Light';
+        max-width: 510px;
+    }
+  .hero .lead{
+    font-family:system-ui,-apple-system,sans-serif;
+    font-size:1rem; color:#9a9184; max-width:42ch; line-height:1.6;
+    opacity: 0;
+  }
+  .hero .cue{
+    position:absolute; bottom:26px; left:50%; transform:translateX(-50%);
+    font-family:system-ui,-apple-system,sans-serif;
+    font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; color:#8a8378;
+    display:flex; flex-direction:column; align-items:center; gap:8px;
+  }
+  .hero .cue span{ font-size:1.1rem; animation:bob 1.5s ease-in-out infinite; color:var(--orange-soft); }
+  @keyframes bob{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(6px); } }
+
+  /* Scaled stage wrapper */
+  #stageWrap{ position:relative; width:100%; }
+  #stage{
+    position:absolute; left:50%; top:0;
+    width:1120px; height:2720px;
+    transform:translateX(-50%);
+    transform-origin:top center;
+  }
+
+  /* Connector SVG sits behind everything */
+  #connector{ position:absolute; inset:0; width:1120px; height:2720px; z-index:1; pointer-events:none; }
+  #connector .dotted{ fill:none; stroke:var(--line); stroke-width:1.4; stroke-dasharray:2 6; stroke-linecap:round; opacity:.85; }
+  #connector .arrow{ fill:#cdc4b8; opacity:.9; }
+  #connector .tick{ stroke:var(--line); stroke-width:1.2; opacity:.7; }
+
+  /* Character circle */
+  .node{ position:absolute; z-index:5; }
+  .circle{
+    position:absolute; width:88px; height:88px; border-radius:50%;
+    border:2px solid #f4efe7; background:#0a0a0a;
+    display:flex; align-items:flex-end; justify-content:center;
+    overflow:hidden;
+    left:0; top:0; transform:translate(-50%,-50%);
+  }
+  .circle img{ height:90%; width:auto; max-width:86%; object-fit:contain; display:block; }
+  .namewrap{
+    position:absolute; left:0; text-align:center; width:180px;
+    transform:translateX(-50%);
+    font-family:system-ui,-apple-system,sans-serif;
+  }
+  .namewrap .nm{ color:#f2ede4; font-weight:700; font-size:.82rem; }
+  .namewrap .role{ color:var(--orange-soft); font-size:.68rem; letter-spacing:.04em; margin-top:1px; }
+
+  /* Orange square info button on the circle */
+  .infobtn{
+    position:absolute; width:26px; height:26px; z-index:8;
+    background:#ee0c0c; border:none; border-radius:4px;
+    color:#fff; font-weight:800; font-size:.82rem; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    transform:translate(-50%,-50%);
+    box-shadow:0 3px 10px rgba(0,0,0,.5);
+    transition:transform .15s ease, background .15s ease;
+    font-family:system-ui,-apple-system,sans-serif;
+  }
+  .infobtn:hover{ background:#ee0c0c; transform:translate(-50%,-50%) scale(1.12); }
+
+  /* White information box */
+  .infobox{
+    position:absolute; z-index:6;
+    background:var(--paper); color:var(--ink);
+    padding:12px 14px; width:210px;
+    font-family:system-ui,-apple-system,sans-serif;
+    font-size:.78rem; line-height:1.42;
+    box-shadow:0 8px 26px rgba(0,0,0,.45);
+  }
+  .infobox .region{ font-weight:800; letter-spacing:.02em; }
+
+  /* Orange rounded question box, sits ON the dotted line */
+  .orangebox{
+    position:absolute; z-index:7;
+    background:var(--orange); color:#fff;
+    padding:12px 15px; width:210px; border-radius:12px;
+    font-family:system-ui,-apple-system,sans-serif;
+    font-size:.78rem; line-height:1.42;
+    transform:translateX(-50%);
+    box-shadow:0 10px 28px rgba(0,0,0,.5);
+  }
+  .orangebox .stmt{ color:#ffe9df; }
+  .orangebox .q{ display:block; margin-top:7px; font-weight:800; color:#fff; }
+
+  /* Caja roja final del "Yo" (el dato) */
+  .orangebox.final{ text-align:center; padding:18px 22px; border-radius:14px;
+    background:#e5271b; box-shadow:0 12px 30px rgba(0,0,0,.55); }
+  .orangebox.final .stmt{ display:block; font-size:.9rem; color:#ffe1d8; line-height:1.5; }
+  .orangebox.final .stmt strong{ color:#fff; font-weight:800; }
+
+  /* Título "¿Y tú?" (blanco, fuera de la caja) */
+  .final-q{
+    position:absolute; z-index:7; transform:translate(-50%,-50%);
+    font-family:system-ui,-apple-system,sans-serif;
+    color:#f7f2ea; font-weight:800; font-size:3rem; line-height:1;
+    letter-spacing:.01em; white-space:nowrap;
+  }
+  /* Texto inferior de la sección final */
+  .final-caption{
+    position:absolute; z-index:6; transform:translateX(-50%);
+    width:440px; text-align:center;
+    font-family:system-ui,-apple-system,sans-serif;
+    color:#e7ddd0; font-size:1.05rem; line-height:1.5;
+  }
+
+  /* Reveal state (GSAP animates these in) */
+  .reveal{ opacity:0; }
+
+  /* ── Bottom section ── */
+  .figrow{ position:absolute; left:0; top:0; width:1120px; z-index:5; }
+  .fig{
+    position:absolute; transform:translateX(-50%);
+    text-align:center; width:80px;
+    font-family:system-ui,-apple-system,sans-serif;
+  }
+  .fig img{ display:block; margin:0 auto; height:80px; width:auto; }
+  .fig.me img{ height:70px; }
+  /* etiquetas escalonadas (posicionadas de forma absoluta bajo la línea) */
+  .fig-lbl{
+    position:absolute; transform:translateX(-50%);
+    width:96px; text-align:center;
+    font-family:system-ui,-apple-system,sans-serif;
+    font-size:.60rem; line-height:1.25; color:#c9c0b4;
+  }
+  .fig-lbl.me{ width:auto; color:#fff; font-weight:800; font-size:1.55rem; letter-spacing:.04em; }
+  /* Número grande (1..9) bajo cada figura */
+  .fig-num{
+    position: absolute;
+    transform: translateX(-50%);
+    width: 60px;
+    text-align: center;
+    font-family: system-ui, -apple-system, sans-serif;
+    font-weight: 800;
+    font-size: 1.3rem;
+    letter-spacing: .02em;
+    color: var(--orange-soft);
+    margin-top: 16px;
+  }
+
+  /* Legend for the popup / modal */
+  .modal-backdrop{
+    position:fixed; inset:0; z-index:100;
+    background:rgba(3,3,3,.72); backdrop-filter:blur(3px);
+    display:flex; align-items:center; justify-content:center;
+    padding:24px; opacity:0; pointer-events:none;
+    transition:opacity .22s ease;
+  }
+  .modal-backdrop.open{ opacity:1; pointer-events:auto; }
+  .modal{
+    position:relative; width:430px; max-width:100%;
+    background:#0d0d0f; border:1px solid #2a2118;
+    border-top:3px solid var(--orange);
+    border-radius:10px; padding:26px 26px 24px;
+    box-shadow:0 30px 80px rgba(0,0,0,.7);
+    transform:translateY(14px) scale(.98);
+    transition:transform .22s ease;
+    font-family:system-ui,-apple-system,sans-serif;
+  }
+  .modal-backdrop.open .modal{ transform:none; }
+  .modal .eyebrow{ font-size:.62rem; letter-spacing:.14em; text-transform:uppercase; color:var(--orange-soft); display: none;}
+  .modal h3{ font-family:Georgia,serif; font-size:1.15rem; color:#f5efe6; margin:4px 0 12px; display: none;}
+  .modal p{ font-size:.9rem; line-height:1.6; color:#c4bcb0; }
+  .modal .datatag{ color:var(--orange-soft); font-style:italic; }
+  .modal .close{
+    position:absolute; top:12px; right:14px;
+    background:none; border:none; color:#5a5348; font-size:1.5rem;
+    cursor:pointer; line-height:1; transition:color .15s;
+  }
+  .modal .close:hover{ color:#f5efe6; }
+
+  .end-note{
+    text-align:center; color:#6b6459; font-family:system-ui,sans-serif;
+    font-size:.72rem; padding:30px 16px 60px;
+  }
+
+  @media (max-width:520px){
+    .topbar{ font-size:.66rem; }
+  }
+
+  /* ===== Efecto pulse del botón de info (añadido, no altera lo previo) =====
+     Usa solo box-shadow: no toca transform (centrado/hover) ni opacity
+     (reveal por scroll con GSAP), así que no interfiere con lo ya hecho. */
+  @keyframes infobtnPulse{
+    0%   { transform:translate(-50%,-50%) scale(.8);    box-shadow:0 3px 10px rgba(0,0,0,.5), 0 0 0 0   rgba(238,12,12,.55); }
+    70%  { transform:translate(-50%,-50%) scale(1.06); box-shadow:0 3px 10px rgba(0,0,0,.5), 0 0 0 10px rgba(238,12,12,0);  }
+    100% { transform:translate(-50%,-50%) scale(.8);    box-shadow:0 3px 10px rgba(0,0,0,.5), 0 0 0 0   rgba(238,12,12,0);   }
+  }
+  .infobtn{ animation: infobtnPulse 2s ease-out infinite; }
+  .infobtn:hover{ animation-play-state:paused; transform:translate(-50%,-50%) scale(1.12) !important; }
+  @media (prefers-reduced-motion: reduce){
+    .infobtn{ animation:none; }
+  }
