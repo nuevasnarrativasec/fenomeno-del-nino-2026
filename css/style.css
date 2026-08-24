@@ -75,6 +75,36 @@
     font-size:.7rem; font-weight:700;
   }
 
+    /* ── Cambios de comportamiento (añadidos, no alteran lo previo) ── */
+
+  /* 1) El topbar se oculta al llegar al #hero-main */
+  .topbar{ transition:opacity .35s ease, transform .35s ease; }
+  .topbar.is-hidden{ opacity:0; transform:translateY(-110%); pointer-events:none; }
+
+  /* 2) En el #stageWrap no se muestra NADA (ni la línea punteada) hasta que
+        el usuario comienza a hacer scroll. Al soltarse el gate, todo el stage
+        entra con un fundido suave para que no aparezca de golpe. */
+  #stageWrap{ transition:opacity .9s ease; }
+  body.pre-scroll #stageWrap{ opacity:0 !important; }
+
+  /* 3) Corte de sección tras el #hero-main: bloque negro con muesca (chevron)
+        apuntando hacia abajo y fondo blanco debajo. */
+  .section-cut{
+    position:relative; width:100%; height:128px;
+    background:#ffffff; z-index:2;
+  }
+  .section-cut::before{            /* banda negra superior */
+    content:""; position:absolute; top:0; left:0; right:0; height:72px;
+    background:var(--bg);
+  }
+  .section-cut::after{             /* triángulo negro que baja al centro */
+    content:""; position:absolute; top:72px; left:50%; transform:translateX(-50%);
+    width:0; height:0;
+    border-left:31px solid transparent;
+    border-right:31px solid transparent;
+    border-top:35px solid var(--bg);
+  }
+
   /* Portada de entrada — mantiene el zigzag fuera de pantalla al cargar,
      para que ningún cuadro aparezca hasta que el usuario haga scroll */
   .hero{    
@@ -305,6 +335,59 @@
   }
   .modal .close:hover{ color:#f5efe6; }
 
+  /* ===========================================================
+     MODALES DE PERSONAJE — rediseño fiel a los previos
+     Tarjeta negra: ilustración (bg-popup-N) + enunciado con
+     resaltados naranjas + línea de FUENTE. La imagen va arriba
+     (img-top) o abajo (img-bottom) según la tarjeta.
+     =========================================================== */
+  .pop-card{
+    width:470px; max-width:92vw;
+    background:#000; border:1px solid #141414; border-top:1px solid #141414;
+    border-radius:6px; padding:30px 30px 20px;
+    max-height:92vh;
+  }
+  .pop-content{
+    max-height:calc(92vh - 50px);
+    overflow-y:auto;
+  }
+  /* Ilustración */
+  .pop-fig{ text-align:center; }
+  /* El ancho real de cada imagen se controla por-popup con "imgW" en el JS
+     (index.html). Aquí solo el tope de seguridad. */
+  .pop-fig img{
+    display:block; margin:0 auto; width:auto;
+    max-width:100%; height:auto;
+  }
+  /* Enunciado */
+  .pop-card .pop-text{
+    font-family:'Monoglyphic Regular', system-ui, -apple-system, sans-serif;
+    font-size:1.55rem; line-height:1.3; color:#f0e8df;
+    margin:22px 2px 4px;
+  }
+  .pop-card .pop-text .hl{ color:var(--orange); }
+  /* Fuente */
+  .pop-source{
+    font-family:'Monoglyphic Light', system-ui, -apple-system, sans-serif;
+    font-size:.95rem; color:#f0e8df; text-align:right; margin-top:24px;
+  }
+  /* Barra comparativa (solo el modal de dengue la lleva en HTML) */
+  .pop-bars{ position:relative; margin:24px 0 6px; }
+  .pop-bars::before{
+    content:""; position:absolute; top:4px; bottom:4px; left:66px; width:2px;
+    background:#7a7a7a;
+  }
+  .pb-row{ display:flex; align-items:center; min-height:52px; }
+  .pb-label{
+    width:66px; padding-right:12px; text-align:right; box-sizing:border-box;
+    font-family:'Monoglyphic Light', system-ui, sans-serif; font-size:1rem; color:#f0e8df;
+  }
+  .pb-bar{ height:38px; background:var(--orange); margin-left:14px; flex:0 0 auto; }
+  .pb-val{
+    margin-left:16px; white-space:nowrap;
+    font-family:'Monoglyphic Bold', system-ui, sans-serif; font-size:1.9rem; color:#fff;
+  }
+
   .end-note{
     text-align:center; color:#6b6459; font-family:system-ui,sans-serif;
     font-size:.72rem; padding:30px 16px 60px;
@@ -327,3 +410,19 @@
   @media (prefers-reduced-motion: reduce){
     .infobtn{ animation:none; }
   }
+
+
+    .main-contenido{
+        background-color: #fff;
+        padding: 40px 0;
+    }
+    .main-contenido h3{
+        font-family: 'Monoglyphic Bold';
+        font-size: 1.8rem;
+        color: #000;
+        text-align: center;
+        margin: 0 auto;
+    }
+    .box-globo-3d{
+        margin: 40px auto;
+    }

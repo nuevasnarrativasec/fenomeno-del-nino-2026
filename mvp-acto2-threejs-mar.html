@@ -2131,6 +2131,62 @@ function initGlobe(data) {
   ctrl.enablePan       = false;
   ctrl.minDistance     = 130;
   ctrl.maxDistance     = 500;
+
+  // ── Zoom del globo SOLO con Ctrl / ⌘ + rueda ──────────────────────────
+  // Este globo se incrusta en la landing dentro de un <iframe>. Para que la
+  // rueda no "atrape" el scroll de la página, el zoom solo se activa con
+  // Ctrl (o ⌘ en Mac). La rueda sin modificador se deja pasar: el globo no
+  // hace zoom y el gesto scrollea la landing que lo contiene.
+  (function () {
+    const cont = document.getElementById('globe-container');
+    if (!cont || cont.__wheelGuard) return;
+    cont.__wheelGuard = true;
+
+    // ── Indicación: "Ctrl/⌘ + rueda para hacer zoom" ──
+    const isMac = /Mac|iPhone|iPad|iPod/.test(navigator.platform || navigator.userAgent || '');
+    const hint = document.createElement('div');
+    hint.className = 'zoom-hint';
+    hint.innerHTML = '<span class="zh-key">' + (isMac ? '⌘' : 'Ctrl') + '</span> + rueda para hacer zoom';
+    hint.style.cssText =
+      'position:absolute;left:50%;bottom:64px;transform:translateX(-50%) translateY(6px);' +
+      'z-index:25;pointer-events:none;opacity:0;transition:opacity .3s ease, transform .3s ease;' +
+      'display:flex;align-items:center;gap:7px;white-space:nowrap;' +
+      'font-family:system-ui,-apple-system,sans-serif;font-size:.8rem;color:#e8e0d5;' +
+      'padding:8px 14px;border-radius:20px;background:rgba(4,8,15,.85);' +
+      'border:1px solid #24314a;box-shadow:0 6px 20px rgba(0,0,0,.4);';
+    cont.appendChild(hint);
+    const kbd = hint.querySelector('.zh-key');
+    if (kbd) kbd.style.cssText =
+      'font-family:system-ui,sans-serif;font-weight:700;font-size:.72rem;' +
+      'padding:2px 7px;border-radius:5px;background:#1b2740;border:1px solid #33456a;color:#fff;';
+
+    let hideT;
+    function showHint() {
+      clearTimeout(hideT);
+      hint.style.opacity = '1';
+      hint.style.transform = 'translateX(-50%) translateY(0)';
+      hideT = setTimeout(hideHint, 1800);
+    }
+    function hideHint() {
+      clearTimeout(hideT);
+      hint.style.opacity = '0';
+      hint.style.transform = 'translateX(-50%) translateY(6px)';
+    }
+    setTimeout(showHint, 600);   // se muestra al cargar unos segundos
+
+    document.addEventListener('wheel', function (e) {
+      if (!cont.contains(e.target)) return;        // solo sobre el globo
+      if (e.ctrlKey || e.metaKey) {
+        e.preventDefault();                        // evita el zoom de página del navegador
+        hideHint();                                // ya está haciendo zoom → oculta la pista
+        // (se deja propagar para que OrbitControls haga el zoom del globo)
+      } else {
+        e.stopImmediatePropagation();              // el globo NO hace zoom…
+        showHint();                                // …y le recuerda cómo hacer zoom
+        // …al no llamar preventDefault, la rueda scrollea la landing
+      }
+    }, { capture: true, passive: false });
+  })();
 }
 
 function updateGlobe() {

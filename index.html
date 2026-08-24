@@ -5,19 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Fenómeno del Niño 2026 — ¿Y tú?</title>
 <link rel="stylesheet" href="./css/style.css">
-<style>
-  /* ── Cambios de comportamiento (añadidos, no alteran lo previo) ── */
 
-  /* 1) El topbar se oculta al llegar al #hero-main */
-  .topbar{ transition:opacity .35s ease, transform .35s ease; }
-  .topbar.is-hidden{ opacity:0; transform:translateY(-110%); pointer-events:none; }
-
-  /* 2) En el #stageWrap no se muestra NADA (ni la línea punteada) hasta que
-        el usuario comienza a hacer scroll. Al soltarse el gate, todo el stage
-        entra con un fundido suave para que no aparezca de golpe. */
-  #stageWrap{ transition:opacity .9s ease; }
-  body.pre-scroll #stageWrap{ opacity:0 !important; }
-</style>
 </head>
 <body class="pre-scroll">
 
@@ -27,37 +15,53 @@
     <div class="cue">Desliza para comenzar <span>▾</span></div>
   </section>
 
-  <div id="stageWrap">
-    <div id="stage">
-      <svg id="connector" viewBox="0 0 1120 2720" preserveAspectRatio="none" aria-hidden="true"></svg>
-      <!-- nodes, boxes, figures injected by JS -->
+    <div id="stageWrap">
+        <div id="stage">
+        <svg id="connector" viewBox="0 0 1120 2720" preserveAspectRatio="none" aria-hidden="true"></svg>
+        <!-- nodes, boxes, figures injected by JS -->
+        </div>
     </div>
-  </div>
 
-  <section class="hero" id="hero-main">
-    <img src="./img/logo-comercio.png" alt="" width="100%" class="logo-comercio">
-    <h1>
-        El Niño:
-        <span>todos estamos conectados</span>
-    </h1>
-    <img src="./img/flecha-bajar.png" alt="flecha bajar" class="flecha-bajar">
-    <p class="bajada">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod. or incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute iruolor in reprehenderit in voluptate velit esum dolore eu fugiat
-    </p>
-    <p class="lead">Nueve personas de todo el país, un mismo fenómeno. Desliza para recorrer sus historias… y descubrir dónde encajas tú.</p>
-  </section>
+    <div class="end-note" id="endNote" style="opacity: 0;">— fin —</div>
 
-  <div class="end-note" id="endNote" style="opacity: 0;">— fin —</div>
+    <section class="hero" id="hero-main">
+        <img src="./img/logo-comercio.png" alt="" width="100%" class="logo-comercio">
+        <h1>
+            El Niño:
+            <span>todos estamos conectados</span>
+        </h1>
+        <img src="./img/flecha-bajar.png" alt="flecha bajar" class="flecha-bajar">
+        <p class="bajada">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod. or incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute iruolor in reprehenderit in voluptate velit esum dolore eu fugiat
+        </p>
+        <p class="lead">Nueve personas de todo el país, un mismo fenómeno. Desliza para recorrer sus historias… y descubrir dónde encajas tú.</p>
+    </section>
 
-  <!-- Modal -->
-  <div class="modal-backdrop" id="modal">
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
-      <button class="close" id="mClose" aria-label="Cerrar">×</button>
-      <div class="eyebrow" id="mEyebrow"></div>
-      <h3 id="mTitle"></h3>
-      <p id="mBody"></p>
+    <!-- Corte de sección: negro (empalma con el hero-main) → blanco, con muesca en punta -->
+    <div class="section-cut" aria-hidden="true"></div>
+
+    <div class="main-contenido">
+        <h3>
+            El origen invisible y la cadena de impacto
+        </h3>
+        <div class="box-globo-3d">
+            <!-- Contenido de mvp-acto2-threejs-mar.html incrustado (app independiente) -->
+            <iframe src="./mvp-acto2-threejs-mar.html"
+                    title="Globo 3D — El origen invisible y la cadena de impacto"
+                    loading="lazy"
+                    style="width:100%; height:100%; min-height:85vh; border:0; display:block;"></iframe>
+        </div>
     </div>
-  </div>
+
+    <!-- Modal -->
+    <div class="modal-backdrop" id="modal">
+        <div class="modal pop-card" role="dialog" aria-modal="true" aria-label="Dato del personaje">
+        <button class="close" id="mClose" aria-label="Cerrar">×</button>
+        <div class="pop-content" id="mContent"></div>
+        </div>
+    </div>
+
+
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
@@ -386,22 +390,84 @@
      MODAL / POPUP
      ============================================================ */
   const modal = document.getElementById('modal');
-  const mEye = document.getElementById('mEyebrow');
-  const mTitle = document.getElementById('mTitle');
-  const mBody = document.getElementById('mBody');
+  const mContent = document.getElementById('mContent');
 
-  function openPopup(data){
-    mEye.textContent = data.popE;
-    mTitle.textContent = data.popT;
-    mBody.innerHTML = data.popB;
+  // ============================================================
+  // DATOS + DISEÑO DE CADA MODAL (una tarjeta por personaje)
+  //   img    : ilustración en img/personajes/popups/
+  //   layout : 'img-top' (imagen arriba) | 'img-bottom' (texto arriba, imagen abajo)
+  //   html   : enunciado; <span class="hl"> marca lo resaltado en naranja
+  //   chart  : (opcional) gráfico HTML extra — solo el de dengue no viene en la imagen
+  //   source : texto de la línea "FUENTE:"
+  // ============================================================
+  const POP_BASE = "img/personajes/popups/";
+  const DENGUE_BARS =
+    '<div class="pop-bars">' +
+      '<div class="pb-row"><span class="pb-label">Antes</span>' +
+        '<span class="pb-bar" style="width:70px"></span>' +
+        '<span class="pb-val">12,150</span></div>' +
+      '<div class="pb-row"><span class="pb-label">2023</span>' +
+        '<span class="pb-bar" style="width:150px"></span>' +
+        '<span class="pb-val">+ 79,000</span></div>' +
+    '</div>';
+
+  // imgW → ancho de la imagen de ESE popup (editable de forma independiente
+  //        por tarjeta). Acepta cualquier valor CSS: "42%", "220px", etc.
+  const POPUPS = {
+    0:  { img:"bg-popup-1.jpg",  imgW:"25%", layout:"img-top", chart:DENGUE_BARS,
+          html:'Los casos de <span class="hl">dengue</span> en Piura casi se multiplicaron por 7 en 2023.',
+          source:"Minsa" },
+    1:  { img:"bg-popup-2.jpg",  imgW:"62%", layout:"img-top",
+          html:'Áncash es el segundo departamento del país con carreteras y puentes destruidos por El Niño: <span class="hl">casi 21 km por cada 100 mil habitantes.</span>',
+          source:"Indeci + INEI" },
+    2:  { img:"bg-popup-3.jpg",  imgW:"80%", layout:"img-bottom",
+          html:'En años <span class="hl">El Niño, en Lambayeque mueren 47 veces más personas por desastres</span> (inundaciones, huaicos, derrumbes) que en un año normal – la cifra más alta de todo el país.',
+          source:"Indeci + INEI" },
+    3:  { img:"bg-popup-4.jpg",  imgW:"42%", layout:"img-top",
+          html:'“En 2023, Cajamarca <span class="hl">tuvo 55 emergencias por lluvia</span> por cada 100 mil habitantes, la tasa más alta de todo el país”',
+          source:"Indeci + INEI" },
+    4:  { img:"bg-popup-5.jpg",  imgW:"74%", layout:"img-top",
+          html:'El único cultivo de los nueve medidos con <span class="hl">caída repetida</span> en los dos años de El Niño.',
+          source:"IPE (Instituto peruano de Economía)" },
+    5:  { img:"bg-popup-6.jpg",  imgW:"68%", layout:"img-top",
+          html:'La cosecha de conchas de abanico en Sechura <span class="hl">se redujo a menos de la octava parte en un solo año.</span>',
+          source:"PRODUCE" },
+    6:  { img:"bg-popup-7.jpg",  imgW:"36%", layout:"img-top",
+          html:'En Puno, <span class="hl">prácticamente 19 de cada 20 chacras dependen solo de la lluvia</span> para regarse, sin ninguna otra fuente de agua. En el verano de 1983, categoría ‘extremadamente seco’.',
+          source:"IPE + Senamhi" },
+    7:  { img:"bg-popup-8.jpg",  imgW:"34%", layout:"img-bottom",
+          html:'Los casos de <span class="hl">leishmaniasis</span> en Ayacucho subieron más de un tercio en un año.',
+          source:"Minsa" },
+    8:  { img:"bg-popup-9.jpg",  imgW:"32%", layout:"img-bottom",
+          html:'En los años de El Niño, <span class="hl">Lima Provincias tuvo casi 12 veces más emergencias</span> que en un año normal — la cifra más alta de todo el país',
+          source:"Indeci + INEI" },
+    yo: { img:"bg-popup-10.jpg", imgW:"36%", layout:"img-top",
+          html:'<span class="hl">Más de la mitad</span> de los proyectos para prevenir desastres en Lima Metropolitana están abandonados o paralizados.',
+          source:"IPE (Instituto peruano de Economía)" }
+  };
+
+  function buildPopup(p){
+    const w    = p.imgW ? (' style="width:' + p.imgW + '"') : '';
+    const fig  = '<div class="pop-fig"><img' + w + ' src="' + POP_BASE + p.img + '" alt=""></div>';
+    const text = '<p class="pop-text">' + p.html + '</p>';
+    const chart = p.chart || '';
+    const src  = '<div class="pop-source">FUENTE: ' + p.source + '</div>';
+    const body = (p.layout === 'img-bottom') ? (text + chart + fig) : (fig + text + chart);
+    return body + src;
+  }
+
+  function openPopup(p){
+    if(!p) return;
+    mContent.innerHTML = buildPopup(p);
     modal.classList.add('open');
+    mContent.scrollTop = 0;
   }
   function closePopup(){ modal.classList.remove('open'); }
 
   document.querySelectorAll('.infobtn').forEach(b=>{
     b.addEventListener('click', ()=>{
       const idx = b.dataset.idx;
-      openPopup(idx==='yo' ? YO_STATION : STATIONS[+idx]);
+      openPopup(idx==='yo' ? POPUPS.yo : POPUPS[+idx]);
     });
   });
   document.getElementById('mClose').addEventListener('click', closePopup);
@@ -466,8 +532,8 @@
     STATIONS.forEach(s=>{
       revealAt(s._circle, s._circle, 0);         // el personaje…
       revealAt(s._nw,     s._circle, 0);         // …con su nombre y cargo
-      revealAt(s._ib,     s._circle, STEP);      // luego el cuadro blanco
-      revealAt(s._btn,    s._circle, STEP*1.5);  // …y después su botón de info
+      revealAt(s._ib,     s._circle, STEP);      // el cuadro blanco…
+      revealAt(s._btn,    s._circle, STEP);      // …y su botón de info aparecen JUNTOS
       revealAt(s._ob,     s._circle, STEP*2);    // por último el cuadro naranja
     });
 
