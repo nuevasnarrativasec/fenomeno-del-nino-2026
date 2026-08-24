@@ -86,18 +86,32 @@
       cursor: pointer;
     }
 
+    /* Cabezal arrastrable en forma de FLECHA (playhead): apunta hacia la
+       línea de tiempo y se distingue claramente de los rombos naranjas
+       de los picos (los hitos marcados). */
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
-      width: 18px; height: 18px;
-      border-radius: 50%;
+      width: 17px; height: 20px;
+      border: none;
       background: #fff;
-      border: 2px solid #e05c2a;
-      box-shadow: 0 0 8px rgba(224,92,42,0.6);
-      cursor: pointer;
+      /* Triángulo que apunta a la DERECHA (sentido del avance) */
+      clip-path: polygon(0 0, 100% 50%, 0 100%);
+      filter: drop-shadow(0 0 5px rgba(224,92,42,0.95));
+      cursor: grab;
+      margin-top: 0;
     }
-
+    input[type="range"]:active::-webkit-slider-thumb { cursor: grabbing; }
     input[type="range"]::-webkit-slider-thumb:hover {
-      box-shadow: 0 0 16px rgba(224,92,42,0.9);
+      filter: drop-shadow(0 0 10px rgba(255,140,74,1));
+    }
+    /* Firefox */
+    input[type="range"]::-moz-range-thumb {
+      width: 17px; height: 20px;
+      border: none;
+      background: #fff;
+      clip-path: polygon(0 0, 100% 50%, 0 100%);
+      filter: drop-shadow(0 0 5px rgba(224,92,42,0.95));
+      cursor: grab;
     }
 
     .slider-ticks {
@@ -913,9 +927,9 @@
   <div id="regions-info">
     <div class="ri-title">Regiones de vigilancia del Niño</div>
     <div class="ri-intro">El Pacífico ecuatorial se divide en cuatro regiones de monitoreo: Niño 1+2, Niño 3, Niño 3.4 y Niño 4.</div>
-    <div class="ri-row"><span class="ri-dot" style="background:#f0603a;color:#f0603a"></span><span><span class="ri-code">Niño 1+2:</span> <span class="ri-desc">costa de Perú y Ecuador.</span></span></div>
+    <div class="ri-row"><span class="ri-dot" style="background:#f0603a;color:#f0603a"></span><span><span class="ri-code">Niño 1+2:</span> <span class="ri-desc">costa de Perú y Ecuador (Niño 1 y Niño 2).</span></span></div>
     <div class="ri-row"><span class="ri-dot" style="background:#ff8200;color:#ff8200"></span><span><span class="ri-code">Niño 3:</span> <span class="ri-desc">Pacífico ecuatorial oriental.</span></span></div>
-    <div class="ri-row"><span class="ri-dot" style="background:#4aa3e6;color:#4aa3e6"></span><span><span class="ri-code">Niño 3.4:</span> <span class="ri-desc">Pacífico ecuatorial central.</span></span></div>
+    <div class="ri-row"><span class="ri-dot" style="background:transparent;color:#fff;border:1.5px dashed #fff;box-shadow:none"></span><span><span class="ri-code">Niño 3.4:</span> <span class="ri-desc">Pacífico ecuatorial central (índice global).</span></span></div>
     <div class="ri-row"><span class="ri-dot" style="background:#f0c020;color:#f0c020"></span><span><span class="ri-code">Niño 4:</span> <span class="ri-desc">Pacífico ecuatorial occidental.</span></span></div>
   </div>
 
@@ -1668,10 +1682,15 @@ function boxPerimeter(latN, latS, lngW, lngE, step = 2) {
 const NINO_REGION_PATHS = [
   { color: '#f0c020', points: boxPerimeter(5,  -5,  160,  210) }, // Niño 4
   { color: '#ff8200', points: boxPerimeter(5,  -5, -150,  -90) }, // Niño 3
-  { color: '#f0603a', points: boxPerimeter(0, -10,  -90,  -80) }, // Niño 1+2
+  // Niño 1+2 (costero) dividido en sus dos sub-regiones históricas: Niño 2
+  // (0°–5°S) al norte y Niño 1 (5°S–10°S) al sur. Al apilarse, la arista que
+  // comparten en 5°S hace de línea divisoria.
+  { color: '#f0603a', points: boxPerimeter(0,  -5,  -90,  -80) }, // Niño 2 (norte)
+  { color: '#f0603a', points: boxPerimeter(-5, -10, -90,  -80) }, // Niño 1 (sur)
   // Niño 3.4 se dibuja al final y a mayor altura (alt/stroke): su contorno queda
   // POR ENCIMA de Niño 4 y Niño 3 para que se lea como la región que engloba a ambas.
-  { color: '#4aa3e6', alt: 0.024, stroke: 2.8, points: boxPerimeter(5, -5, -170, -120) }, // Niño 3.4
+  // Trazo BLANCO y PUNTEADO (dash) para distinguirla como el índice global.
+  { color: '#ffffff', dash: true, alt: 0.024, stroke: 3, points: boxPerimeter(8, -8, -170, -120) }, // Niño 3.4 (más alta: sobresale de las bandas)
 ];
 
 // Relleno semitransparente de cada caja. Se inyectan como features GeoJSON en la
@@ -1704,7 +1723,8 @@ const NINO_REGION_FILLS = [
   ninoFillFeature('rgba(240,200,40,0.18)',  5,  -5,  160,  180), // Niño 4 (oeste)
   ninoFillFeature('rgba(240,200,40,0.18)',  5,  -5, -180, -150), // Niño 4 (este)
   ninoFillFeature('rgba(255,130,0,0.20)',   5,  -5, -150,  -90), // Niño 3  (naranja)
-  ninoFillFeature('rgba(240,96,58,0.22)',   0, -10,  -90,  -80), // Niño 1+2 (rojo)
+  ninoFillFeature('rgba(240,96,58,0.22)',   0,  -5,  -90,  -80), // Niño 2 (norte)
+  ninoFillFeature('rgba(240,96,58,0.22)',  -5, -10,  -90,  -80), // Niño 1 (sur)
 ];
 
 // Regiones Niño como elementos HTML clicables (usan la fuente del navegador → la
@@ -1714,7 +1734,7 @@ const NINO_REGIONS = [
   {
     isRegionLabel: true, id: 'nino4',
     lat: 8, lng: -177,
-    name: 'Niño 4',
+    name: 'NIÑO 4',
     code: 'Niño 4 · Pacífico occidental',
     tag: 'Región de vigilancia ENSO',
     desc: 'Pacífico ecuatorial occidental-central (160°E–150°O). Vigila la reserva de agua cálida del oeste; sus variaciones anticipan cómo evolucionará un evento.',
@@ -1726,19 +1746,19 @@ const NINO_REGIONS = [
   {
     isRegionLabel: true, id: 'global',
     lat: 12, lng: -145,
-    name: 'Niño Global',
+    name: 'NIÑO GLOBAL',
     code: 'Niño 3.4 · Pacífico central',
     tag: 'Índice ENSO · lo vigila NOAA',
     desc: 'Termómetro del Pacífico central: mide qué tan potente es El Niño global (ENSO). Es la señal que usa el mundo para declarar un evento El Niño.',
     val: '+1,4 °C · jul 2026',
-    color: '#4aa3e6', labelColor: '#8fd0ff',
+    color: '#eaf1ff', labelColor: '#ffffff',
     hint: 'Mide una región distinta a la costera: hoy su señal es más moderada que la del Niño Costero.',
     source: 'Fuente: NOAA CPC (jul 2026)',
   },
   {
     isRegionLabel: true, id: 'nino3',
     lat: 8, lng: -105,
-    name: 'Niño 3',
+    name: 'NIÑO 3',
     code: 'Niño 3 · Pacífico oriental',
     tag: 'Región de vigilancia ENSO',
     desc: 'Pacífico ecuatorial oriental (150°O–90°O). Fue la región de referencia histórica de El Niño; complementa la lectura de la 3.4 hacia el este.',
@@ -1750,7 +1770,7 @@ const NINO_REGIONS = [
   {
     isRegionLabel: true, id: 'costero',
     lat: 3.5, lng: -85,
-    name: 'Niño Costero',
+    name: 'NIÑO COSTERO',
     code: 'Niño 1+2 · frente al Perú',
     tag: 'Índice costero · lo vigila ENFEN',
     desc: 'Termómetro frente a Perú y Ecuador: el mar que más directamente influye sobre nuestra costa.',
@@ -2056,6 +2076,10 @@ function initGlobe(data) {
     .pathColor(d => [d.color, d.color])
     .pathStroke(d => d.stroke || 2.2)
     .pathPointAlt(d => d.alt ?? 0.014)
+    // Niño 3.4 se traza punteada (dash); las demás cajas van sólidas (length 1, gap 0)
+    .pathDashLength(d => d.dash ? 0.02 : 1)
+    .pathDashGap(d => d.dash ? 0.008 : 0)
+    .pathDashAnimateTime(0)
     .pathTransitionDuration(0)
     // Marcadores HTML de historias (+ etiquetas de región, ver htmlElement)
     .htmlElementsData(STORIES)
@@ -2191,6 +2215,14 @@ let currentICENIdx = 0;
 
 function updateSlider(i) {
   currentICENIdx = i;
+
+  // Avance del cabezal: el tramo ya recorrido se pinta en cálido (naranja)
+  // y el resto del riel queda en el azul base, para que se vea cuánto se ha
+  // arrastrado a lo largo de la línea de tiempo.
+  const prog = (i / (ICEN.length - 1)) * 100;
+  slider.style.background =
+    `linear-gradient(to right, #b33a12 0%, #ff8a4a ${prog}%, #16263f ${prog}%, #24344f 100%)`;
+
   const v    = ICEN[i];
   const cat  = ICEN_CATS[ICEN_CI[i]];
   const when = icenMonthLabel(i);
