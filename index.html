@@ -76,7 +76,7 @@
   const FIGURE = (color)=>`<svg viewBox="0 0 40 48"><circle cx="20" cy="11" r="8" fill="${color}"/><path d="M4 48c0-9 7-16 16-16s16 7 16 16z" fill="${color}"/></svg>`;
 
   const STATIONS = [
-    { name:"María", age:34, role:"Ciudadana", region:"PIURA",
+    { name:"María", age: '34 años', role:"Ciudadana", region:"PIURA",
       cx:150, cy:135, side:"right", infoTop:92,
       info:"Vivo en un asentamiento humano en las afueras de Piura. Mi hija Xiomara, de 9 años, lleva tres días internada con dengue. Creo que la culpa es de un mosquito que la picó en el patio de la casa.",
       q:"¿Y si no fue el mosquito, sino la misma lluvia que golpeaba más al sur?",
@@ -84,7 +84,7 @@
       popE:"Dengue", popT:"El dengue y El Niño",
       popB:"Los casos de dengue en Piura casi se multiplicaron por 7 en 2023: de 12,150 pasaron a más de 79 mil." },
 
-    { name:"Carlos", age:41, role:"Ingeniero", region:"ÁNCASH",
+    { name:"Carlos", age: '41 años', role:"Ingeniero", region:"ÁNCASH",
       cx:352, cy:352, side:"left", infoTop:308,
       info:"Trabajo para una empresa contratista en Áncash, operando maquinaria pesada para retirar huaicos y escombros de la vía tras las lluvias. Llevo dos semanas sin volver a casa por la magnitud del daño.",
       q:"¿Y si esa misma lluvia, más al norte, costó algo más que caminos?",
@@ -92,7 +92,7 @@
       popE:"Infraestructura crítica", popT:"Huaicos y vías rotas",
       popB:"Áncash es el segundo departamento del país con carreteras y puentes destruidos por El Niño: casi 21 km por cada 100 mil habitantes." },
 
-    { name:"Pablo", age:29, role:"Transportista", region:"LAMBAYEQUE",
+    { name:"Pablo", age: '29 años', role:"Transportista", region:"LAMBAYEQUE",
       cx:600, cy:562, side:"left", infoTop:520,
       info:"Soy chofer de una empresa de carga que transporta alimentos entre Chiclayo y el norte. Ese año, mi ruta habitual se volvió zona de rescate.",
       q:"¿Cuántas veces se repite esto cada año?",
@@ -100,7 +100,7 @@
       popE:"Fallecidos por El Niño", popT:"Las muertes en la carretera",
       popB:"En años de El Niño, en Lambayeque mueren 47 veces más personas que en un año normal — la cifra más alta de todo el país." },
 
-    { name:"Daniel", age:47, role:"Promotor", region:"CAJAMARCA",
+    { name:"Daniel", age: '47 años', role:"Promotor", region:"CAJAMARCA",
       cx:188, cy:802, side:"right", infoTop:758,
       info:"Vivo en un caserío rural de Cajamarca. Soy promotor de defensa civil de mi comunidad desde hace 15 años; he visto el mismo río desbordarse más veces de las que puedo contar.",
       q:"¿En otra parte del Perú también se arruinaron sus cosechas?",
@@ -108,7 +108,7 @@
       popE:"Recurrencia de eventos", popT:"El desastre que se repite",
       popB:"En 2023, Cajamarca tuvo 55 emergencias por lluvia por cada 100 mil habitantes, la tasa más alta de todo el país." },
 
-    { name:"Isabel", age:52, role:"Comerciante", region:"LA LIBERTAD",
+    { name:"Isabel", age: '52 años', role:"Comerciante", region:"LA LIBERTAD",
       cx:632, cy:1042, side:"left", infoTop:998,
       info:"Tengo un puesto de frutas en un mercado de Trujillo hace más de veinte años. Ese año no pude vender mango, mi producto más pedido, porque la cosecha de la región se malogró.",
       q:"¿Y si la cosecha no estuviera en la tierra, sino en el mar?",
@@ -116,7 +116,7 @@
       popE:"Rendimiento de mango", popT:"La cosecha que no maduró",
       popB:"Caída de 20.2% en 2017 y 25.9% en 2023 — el único cultivo de los nueve medidos con caída repetida en los dos años de El Niño." },
 
-    { name:"Héctor", age:58, role:"Acuicultor", region:"LA LIBERTAD",
+    { name:"Héctor", age: '58 años', role:"Acuicultor", region:"LA LIBERTAD",
       cx:168, cy:1278, side:"right", infoTop:1234,
       info:"Tengo una concesión de conchas de abanico en la bahía de Sechura desde hace quince años. Es la peor cosecha que recuerdo.",
       q:"¿Y si el problema no es el agua que llega, sino la que nunca llegó?",
@@ -124,7 +124,7 @@
       popE:"Concha de abanico", popT:"El mar demasiado caliente",
       popB:"La cosecha de conchas de abanico en Sechura se redujo a menos de la octava parte en un solo año (de 7 205.8 a 838.9 toneladas)." },
 
-    { name:"Estela", age:61, role:"Agricultora", region:"PUNO",
+    { name:"Estela", age: '61 años', role:"Agricultora", region:"PUNO",
       cx:352, cy:1502, side:"right", infoTop:1458,
       info:"Cultivo papa nativa en una chacra a más de 3,800 metros de altura, sin acceso a riego. Ese año la lluvia de temporada nunca llegó.",
       q:"¿Y esa sequía tocó algo más, en otro rincón de la sierra?",
@@ -132,7 +132,7 @@
       popE:"Sequías históricas", popT:"El sur que se seca",
       popB:"En Puno, prácticamente 19 de cada 20 chacras dependen solo de la lluvia para regarse, sin ninguna otra fuente de agua. En el verano de 1983, categoría 'extremadamente seco'." },
 
-    { name:"Tomás", age:47, role:"Fruticultor", region:"AYACUCHO",
+    { name:"Tomás", age: '47 años', role:"Fruticultor", region:"AYACUCHO",
       cx:562, cy:1722, side:"left", infoTop:1678,
       info:"Trabajo un valle interandino cerca de Huamanga cultivando frutales. Una herida que no cerraba resultó ser leishmaniasis.",
       q:"¿Y qué pasa cuando una emergencia alcanza a toda una comunidad?",
@@ -140,7 +140,7 @@
       popE:"Leishmaniasis", popT:"La enfermedad del valle",
       popB:"Los casos de leishmaniasis en Ayacucho subieron más de un tercio en un año: de 119 a 161." },
 
-    { name:"Cecilia", age:44, role:"Directora", region:"LIMA PROVINCIAS",
+    { name:"Cecilia", age: '44 años', role:"Directora", region:"LIMA PROVINCIAS",
       cx:238, cy:1978, side:"right", infoTop:1934,
       info:"Dirijo un colegio rural en una provincia de Lima. Mi escuela sirvió de refugio de emergencia varias veces ese año.",
       q:"¿Hasta dónde puede llegar una emergencia como esta?",
@@ -279,7 +279,7 @@
     node.appendChild(btn);
 
     // nombre + rol (aparece con fade junto al personaje)
-    const nw = el('div','namewrap reveal', `<div class="nm">${s.name} (${s.age})</div><div class="role">${s.role}</div>`);
+    const nw = el('div','namewrap reveal', `<div class="nm">${s.name} <br> (${s.age})</div><div class="role">${s.role}</div>`);
     nw.style.left = s.cx+'px';
     nw.style.top  = (s.cy + CIRCLE_R + 12)+'px';
     node.appendChild(nw);
@@ -513,7 +513,7 @@
     // sale de golpe: hay que seguir scrolleando para revelar cada parte.
     // toggleActions 'play none none reverse' => se deshace al volver a subir.
     const STEP = 150;      // px de scroll extra entre cada aparición dentro de un personaje
-    const START = 'top 35%';  // cada estación se revela cuando sube al tercio superior:
+    const START = 'top 55%';  // cada estación se revela cuando sube al tercio superior:
                               // así en el primer scroll solo aparece la 1ª (María) y no varias a la vez
 
     function revealAt(node, anchor, offset){
@@ -521,7 +521,7 @@
       gsap.set(node, { opacity:0 });
       // El desfase se multiplica por la escala actual para que el ORDEN se
       // conserve también cuando el lienzo se reduce en pantallas chicas.
-      const start = offset>0 ? (()=> 'top+=' + (offset*curScale) + ' 35%') : START;
+      const start = offset>0 ? (()=> 'top+=' + (offset*curScale) + ' 55%') : START;
       gsap.to(node, {
         opacity:1, duration:1, ease:'power2.out',
         scrollTrigger:{ trigger: anchor, start, toggleActions:'play none none reverse' }
