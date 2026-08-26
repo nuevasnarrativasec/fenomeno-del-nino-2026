@@ -425,4 +425,25 @@
     }
     .box-globo-3d{
         margin: 40px auto;
+        position: relative;
     }
+    /* Placeholder mientras el iframe del globo 3D carga de forma diferida */
+    .globe-placeholder{
+        position: absolute; inset: 0;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        gap: 18px; background: #04080f; z-index: 2;
+        transition: opacity .6s ease; pointer-events: none;
+    }
+    .globe-placeholder.hidden{ opacity: 0; }
+    .gp-orb{
+        width: 120px; height: 120px; border-radius: 50%;
+        background: radial-gradient(circle at 35% 32%, #1a3a6a, #040c1e 70%);
+        box-shadow: 0 0 60px rgba(26,80,192,.35), inset -12px -12px 40px rgba(0,0,0,.6);
+        animation: gpPulse 1.8s ease-in-out infinite;
+    }
+    @keyframes gpPulse{ 0%,100%{ transform: scale(1); opacity: .85; } 50%{ transform: scale(1.06); opacity: 1; } }
+    .gp-text{
+        font-family: system-ui, -apple-system, sans-serif;
+        font-size: .8rem; letter-spacing: .06em; color: #8a90a0;
+    }
+    @media (prefers-reduced-motion: reduce){ .gp-orb{ animation: none; } }
