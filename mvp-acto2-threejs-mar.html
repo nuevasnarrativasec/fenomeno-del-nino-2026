@@ -600,6 +600,8 @@
       border: 1px solid #1e2a3e;
       border-radius: 10px;
       padding: 18px 20px 14px;
+      max-height: calc(100% - 92px);
+      overflow-y: auto;
       z-index: 25;
       backdrop-filter: blur(10px);
       opacity: 0;
@@ -676,6 +678,27 @@
       color: #8a8878;
       margin-bottom: 14px;
     }
+
+    .popup-refs {
+      border-top: 1px solid #141c2e;
+      padding-top: 10px;
+      margin-bottom: 14px;
+    }
+    .popup-year {
+      font-family: sans-serif;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      color: #b0864f;
+      margin-bottom: 5px;
+    }
+    .popup-source {
+      font-family: sans-serif;
+      font-size: 0.64rem;
+      line-height: 1.5;
+      color: #5a6070;
+    }
+    .popup-source .src-label { color: #4a5568; font-weight: 700; }
 
     .popup-nav {
       display: flex;
@@ -1041,6 +1064,10 @@
     <div class="popup-impact" id="popupImpact">—</div>
     <div class="popup-divider"></div>
     <div class="popup-story" id="popupStory">—</div>
+    <div class="popup-refs" id="popupRefs">
+      <div class="popup-year"   id="popupYear"></div>
+      <div class="popup-source" id="popupSource"></div>
+    </div>
     <div class="popup-nav">
       <button class="popup-nav-btn" id="popupPrev">← Anterior</button>
       <span class="popup-counter" id="popupCounter">1 / 6</span>
@@ -1144,19 +1171,23 @@ const STORIES = [
     markerColor: '#c04ac0',
   },
 
-  // ─── 10 casos globales por El Niño ───
+  // ─── 10 casos globales por El Niño / La Niña ───
   {
     lat: -33.0, lng: 147.0, iso: 'AUS', emoji: '🌾',
     person: 'Liam, 45 años',
     location: 'Agricultor · Australia',
     story: 'La sequía extrema asociada a El Niño arruinó por completo su cosecha de trigo, impidiéndole exportar al mercado asiático y deprimiendo fuertemente sus ingresos familiares.',
+    year: '2015-2016',
+    source: 'Banco Mundial, Commodity Markets Outlook: Understanding El Niño (octubre 2015).',
     markerColor: '#6ec8fa',
   },
   {
     lat: 26.85, lng: 80.91, iso: 'IND', emoji: '🌾',
     person: 'Rajesh, 48 años',
     location: 'Campesino · India',
-    story: 'El debilitamiento del monzón por El Niño redujo el rendimiento de sus cultivos de arroz un 3% por debajo de la tendencia histórica, limitando sus ventas locales.',
+    story: 'El debilitamiento del monzón por El Niño redujo el rendimiento de sus cultivos de arroz, limitando sus ventas locales.',
+    year: '2015-2016',
+    source: 'Banco Mundial, Commodity Markets Outlook: Understanding El Niño (octubre 2015).',
     markerColor: '#5ab0e0',
   },
   {
@@ -1164,48 +1195,62 @@ const STORIES = [
     person: 'Kunda, 38 años',
     location: 'Refinador · Zambia',
     story: 'La severa sequía de El Niño secó los ríos, provocando apagones en su planta de fundición de cobre que paralizaron las operaciones e interrumpieron sus turnos de trabajo.',
+    year: '2015-2016',
+    source: 'Banco Mundial, Commodity Markets Outlook: Understanding El Niño (octubre 2015). Cita textual: “in Zambia, copper mines may need to reduce production if an El Niño-induced drought reduces electricity supply from hydro power sources.”',
     markerColor: '#4aa3e6',
   },
   {
     lat: -2.20, lng: 113.92, iso: 'IDN', emoji: '🔥',
     person: 'Siti, 35 años',
     location: 'Recolectora · Indonesia',
-    story: 'Durante el El Niño de 2015, la grave sequía desató incendios masivos en las turberas de su región, destruyendo los recursos forestales de los que dependía su sustento.',
+    story: 'Durante El Niño, la grave sequía desató incendios masivos en las turberas de su región, destruyendo los recursos forestales de los que dependía su sustento.',
+    year: '2015',
+    source: 'Banco Mundial, The Cost of Fire: An Economic Analysis of Indonesia’s 2015 Fire Crisis.',
     markerColor: '#ff8200',
   },
   {
     lat: -19.0, lng: 29.0, iso: 'ZWE', emoji: '🌽',
     person: 'Tendai, 42 años',
     location: 'Agricultora · Zimbabue',
-    story: 'La escasez de lluvias de El Niño en 2015-2016 redujo su producción de maíz en un 40%, obligando a su hogar a depender de asistencia alimentaria de emergencia.',
+    story: 'La escasez de lluvias de El Niño redujo su producción de maíz, obligando a su hogar a depender de asistencia alimentaria de emergencia.',
+    year: '2015-2016',
+    source: 'FAO/ONU, El Niño Early Action and Response Plan (2016). La cosecha de maíz cayó cerca de un tercio en 2016 vs. 2015; Zimbabue declaró estado de desastre nacional.',
     markerColor: '#148ce6',
   },
   {
     lat: -28.5, lng: 26.8, iso: 'ZAF', emoji: '🌽',
     person: 'Sipho, 44 años',
     location: 'Agricultor · Sudáfrica',
-    story: 'Las sequías cíclicas de El Niño provocaron que el rendimiento de sus cosechas de maíz cayera un 20% por debajo del promedio histórico, dejándolo sin excedentes para comercializar.',
+    story: 'Las sequías cíclicas de El Niño provocaron que el rendimiento de sus cosechas de maíz cayera por debajo del promedio histórico, dejándolo sin excedentes para comercializar.',
+    year: '2015-2016',
+    source: 'FAO/ONU, El Niño Early Action and Response Plan (2016). Descrita como la peor sequía en casi 25 años.',
     markerColor: '#5ab0e0',
   },
   {
     lat: 26.0, lng: 68.4, iso: 'PAK', emoji: '🌊',
     person: 'Aisha, 29 años',
     location: 'Tejedora · Pakistán',
-    story: 'Durante la fase húmeda de La Niña en 2022, las inundaciones monzónicas extremas anegaron su pueblo, arrasando con su hogar y su taller de hilado.',
+    story: 'Durante la fase húmeda de La Niña, las inundaciones monzónicas extremas anegaron su pueblo, arrasando con su hogar y su taller de hilado.',
+    year: '2022 (La Niña)',
+    source: 'Banco Mundial, Pakistan Floods 2022: Post-Disaster Needs Assessment. Más de 2 millones de viviendas dañadas.',
     markerColor: '#fa3010',
   },
   {
     lat: -22.5, lng: 27.5, iso: 'BWA', emoji: '🌵',
     person: 'Lerato, 30 años',
     location: 'Productor · Botsuana',
-    story: 'La intensa sequía de El Niño en 2015-2016 devastó el cinturón de maíz de su región, perdiendo la totalidad de sus siembras de secano poco después de plantarlas.',
+    story: 'La intensa sequía de El Niño devastó el cinturón de maíz de su región, perdiendo la totalidad de sus siembras de secano poco después de plantarlas.',
+    year: '2015-2016',
+    source: 'FAO/ONU, El Niño Early Action and Response Plan (2016).',
     markerColor: '#6ec8fa',
   },
   {
-    lat: 47.5, lng: 13.5, iso: 'AUT', emoji: '⚡',
-    person: 'Franz, 52 años',
-    location: 'Técnico · Austria',
-    story: 'La irregularidad de las precipitaciones redujo el caudal del río que alimenta su central hidroeléctrica de pasada, disminuyendo la generación estacional hasta un 15%.',
+    lat: 48.20, lng: 16.37, iso: 'AUT', emoji: '⚡',
+    person: 'Markus, 52 años',
+    location: 'Técnico · Europa Central (Danubio)',
+    story: 'El nivel del río Danubio bajó a niveles críticos por la sequía ligada a El Niño, reduciendo la generación de energía hidroeléctrica de toda la cuenca.',
+    year: '2026 (evento en curso)',
+    source: 'Joint Research Centre — Comisión Europea, “Worsening drought and record heat grip Europe, fuelling extraordinary wildfires and extremely low river flows”.',
     markerColor: '#8888cc',
   },
   {
@@ -1213,6 +1258,8 @@ const STORIES = [
     person: 'Chen, 41 años',
     location: 'Arrocero · China',
     story: 'Las copiosas lluvias de El Niño en el centro del país causaron inundaciones en la cuenca del Yangtze, perdiendo gran parte de su siembra de arroz en el verano posterior.',
+    year: '2020',
+    source: 'Ministerio de Emergencias y Ministerio de Recursos Hídricos de China (gobierno chino).',
     markerColor: '#f04010',
   },
 ];
@@ -1983,6 +2030,25 @@ function openStory(idx) {
     if (dividerEl) dividerEl.style.display = 'none';
   }
   document.getElementById('popupStory').textContent    = s.story;
+
+  // Año + fuente (solo los casos globales los traen).
+  const refsEl   = document.getElementById('popupRefs');
+  const yearEl   = document.getElementById('popupYear');
+  const sourceEl = document.getElementById('popupSource');
+  if (s.year || s.source) {
+    yearEl.textContent = s.year ? `Año: ${s.year}` : '';
+    yearEl.style.display = s.year ? '' : 'none';
+    if (s.source) {
+      sourceEl.innerHTML = `<span class="src-label">Fuente:</span> ${s.source}`;
+      sourceEl.style.display = '';
+    } else {
+      sourceEl.style.display = 'none';
+    }
+    refsEl.style.display = '';
+  } else {
+    refsEl.style.display = 'none';
+  }
+
   document.getElementById('popupCounter').textContent  = `${idx + 1} / ${STORIES.length}`;
 
   document.querySelectorAll('.story-dot').forEach((dot, i) => {
