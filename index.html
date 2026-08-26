@@ -217,7 +217,7 @@
   const stage = document.getElementById('stage');
   const svg = document.getElementById('connector');
   const SVGNS = "http://www.w3.org/2000/svg";
-  const INFO_W = 210, ORANGE_W = 210, CIRCLE_R = 44;
+  const INFO_W = 250, ORANGE_W = 210, CIRCLE_R = 44;
 
   // El lienzo y el SVG crecen según STAGE_H (derivado de GAP)
   stage.style.height = STAGE_H + 'px';
@@ -286,6 +286,7 @@
 
     // cuadro blanco de información
     const ib = el('div','infobox reveal', `<span class="region">${s.region}.</span> ${s.info}`);
+    ib.style.width = INFO_W+'px';   // ancho único de verdad: el botón siempre cae en su esquina
     ib.style.top = s.infoTop+'px';
     ib.style.left = ibLeft+'px';
     node.appendChild(ib);
