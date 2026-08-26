@@ -176,6 +176,29 @@
       z-index: 1;
     }
 
+    /* ── CONTROLES DE ZOOM (trackpad / Magic Mouse) ── */
+    #zoom-ctrl {
+      position: absolute;
+      right: 20px; bottom: 68px;
+      display: flex; flex-direction: column; gap: 6px;
+      z-index: 22;
+    }
+    .zoom-btn {
+      width: 38px; height: 38px;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(4, 8, 15, 0.9);
+      border: 1px solid #24314a;
+      color: #e8e0d5;
+      font-family: sans-serif; font-size: 1.35rem; line-height: 1;
+      cursor: pointer; border-radius: 8px;
+      backdrop-filter: blur(6px);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+      transition: background 0.15s, border-color 0.15s, transform 0.1s;
+      user-select: none;
+    }
+    .zoom-btn:hover  { background: rgba(20, 30, 48, 0.95); border-color: #3a4a6a; color: #fff; }
+    .zoom-btn:active { transform: scale(0.92); }
+
     /* ── TOOLTIP ── (hover país/región · lado derecho) */
     #tooltip {
       position: absolute;
@@ -247,6 +270,26 @@
     }
     #regions-info .ri-code { color: #f0e8df; font-weight: 700; white-space: nowrap; }
     #regions-info .ri-desc { color: #8a8878; }
+    #regions-info { max-height: calc(100% - 84px); overflow-y: auto; }
+    #regions-info .ri-more { margin-top: 11px; border-top: 1px solid #1e2a3e; padding-top: 9px; }
+    #regions-info .ri-more summary {
+      list-style: none; cursor: pointer;
+      font-family: sans-serif; font-size: 0.66rem; font-weight: 700;
+      letter-spacing: 0.02em; color: #b0b6c4;
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      user-select: none;
+    }
+    #regions-info .ri-more summary::-webkit-details-marker { display: none; }
+    #regions-info .ri-more summary:hover { color: #e8e0d5; }
+    #regions-info .ri-chevron { transition: transform 0.2s ease; color: #5a6070; font-weight: 700; }
+    #regions-info .ri-more[open] .ri-chevron { transform: rotate(90deg); }
+    #regions-info .ri-note, #regions-info .ri-para {
+      font-family: sans-serif; font-size: 0.68rem; line-height: 1.5;
+      color: #9aa0b0; margin-top: 8px;
+    }
+    #regions-info .ri-note { color: #c8b090; }
+    #regions-info .ri-note strong { color: #e6c48a; }
+    #regions-info .ri-para strong { color: #d6dae4; font-weight: 700; }
 
     /* ── PICOS DE TEMPERATURA EN EL SLIDER ── */
     .slider-peaks {
@@ -915,6 +958,12 @@
 <div id="globe-wrapper">
   <div id="globe-container"></div>
 
+  <!-- Controles de zoom (fiables en trackpad / Magic Mouse) -->
+  <div id="zoom-ctrl">
+    <button class="zoom-btn" id="zoomInBtn"  title="Acercar" aria-label="Acercar">+</button>
+    <button class="zoom-btn" id="zoomOutBtn" title="Alejar"  aria-label="Alejar">−</button>
+  </div>
+
   <!-- Loading -->
   <div id="loading">
     <div class="loading-globe"></div>
@@ -927,27 +976,22 @@
   <div id="regions-info">
     <div class="ri-title">Regiones de vigilancia del Niño</div>
     <div class="ri-intro">El Pacífico ecuatorial se divide en cuatro regiones de monitoreo: Niño 1+2, Niño 3, Niño 3.4 y Niño 4.</div>
-    <div class="ri-row"><span class="ri-dot" style="background:#f0603a;color:#f0603a"></span><span><span class="ri-code">Niño 1+2:</span> <span class="ri-desc">costa de Perú y Ecuador (Niño 1 y Niño 2).</span></span></div>
+    <div class="ri-row"><span class="ri-dot" style="background:#f0603a;color:#f0603a"></span><span><span class="ri-code">Niño 1+2:</span> <span class="ri-desc">costa de Perú y Ecuador.</span></span></div>
     <div class="ri-row"><span class="ri-dot" style="background:#ff8200;color:#ff8200"></span><span><span class="ri-code">Niño 3:</span> <span class="ri-desc">Pacífico ecuatorial oriental.</span></span></div>
-    <div class="ri-row"><span class="ri-dot" style="background:transparent;color:#fff;border:1.5px dashed #fff;box-shadow:none"></span><span><span class="ri-code">Niño 3.4:</span> <span class="ri-desc">Pacífico ecuatorial central (índice global).</span></span></div>
+    <div class="ri-row"><span class="ri-dot" style="background:transparent;color:#fff;border:1.5px dashed #fff;box-shadow:none"></span><span><span class="ri-code">Niño 3.4:</span> <span class="ri-desc">zona intermedia entre Niño 3 y Niño 4 (Pacífico ecuatorial central).</span></span></div>
     <div class="ri-row"><span class="ri-dot" style="background:#f0c020;color:#f0c020"></span><span><span class="ri-code">Niño 4:</span> <span class="ri-desc">Pacífico ecuatorial occidental.</span></span></div>
+    <details class="ri-more">
+      <summary>¿Costero o global? <span class="ri-chevron">›</span></summary>
+      <p class="ri-note"><strong>Importante:</strong> el «+» indica que Niño 1 y Niño 2 se agrupan en una sola zona; el punto en 3.4 identifica una región intermedia entre Niño 3 y Niño 4, no una suma.</p>
+      <p class="ri-para">Ambos pueden afectarnos, pero no son lo mismo. El <strong>Niño Costero</strong> se monitorea en la región <strong>Niño 1+2</strong> mediante el <strong>ICEN</strong>; el <strong>Niño global</strong>, principalmente en la región <strong>Niño 3.4</strong> mediante el <strong>ONI</strong>. Por eso sus intensidades no siempre coinciden: uno puede ser fuerte mientras el otro es moderado, débil o neutro.</p>
+      <p class="ri-para">Además, El Niño no depende solo de la temperatura del mar: interviene la interacción entre océano y atmósfera, con cambios en vientos, lluvias, corrientes, ondas Kelvin y otras variables.</p>
+    </details>
   </div>
 
   <!-- Tooltip hover país/región -->
   <div id="tooltip">
     <div class="t-name"    id="ttName">—</div>
     <div class="t-country" id="ttCountry">—</div>
-    <div class="t-anomaly" id="ttAnomaly">—</div>
-    <div class="t-note"    id="ttNote">—</div>
-  </div>
-
-  <!-- Leyenda temperatura -->
-  <div id="legend">
-    <div class="leg-title">Anomalía de temperatura (°C)</div>
-    <div class="leg-bar"></div>
-    <div class="leg-labels">
-      <span>−2</span><span>0</span><span>+2</span><span>+4</span><span>+5</span>
-    </div>
   </div>
 
   <!-- Leyenda corrientes (visible al activar corrientes) -->
@@ -1837,21 +1881,32 @@ function isoOf(f) {
   return NAME_TO_ISO[admin] || raw || '';
 }
 
+// Nombre del país en español. Los 9 países que vienen a nivel provincia
+// (Natural Earth admin_1) y Perú/Ecuador (geoBoundaries) no traen el país en
+// español, así que se mapean por ISO3; el resto (admin_0) usa su NAME_ES.
+const COUNTRY_ES = {
+  AUS: 'Australia', BRA: 'Brasil',  CAN: 'Canadá',   CHN: 'China',
+  IDN: 'Indonesia', IND: 'India',   RUS: 'Rusia',    USA: 'Estados Unidos',
+  ZAF: 'Sudáfrica', PER: 'Perú',    ECU: 'Ecuador',
+};
+
 function nameOf(f) {
-  return f.properties.name_en || f.properties.name    ||
-         f.properties.NAME    || f.properties.ADMIN   || '—';
+  const p = f.properties;
+  // Prioriza el nombre en español (name_es en admin_1, NAME_ES en admin_0).
+  return p.name_es || p.NAME_ES || p.name_en || p.name || p.NAME || p.ADMIN || '—';
 }
 function countryOf(f) {
-  return f.properties.admin   || f.properties.adm0_name ||
-         f.properties.ADMIN   || f.properties.NAME    || '';
+  const p = f.properties;
+  return COUNTRY_ES[isoOf(f)] || p.NAME_ES || p.name_es ||
+         p.admin || p.adm0_name || p.ADMIN || p.NAME || '';
 }
 
+// Color fijo "medio tierra" para toda la tierra firme: los países ya NO cambian
+// de color con el slider; solo el mar (textura SST) refleja la temperatura.
+const LAND_COLOR = '#e5d3ae';
 function capColor(f) {
   if (f.__nino) return f.fillColor;          // relleno de región Niño
-  const iso   = isoOf(f);
-  const fname = nameOf(f);
-  const a     = getAnomaly(iso, multiplier, fname);
-  return anomalyToHex(a);
+  return LAND_COLOR;                          // resto de países: tono tierra constante
 }
 
 // Mapa plano: altura constante para todos los polígonos (sin extrusión 3D).
@@ -1887,27 +1942,13 @@ function hideLoading() {
 const tooltip   = document.getElementById('tooltip');
 const ttName    = document.getElementById('ttName');
 const ttCountry = document.getElementById('ttCountry');
-const ttAnom    = document.getElementById('ttAnomaly');
-const ttNote    = document.getElementById('ttNote');
 
 function handleHover(f) {
   if (!f || f.__nino) { tooltip.classList.remove('visible'); return; }
-  const province = nameOf(f);
-  const country  = countryOf(f);
-  const iso      = isoOf(f);
-  const anomaly  = getAnomaly(iso, multiplier, province);
-  const sign     = anomaly > 0 ? '+' : '';
-  const color    = anomalyToHex(anomaly);
-  const note     = anomaly > 0.2
-    ? 'Temperatura sobre el promedio histórico'
-    : anomaly < -0.2
-      ? 'Temperatura bajo el promedio histórico'
-      : 'Sin variación significativa';
-  ttName.textContent    = province;
-  ttCountry.textContent = country;
-  ttAnom.textContent    = `${sign}${anomaly.toFixed(1)}°C`;
-  ttAnom.style.color    = color;
-  ttNote.textContent    = note;
+  // Solo identificamos el país. La anomalía de temperatura NO se muestra:
+  // esa data aún no está verificada por el equipo editorial.
+  ttName.textContent    = nameOf(f);
+  ttCountry.textContent = countryOf(f);
   tooltip.classList.add('visible');
 }
 
@@ -2223,7 +2264,7 @@ function initStoryNav() {
 // ─────────────────────────────────────────────
 // SLIDER + MECANISMO
 // ─────────────────────────────────────────────
-const TICKS   = ['1980', '1990', '2000', '2010', '2020', '2026'];
+const TICKS   = ['1980', '2026'];   // solo inicio y final; los peaks se marcan aparte
 const badge   = document.getElementById('intensityBadge');
 const slider  = document.getElementById('intensitySlider');
 const ticksEl = document.getElementById('sliderTicks');
@@ -2316,15 +2357,23 @@ slider.addEventListener('input', () => updateSlider(parseInt(slider.value, 10)))
 // ── Picos de temperatura: los meses con los valores ICEN más altos de la serie
 // (eventos cálidos fuertes/extraordinarios). Se resaltan como rombos naranjas
 // sobre el riel para que el usuario los ubique al instante; al hacer clic, el
-// slider salta a ese mes. Índices: jun 1983, nov 1997, oct 2015, jul 2023, jul 2026.
-const PEAK_IDX = [41, 214, 429, 522, 558];
+// slider salta a ese mes. Índices: jun 1983, abr 1992, ene 2016, mar 2017, jul 2023.
+const PEAK_IDX = [41, 147, 432, 446, 522];   // jun 1983 · abr 1992 · ene 2016 · mar 2017 · jul 2023
 const peaksEl  = document.getElementById('sliderPeaks');
-PEAK_IDX.forEach(i => {
-  const pos = i / (ICEN.length - 1);
+const peakPos  = PEAK_IDX.map(i => i / (ICEN.length - 1));   // 0..1 sobre el riel
+const NUDGE = 16;   // px para separar etiquetas de años muy juntos (2016/2017)
+PEAK_IDX.forEach((i, k) => {
+  const pos = peakPos[k];
   const d = document.createElement('div');
-  d.className = 'slider-peak' + (i === ICEN.length - 1 ? ' pk-last' : '');
+  d.className = 'slider-peak';
   d.style.left = (pos * 100).toFixed(2) + '%';
   d.title = `Pico · ${icenMonthLabel(i)} · ${fmtICEN(ICEN[i])}`;
+  // Si dos picos caen muy cerca, corre el marcador completo (rombo + año juntos)
+  // para que no se pisen, manteniendo el rombo centrado con su año.
+  let dx = 0;
+  if (k > 0 && (pos - peakPos[k - 1]) < 0.05) dx = NUDGE;                       // corre a la derecha
+  if (k < PEAK_IDX.length - 1 && (peakPos[k + 1] - pos) < 0.05) dx = -NUDGE;    // corre a la izquierda
+  if (dx) d.style.transform = `translateX(calc(-50% + ${dx}px))`;
   d.innerHTML = `<span class="pk-diamond"></span><span class="pk-year">${icenYear(i)}</span>`;
   d.addEventListener('click', (e) => {
     e.stopPropagation();
@@ -2339,6 +2388,17 @@ updateSlider(ICEN.length - 1);   // arranca en el mes más reciente (jul 2026)
 // ─────────────────────────────────────────────
 // BOTONES DE CONTROL
 // ─────────────────────────────────────────────
+// Zoom por botones: alternativa fiable a Ctrl/⌘ + rueda (mejor en trackpad y Magic Mouse).
+function zoomGlobe(factor) {
+  if (!world) return;
+  const pov = world.pointOfView();
+  let alt = pov.altitude * factor;
+  alt = Math.max(0.32, Math.min(4.0, alt));   // límites de acercar / alejar
+  world.pointOfView({ altitude: alt }, 260);
+}
+document.getElementById('zoomInBtn').addEventListener('click',  () => zoomGlobe(0.72));
+document.getElementById('zoomOutBtn').addEventListener('click', () => zoomGlobe(1.38));
+
 document.getElementById('rotateBtn').addEventListener('click', function () {
   autoRotating = !autoRotating;
   if (world) world.controls().autoRotate = autoRotating;
