@@ -447,3 +447,107 @@
         font-size: .8rem; letter-spacing: .06em; color: #8a90a0;
     }
     @media (prefers-reduced-motion: reduce){ .gp-orb{ animation: none; } }
+
+
+    /*   ============================================================
+         MAPA CHOROPLETH — Señales de El Niño por departamento
+         Data: pestaña 7 "Tabla maestra departamentos" (V6).
+         Colorea cada departamento del SVG (img/peru.svg) según cuántas
+         señales de impacto de El Niño acumula (0–10). Interactivo:
+         hover / foco / tap actualiza el panel lateral.
+         ============================================================ */
+
+    .mapa-fen{ background:#ffffff; color:#141414; padding:12px 20px 64px; }
+      .mapa-inner{ max-width:1040px; margin:0 auto; }
+      .mapa-fen h3{
+        font-family:'Monoglyphic Bold', system-ui, sans-serif;
+        font-size:1.8rem; color:#000; text-align:center; margin:0 auto;
+      }
+      .mapa-intro{
+        font-family:'Monoglyphic Light', system-ui, sans-serif;
+        font-size:1.05rem; line-height:1.5; color:#3a3a3a;
+        max-width:660px; margin:16px auto 8px; text-align:center;
+      }
+      .mapa-intro strong{ color:#1f7a70; font-family:'Monoglyphic Bold', system-ui, sans-serif; }
+      .mapa-layout{
+        display:flex; gap:32px; align-items:stretch;
+        margin-top:24px; justify-content:center;
+      }
+      .mapa-map{ flex:0 0 auto; width:min(44vw,420px); position:relative; }
+      .mapa-svg-holder{ width:100%; }
+      .mapa-svg-holder svg.peru-map{ width:100%; height:auto; display:block; }
+      .peru-map .dep{
+        stroke:#ffffff; stroke-width:0.6; cursor:pointer;
+        transition:fill .2s ease, stroke .15s ease, stroke-width .15s ease;
+        outline:none;
+      }
+      .peru-map .dep:hover{ stroke:#0e2f2b; stroke-width:1.1; }
+      .peru-map .dep.is-active{ stroke:#0e2f2b; stroke-width:1.4; }
+      .peru-map .dep:focus-visible{ stroke:#0e2f2b; stroke-width:1.4; }
+      .mapa-err{ font-family:system-ui,sans-serif; color:#b3140b; text-align:center; padding:40px 0; }
+
+      /* Leyenda compacta, anclada abajo-izquierda sobre el mapa */
+      .mapa-legend{
+        position:absolute; left:6px; bottom:6px; width:128px;
+        background:rgba(255,255,255,.88); backdrop-filter:blur(2px);
+        border:1px solid rgba(0,0,0,.06); border-radius:8px;
+        padding:8px 10px 9px; box-shadow:0 4px 14px rgba(0,0,0,.06);
+      }
+      .mapa-legend .ml-title{
+        font-family:system-ui,-apple-system,sans-serif; font-size:.58rem;
+        letter-spacing:.08em; text-transform:uppercase; color:#7d7468; margin-bottom:5px;
+      }
+      .mapa-legend .ml-bar{
+        height:8px; border-radius:5px;
+        background:linear-gradient(90deg,#d8efe9 0%,#8fd0c4 25%,#4aa89b 50%,#1f7a70 75%,#0b4a45 100%);
+        border:1px solid rgba(0,0,0,.08);
+      }
+      .mapa-legend .ml-scale{
+        display:flex; justify-content:space-between; margin-top:3px;
+        font-family:system-ui,sans-serif; font-size:.6rem; color:#7d7468;
+      }
+      .mapa-legend .ml-nodata{
+        display:flex; align-items:center; gap:6px; margin-top:8px;
+        padding-top:7px; border-top:1px solid rgba(0,0,0,.07);
+        font-family:system-ui,sans-serif; font-size:.6rem; color:#7d7468;
+      }
+      .mapa-legend .ml-sw{ width:11px; height:11px; border-radius:3px; background:#e7e2da; border:1px solid rgba(0,0,0,.08); display:inline-block; flex:0 0 auto; }
+
+      .mapa-panel{
+        flex:1 1 340px; max-width:420px;
+        display:flex; flex-direction:column; gap:22px; justify-content:flex-start;
+      }
+      .mp-card{
+        border:1px solid #e6e0d6; border-top:3px solid #1f7a70;
+        background:#fbf9f6; border-radius:8px; padding:20px 22px;
+        box-shadow:0 8px 26px rgba(0,0,0,.06);
+      }
+      .mp-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
+      .mp-name{
+        font-family:'Monoglyphic Bold', system-ui, sans-serif;
+        font-size:1.5rem; color:#141414; line-height:1.1;
+      }
+      .mp-badge{
+        flex:0 0 auto;
+        font-family:system-ui,-apple-system,sans-serif; font-weight:800;
+        font-size:1rem; color:#fff; background:#1f7a70;
+        padding:5px 12px; border-radius:999px; white-space:nowrap;
+        box-shadow:0 2px 8px rgba(0,0,0,.18);
+      }
+      .mp-pop{
+        font-family:system-ui,-apple-system,sans-serif; font-size:.82rem;
+        letter-spacing:.02em; color:#8a7f70; margin-top:8px; text-transform:uppercase;
+      }
+      .mp-explic{
+            font-family: 'Monoglyphic Light', system-ui, sans-serif;
+        font-size:.98rem; line-height:1.55; color:#33302b; margin-top:14px;
+      }
+      .mapa-source{
+        font-family:'Monoglyphic Light', system-ui, sans-serif;
+        font-size:.8rem; color:#9a9184; text-align:center; margin-top:34px;
+      }
+      @media (max-width:780px){
+        .mapa-layout{ flex-direction:column; align-items:center; gap:24px; }
+        .mapa-map{ width:min(78vw,360px); }
+        .mapa-panel{ width:100%; max-width:460px; }
+      }
