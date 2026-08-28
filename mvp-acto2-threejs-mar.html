@@ -1988,7 +1988,7 @@ function countryOf(f) {
 
 // Color fijo "medio tierra" para toda la tierra firme: los países ya NO cambian
 // de color con el slider; solo el mar (textura SST) refleja la temperatura.
-const LAND_COLOR = '#e5d3ae';
+const LAND_COLOR = '#001e32';
 function capColor(f) {
   if (f.__nino) return f.fillColor;          // relleno de región Niño
   return LAND_COLOR;                          // resto de países: tono tierra constante
@@ -2198,7 +2198,7 @@ function initGlobe(data) {
     .polygonsData(geojson.features)
     .polygonCapColor(capColor)
     .polygonSideColor(f => f.__nino ? 'rgba(0,0,0,0)' : 'rgba(4,8,15,0.4)')
-    .polygonStrokeColor(f => f.__nino ? 'rgba(0,0,0,0)' : 'rgba(4,8,15,0.7)')
+    .polygonStrokeColor(f => f.__nino ? 'rgba(0,0,0,0)' : 'rgba(255,255,255,0.6)')   // borde blanco de países
     .polygonAltitude(altitude)
     .onPolygonHover(handleHover)
     .polygonsTransitionDuration(500)
