@@ -7,10 +7,29 @@
   <script src="https://unpkg.com/globe.gl@2.34.4/dist/globe.gl.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
   <style>
+    /* ── Tipografía Monoglyphic (misma del landing general) ── */
+    @font-face {
+      font-family: 'Monoglyphic Light';
+      src: url('./fonts/Monoglyphic-Light.woff2') format('woff2'),
+           url('./fonts/Monoglyphic-Light.woff') format('woff');
+      font-weight: normal; font-style: normal; font-display: swap;
+    }
+    @font-face {
+      font-family: 'Monoglyphic Regular';
+      src: url('./fonts/Monoglyphic-Regular.woff2') format('woff2'),
+           url('./fonts/Monoglyphic-Regular.woff') format('woff');
+      font-weight: normal; font-style: normal; font-display: swap;
+    }
+    @font-face {
+      font-family: 'Monoglyphic Bold';
+      src: url('./fonts/Monoglyphic-Bold.woff2') format('woff2'),
+           url('./fonts/Monoglyphic-Bold.woff') format('woff');
+      font-weight: normal; font-style: normal; font-display: swap;
+    }
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: 'Georgia', serif;
+      font-family: 'Monoglyphic Light', Georgia, serif;
       background: #04080f;
       color: #e8e0d5;
       height: 100vh;
@@ -36,6 +55,7 @@
     }
 
     header h1 {
+      font-family: 'Monoglyphic Bold', Georgia, serif;
       font-size: 1.1rem;
       font-weight: normal;
       letter-spacing: 0.02em;
@@ -43,7 +63,7 @@
     }
 
     .intensity-badge {
-      font-family: sans-serif;
+      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
       font-size: 0.78rem;
       color: #e09070;
       background: #1a1020;
@@ -69,7 +89,7 @@
     }
 
     .slider-label {
-      font-family: sans-serif;
+      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
       font-size: 0.72rem;
       color: #5a5060;
       white-space: nowrap;
@@ -128,7 +148,7 @@
       position: absolute;
       top: 0;
       transform: translateX(-50%);
-      font-family: sans-serif;
+      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
       font-size: 0.65rem;
       color: #2a2535;
       white-space: nowrap;
@@ -147,7 +167,7 @@
       padding-top: 9px;
       border-top: 1px solid #141c2e;
       margin-top: 7px;
-      font-family: sans-serif;
+      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
       font-size: 0.70rem;
       line-height: 1.5;
       color: #4a5568;
@@ -174,6 +194,7 @@
       position: absolute;
       inset: 0;
       z-index: 1;
+      transform: translateY(-40px);   /* sube el globo para centrarlo en el viewport visible */
     }
 
     /* ── CONTROLES DE ZOOM (trackpad / Magic Mouse) ── */
@@ -189,7 +210,7 @@
       background: rgba(4, 8, 15, 0.9);
       border: 1px solid #24314a;
       color: #e8e0d5;
-      font-family: sans-serif; font-size: 1.35rem; line-height: 1;
+      font-family: 'Monoglyphic Regular', system-ui, sans-serif; font-size: 1.35rem; line-height: 1;
       cursor: pointer; border-radius: 8px;
       backdrop-filter: blur(6px);
       box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
@@ -219,9 +240,9 @@
     #tooltip.visible { opacity: 1; }
 
     #tooltip .t-name    { font-size: 0.9rem; color: #f0e8df; margin-bottom: 2px; }
-    #tooltip .t-country { font-family: sans-serif; font-size: 0.68rem; color: #4a5568; margin-bottom: 6px; }
-    #tooltip .t-anomaly { font-size: 1.6rem; font-family: sans-serif; font-weight: 700; }
-    #tooltip .t-note    { font-size: 0.72rem; font-family: sans-serif; color: #6a7080; margin-top: 4px; line-height: 1.4; }
+    #tooltip .t-country { font-family: 'Monoglyphic Regular', system-ui, sans-serif; font-size: 0.68rem; color: #4a5568; margin-bottom: 6px; }
+    #tooltip .t-anomaly { font-size: 1.6rem; font-family: 'Monoglyphic Regular', system-ui, sans-serif; font-weight: 700; }
+    #tooltip .t-note    { font-size: 0.72rem; font-family: 'Monoglyphic Regular', system-ui, sans-serif; color: #6a7080; margin-top: 4px; line-height: 1.4; }
 
     /* ── PANEL EXPLICATIVO DE REGIONES (esquina superior izquierda) ── */
     #regions-info {
@@ -233,11 +254,11 @@
       border-radius: 8px;
       padding: 13px 16px;
       z-index: 20;
-      max-width: 262px;
+      max-width: 300px;
       backdrop-filter: blur(6px);
     }
     #regions-info .ri-title {
-      font-family: sans-serif;
+      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
       font-size: 0.63rem;
       letter-spacing: 0.08em;
       text-transform: uppercase;
@@ -245,8 +266,8 @@
       margin-bottom: 8px;
     }
     #regions-info .ri-intro {
-      font-family: sans-serif;
-      font-size: 0.72rem;
+      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
+      font-size: 0.9rem;
       line-height: 1.5;
       color: #9aa0b0;
       margin-bottom: 11px;
@@ -256,8 +277,8 @@
       align-items: baseline;
       gap: 8px;
       margin-bottom: 6px;
-      font-family: sans-serif;
-      font-size: 0.70rem;
+      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
+      font-size: 0.9rem;
       line-height: 1.35;
     }
     #regions-info .ri-row:last-child { margin-bottom: 0; }
@@ -274,7 +295,7 @@
     #regions-info .ri-more { margin-top: 11px; border-top: 1px solid #1e2a3e; padding-top: 9px; }
     #regions-info .ri-more summary {
       list-style: none; cursor: pointer;
-      font-family: sans-serif; font-size: 0.66rem; font-weight: 700;
+      font-family: 'Monoglyphic Regular', system-ui, sans-serif; font-size: 0.9rem; font-weight: 700;
       letter-spacing: 0.02em; color: #b0b6c4;
       display: flex; align-items: center; justify-content: space-between; gap: 8px;
       user-select: none;
@@ -284,7 +305,7 @@
     #regions-info .ri-chevron { transition: transform 0.2s ease; color: #5a6070; font-weight: 700; }
     #regions-info .ri-more[open] .ri-chevron { transform: rotate(90deg); }
     #regions-info .ri-note, #regions-info .ri-para {
-      font-family: sans-serif; font-size: 0.68rem; line-height: 1.5;
+      font-family: 'Monoglyphic Regular', system-ui, sans-serif; font-size: 0.9rem; line-height: 1.5;
       color: #9aa0b0; margin-top: 8px;
     }
     #regions-info .ri-note { color: #c8b090; }
@@ -326,7 +347,7 @@
     }
     .slider-peak .pk-year {
       margin-top: 7px;
-      font-family: sans-serif;
+      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
       font-size: 0.6rem;
       font-weight: 700;
       color: #d78a55;
@@ -356,7 +377,7 @@
     }
 
     #legend .leg-title {
-      font-family: sans-serif;
+      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
       font-size: 0.63rem;
       letter-spacing: 0.08em;
       text-transform: uppercase;
@@ -377,7 +398,7 @@
     .leg-labels {
       display: flex;
       justify-content: space-between;
-      font-family: sans-serif;
+      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
       font-size: 0.62rem;
       color: #5a6070;
     }
@@ -399,7 +420,7 @@
       min-width: 230px;
     }
     .curr-title {
-      font-family: sans-serif;
+      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
       font-size: 0.60rem;
       letter-spacing: 0.09em;
       text-transform: uppercase;
@@ -411,7 +432,7 @@
       align-items: center;
       gap: 9px;
       margin-bottom: 5px;
-      font-family: sans-serif;
+      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
       font-size: 0.68rem;
       color: #5a6070;
     }
@@ -422,7 +443,7 @@
       flex-shrink: 0;
     }
     .curr-hint {
-      font-family: sans-serif;
+      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
       font-size: 0.60rem;
       color: #2a3040;
       margin-top: 7px;
@@ -432,7 +453,7 @@
 
     /* ── ESTILOS COMPARTIDOS DE REGIÓN NIÑO (usados por el popup) ── */
     .reg-title {
-      font-family: sans-serif;
+      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
       font-size: 0.62rem;
       letter-spacing: 0.08em;
       text-transform: uppercase;
@@ -455,32 +476,32 @@
     }
     .reg-body { flex: 1; }
     .reg-name {
-      font-family: sans-serif;
+      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
       font-size: 0.78rem;
       color: #f0e8df;
       font-weight: 700;
     }
     .reg-tag {
-      font-family: sans-serif;
+      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
       font-size: 0.64rem;
       color: #6a7080;
       margin-top: 1px;
     }
     .reg-desc {
-      font-family: sans-serif;
+      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
       font-size: 0.68rem;
       color: #8a8878;
       line-height: 1.45;
       margin-top: 4px;
     }
     .reg-val {
-      font-family: sans-serif;
+      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
       font-size: 0.70rem;
       font-weight: 700;
       margin-top: 4px;
     }
     .reg-hint {
-      font-family: sans-serif;
+      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
       font-size: 0.64rem;
       color: #6a7080;
       line-height: 1.45;
@@ -489,7 +510,7 @@
       padding-top: 9px;
     }
     .reg-source {
-      font-family: sans-serif;
+      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
       font-size: 0.58rem;
       color: #3a4050;
       margin-top: 8px;
@@ -522,8 +543,22 @@
     }
 
     .bar-section.center {
+      flex-direction: column;
       justify-content: center;
+      gap: 4px;
+    }
+    .bar-section.center .dots-row {
+      display: flex;
+      align-items: center;
       gap: 10px;
+    }
+    .bar-section.center .dots-caption {
+      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #6a7080;
+      white-space: nowrap;
     }
 
     .bar-section.right {
@@ -535,7 +570,7 @@
       border: 1px solid #1e2a3e;
       border-radius: 6px;
       padding: 6px 13px;
-      font-family: sans-serif;
+      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
       font-size: 0.72rem;
       color: #7a8090;
       cursor: pointer;
@@ -584,7 +619,7 @@
     }
 
     .bar-label {
-      font-family: sans-serif;
+      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
       font-size: 0.68rem;
       color: #3a4050;
       white-space: nowrap;
@@ -638,7 +673,7 @@
     }
 
     .popup-location {
-      font-family: sans-serif;
+      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
       font-size: 0.70rem;
       color: #5a6070;
       margin-top: 3px;
@@ -659,7 +694,7 @@
     .popup-close:hover { color: #f0e8df; }
 
     .popup-impact {
-      font-family: sans-serif;
+      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
       font-size: 0.76rem;
       font-weight: 700;
       margin-bottom: 10px;
@@ -685,7 +720,7 @@
       margin-bottom: 14px;
     }
     .popup-year {
-      font-family: sans-serif;
+      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
       font-size: 0.68rem;
       font-weight: 700;
       letter-spacing: 0.03em;
@@ -693,7 +728,7 @@
       margin-bottom: 5px;
     }
     .popup-source {
-      font-family: sans-serif;
+      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
       font-size: 0.64rem;
       line-height: 1.5;
       color: #5a6070;
@@ -713,7 +748,7 @@
       border: 1px solid #1e2a3e;
       border-radius: 4px;
       padding: 4px 10px;
-      font-family: sans-serif;
+      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
       font-size: 0.68rem;
       color: #5a6070;
       cursor: pointer;
@@ -723,7 +758,7 @@
     .popup-nav-btn:hover { color: #f0e8df; border-color: #3a4a6a; }
 
     .popup-counter {
-      font-family: sans-serif;
+      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
       font-size: 0.65rem;
       color: #2a3040;
     }
@@ -741,7 +776,7 @@
       cursor: pointer;
       pointer-events: auto;
       white-space: nowrap;
-      font-family: sans-serif;
+      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
       backdrop-filter: blur(4px);
       box-shadow: 0 2px 9px rgba(0,0,0,0.45);
       transition: border-color 0.2s, box-shadow 0.2s;
@@ -809,19 +844,19 @@
     }
     .rp-swatch { margin-top: 0; width: 15px; height: 15px; }
     .rp-name {
-      font-family: sans-serif;
+      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
       font-size: 0.94rem;
       font-weight: 700;
       color: #f0e8df;
     }
     .rp-code {
-      font-family: sans-serif;
+      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
       font-size: 0.68rem;
       color: #8a94a8;
       margin-bottom: 7px;
     }
     .rp-tag2 {
-      font-family: sans-serif;
+      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
       font-size: 0.66rem;
       color: #6a7080;
       margin-bottom: 2px;
@@ -920,14 +955,14 @@
     }
 
     .loading-text {
-      font-family: sans-serif;
+      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
       font-size: 0.82rem;
       color: #5a6070;
       letter-spacing: 0.05em;
     }
 
     .loading-step {
-      font-family: sans-serif;
+      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
       font-size: 0.68rem;
       color: #3a4050;
       margin-top: -10px;
@@ -1084,9 +1119,12 @@
       <button class="ctrl-btn" id="currentsBtn" title="Mostrar corrientes oceánicas animadas">Corrientes</button>      
     </div>
     <div class="bar-section center">
-      <button class="ctrl-btn nav-arrow" id="prevStory">‹</button>
-      <div id="storyDots" class="story-dots"></div>
-      <button class="ctrl-btn nav-arrow" id="nextStory">›</button>
+      <div class="dots-caption">Testimonios de afectados por el FEN</div>
+      <div class="dots-row">
+        <button class="ctrl-btn nav-arrow" id="prevStory">‹</button>
+        <div id="storyDots" class="story-dots"></div>
+        <button class="ctrl-btn nav-arrow" id="nextStory">›</button>
+      </div>
     </div>
     <div class="bar-section right">
       <button class="ctrl-btn focus-btn" id="focusBtn" title="Enfocar Ecuador y Perú">📍 Ecuador &amp; Perú</button>
@@ -2230,6 +2268,9 @@ function initGlobe(data) {
       attachSSTTexture();
     });
 
+  // El mapa carga centrado en Perú (punto de partida del recorrido).
+  world.pointOfView({ lat: -9.2, lng: -75, altitude: 2.2 });
+
   const ctrl = world.controls();
   ctrl.autoRotate      = false;
   ctrl.autoRotateSpeed = 0.5;
@@ -2258,7 +2299,7 @@ function initGlobe(data) {
       'position:absolute;left:50%;bottom:64px;transform:translateX(-50%) translateY(6px);' +
       'z-index:25;pointer-events:none;opacity:0;transition:opacity .3s ease, transform .3s ease;' +
       'display:flex;align-items:center;gap:7px;white-space:nowrap;' +
-      'font-family:system-ui,-apple-system,sans-serif;font-size:.8rem;color:#e8e0d5;' +
+      "font-family:'Monoglyphic Regular',system-ui,sans-serif;font-size:.8rem;color:#e8e0d5;" +
       'padding:8px 14px;border-radius:20px;background:rgba(4,8,15,.85);' +
       'border:1px solid #24314a;box-shadow:0 6px 20px rgba(0,0,0,.4);';
     cont.appendChild(hint);
@@ -2418,7 +2459,15 @@ function updateSlider(i) {
   updateGlobe();
 }
 
-slider.addEventListener('input', () => updateSlider(parseInt(slider.value, 10)));
+// Al manipular el slider, activa automáticamente la capa "Temperatura mar".
+function enableOceanLayer() {
+  if (showOcean) return;
+  showOcean = true;
+  const ob = document.getElementById('oceanBtn');
+  if (ob) ob.classList.add('active');
+  updateOceanLayer();
+}
+slider.addEventListener('input', () => { enableOceanLayer(); updateSlider(parseInt(slider.value, 10)); });
 
 // ── Picos de temperatura: los meses con los valores ICEN más altos de la serie
 // (eventos cálidos fuertes/extraordinarios). Se resaltan como rombos naranjas
@@ -2443,6 +2492,7 @@ PEAK_IDX.forEach((i, k) => {
   d.innerHTML = `<span class="pk-diamond"></span><span class="pk-year">${icenYear(i)}</span>`;
   d.addEventListener('click', (e) => {
     e.stopPropagation();
+    enableOceanLayer();
     slider.value = i;
     updateSlider(i);
   });
