@@ -7,234 +7,161 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
+    @font-face { font-family:'Monoglyphic Bold';    src:url('fonts/Monoglyphic-Bold.woff2') format('woff2'); font-display:swap; }
+    @font-face { font-family:'Monoglyphic Regular'; src:url('fonts/Monoglyphic-Regular.woff2') format('woff2'); font-display:swap; }
+    @font-face { font-family:'Monoglyphic Light';   src:url('fonts/Monoglyphic-Light.woff2') format('woff2'); font-display:swap; }
+
+    :root{ --ip-ink:#0a0a0a; --ip-blue:#57bdec; --ip-line:#c9c9c9; --ip-muted:#8a8a8a; }
+
+    html,body{ background:#ffffff; }
     body {
-      font-family: 'Georgia', serif;
-      background: #04080f;
-      color: #e8e0d5;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
+      font-family:'Monoglyphic Regular', system-ui, sans-serif;
+      color:var(--ip-ink);
+      background-color:#ffffff;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cpath d='M0 0H150M0 0V150' fill='none' stroke='%23e4e4e4' stroke-width='1' stroke-dasharray='5 9'/%3E%3C/svg%3E");
+      padding:0 24px 46px;
     }
 
-    /* ── PANEL DE IMPACTO PERSONAL ── */
-    #impact-panel {
-      position: relative;
-      width: 340px;
-      max-width: 100%;
-      max-height: calc(100vh - 48px);
-      background: rgba(4, 8, 15, 0.96);
-      border: 1px solid #1e2a3e;
-      border-radius: 10px;
-      backdrop-filter: blur(10px);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      box-shadow: 0 24px 70px rgba(0,0,0,0.55);
+    #impact-panel{ max-width:1040px; margin:0 auto; padding:74px 0 44px; text-align:center; }
+
+    .ip-title{
+      font-family:'Monoglyphic Bold', system-ui, sans-serif;
+      font-size:clamp(1.9rem, 4.2vw, 3.1rem); line-height:1.05; color:var(--ip-ink);
+      margin-bottom:22px;
+    }
+    .ip-intro{
+      font-family:'Monoglyphic Regular', system-ui, sans-serif;
+      font-size:clamp(1rem,1.5vw,1.3rem); line-height:1.42; color:#2b2b2b;
+      max-width:600px; margin:0 auto 58px;
     }
 
-    .ip-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      padding: 15px 17px 13px;
-      border-bottom: 1px solid #141c2e;
-      flex-shrink: 0;
+    /* Caja con borde; el nombre y el botón solapan sus bordes */
+    .ip-box{ position:relative; border:1px solid #2a2a2a; max-width:1000px; margin:0 auto; padding:60px 44px 60px; }
+    .ip-name{
+      position:absolute; top:0; left:50%; transform:translate(-50%,-50%);
+      background:var(--ip-ink); color:var(--ip-blue); border:none; outline:none; text-align:center;
+      font-family:'Monoglyphic Regular', system-ui, sans-serif;
+      font-size:.95rem; letter-spacing:.06em; text-transform:uppercase;
+      padding:16px 26px; width:min(340px, 82%);
     }
+    .ip-name::placeholder{ color:var(--ip-blue); opacity:.85; }
 
-    .ip-eyebrow {
-      font-family: sans-serif;
-      font-size: 0.60rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: #e09070;
-      margin-bottom: 2px;
+    .ip-line{ height:1px; background:var(--ip-line); }
+
+    .ip-gender{ padding:24px 0; }
+    .ip-label{
+      display:block; font-family:'Monoglyphic Regular', system-ui, sans-serif;
+      font-size:.9rem; letter-spacing:.05em; text-transform:uppercase; color:var(--ip-ink); margin-bottom:16px;
     }
-
-    .ip-panel-title { font-size: 0.95rem; color: #f0e8df; }
-
-    .ip-toggle {
-      background: none;
-      border: none;
-      color: #3a4050;
-      font-size: 1.3rem;
-      cursor: pointer;
-      padding: 0;
-      line-height: 1;
-      transition: color 0.2s;
-      flex-shrink: 0;
-      margin-left: 8px;
+    .ip-radio-group{ display:flex; gap:44px; justify-content:center; }
+    .ip-radio-label{
+      display:inline-flex; align-items:center; gap:9px; cursor:pointer;
+      font-family:'Monoglyphic Regular', system-ui, sans-serif;
+      font-size:.95rem; letter-spacing:.04em; text-transform:uppercase; color:var(--ip-ink);
     }
-    .ip-toggle:hover { color: #f0e8df; }
+    .ip-radio-input{ width:17px; height:17px; accent-color:var(--ip-blue); cursor:pointer; }
 
-    #ipBody {
-      overflow-y: auto;
-      padding: 14px 17px;
-      flex: 1;
+    /* 3 columnas: Edad / Profesión / Región */
+    .ip-cols{ display:grid; grid-template-columns:repeat(3, 1fr); gap:34px; padding:32px 2px 4px; }
+    .ip-field{ text-align:center; }
+    .ip-field .ip-label{ margin-bottom:12px; }
+    .ip-select{
+      width:100%; background:#fff; border:1px solid #2a2a2a; border-radius:0;
+      padding:15px 34px 15px 14px; font-family:'Monoglyphic Regular', system-ui, sans-serif;
+      font-size:.92rem; color:var(--ip-ink); outline:none; cursor:pointer;
+      -webkit-appearance:none; appearance:none;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%238a8a8a' stroke-width='1.6'/%3E%3C/svg%3E");
+      background-repeat:no-repeat; background-position:right 14px center;
     }
-    #ipBody::-webkit-scrollbar { width: 3px; }
-    #ipBody::-webkit-scrollbar-thumb { background: #1e2a3e; border-radius: 2px; }
+    .ip-select:focus{ border-color:var(--ip-blue); }
+    .ip-select:has(option[value=""]:checked){ color:var(--ip-muted); }
 
-    .ip-intro {
-      font-family: sans-serif;
-      font-size: 0.74rem;
-      color: #4a5568;
-      line-height: 1.55;
-      margin-bottom: 14px;
+    .ip-submit{
+      position:absolute; left:50%; bottom:0; transform:translate(-50%,50%);
+      background:var(--ip-blue); color:#08222f; border:none; cursor:pointer;
+      font-family:'Monoglyphic Regular', system-ui, sans-serif;
+      font-size:1rem; letter-spacing:.03em; padding:17px 46px; width:min(300px,82%); transition:filter .15s;
     }
+    .ip-submit:hover{ filter:brightness(1.06); }
 
-    .ip-field { margin-bottom: 12px; }
+    .ip-error{ font-family:'Monoglyphic Regular', system-ui, sans-serif; font-size:.85rem; color:#d23b1f; margin-top:30px; min-height:16px; }
 
-    .ip-label {
-      display: block;
-      font-family: sans-serif;
-      font-size: 0.64rem;
-      color: #3a4a5a;
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-      margin-bottom: 5px;
+    /* Resultado (tema claro) */
+    #ipResult{ max-width:720px; margin:0 auto; text-align:left; }
+    .ip-result-greeting{ font-family:'Monoglyphic Bold', system-ui, sans-serif; font-size:1.5rem; color:var(--ip-ink); margin-bottom:14px; }
+    .ip-result-context, .ip-result-body{ font-family:'Monoglyphic Regular', system-ui, sans-serif; font-size:1rem; line-height:1.6; color:#2b2b2b; }
+    .ip-result-age{ font-family:'Monoglyphic Light', system-ui, sans-serif; font-size:.95rem; line-height:1.55; color:#555; font-style:italic; }
+    .ip-divider{ height:1px; background:var(--ip-line); margin:18px 0; }
+    .ip-back{
+      background:none; border:1px solid #2a2a2a; padding:10px 18px; cursor:pointer;
+      font-family:'Monoglyphic Regular', system-ui, sans-serif; font-size:.85rem; color:var(--ip-ink);
+      margin-top:24px; transition:all .15s;
     }
+    .ip-back:hover{ background:var(--ip-ink); color:#fff; }
 
-    .ip-input, .ip-select {
-      width: 100%;
-      background: #060d18;
-      border: 1px solid #1a2436;
-      border-radius: 5px;
-      padding: 8px 9px;
-      font-family: sans-serif;
-      font-size: 0.78rem;
-      color: #b0a8a0;
-      outline: none;
-      transition: border-color 0.2s;
-      -webkit-appearance: none;
-    }
-    .ip-input:focus, .ip-select:focus { border-color: #2a4070; }
-    .ip-input::placeholder { color: #1e2a3a; }
-
-    .ip-radio-group { display: flex; gap: 14px; }
-    .ip-radio-label {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      font-family: sans-serif;
-      font-size: 0.74rem;
-      color: #6a7080;
-      cursor: pointer;
-    }
-    .ip-radio-input { accent-color: #e05c2a; }
-
-    .ip-submit {
-      width: 100%;
-      background: rgba(26, 58, 106, 0.5);
-      border: 1px solid #2a4a7a;
-      border-radius: 6px;
-      padding: 10px;
-      font-family: sans-serif;
-      font-size: 0.78rem;
-      color: #8ab0e0;
-      cursor: pointer;
-      transition: all 0.2s;
-      margin-top: 4px;
-    }
-    .ip-submit:hover { background: rgba(30,74,136,0.7); color: #f0e8df; border-color: #3a6aaa; }
-
-    .ip-error { font-family: sans-serif; font-size: 0.67rem; color: #e05c2a; margin-top: 5px; min-height: 14px; }
-
-    /* Resultado */
-    .ip-result-greeting { font-size: 0.95rem; color: #f0e8df; margin-bottom: 8px; }
-    .ip-result-context  { font-family: sans-serif; font-size: 0.74rem; color: #6a7880; line-height: 1.55; }
-    .ip-result-body     { font-family: sans-serif; font-size: 0.77rem; color: #9a9888; line-height: 1.6; }
-    .ip-result-age      { font-family: sans-serif; font-size: 0.72rem; color: #5a6070; line-height: 1.55; font-style: italic; }
-    .ip-divider         { height: 1px; background: #141c2e; margin: 11px 0; }
-
-    .ip-back {
-      background: none;
-      border: 1px solid #1e2a3e;
-      border-radius: 4px;
-      padding: 6px 11px;
-      font-family: sans-serif;
-      font-size: 0.67rem;
-      color: #4a5568;
-      cursor: pointer;
-      margin-top: 14px;
-      transition: all 0.2s;
-    }
-    .ip-back:hover { color: #f0e8df; border-color: #3a4a6a; }
+    @media (max-width:680px){ .ip-cols{ grid-template-columns:1fr; gap:24px; } }
   </style>
 </head>
 <body>
 
-  <!-- Panel: ¿Cómo te afecta El Niño? -->
-  <div id="impact-panel">
-    <div class="ip-header">
-      <div>
-        <div class="ip-eyebrow">El Niño y tú</div>
-        <div class="ip-panel-title">¿Cómo te afectaría?</div>
-      </div>
-      <button class="ip-toggle" id="ipToggle" title="Colapsar">−</button>
-    </div>
-    <div id="ipBody">
+  <section id="impact-panel">
+    <button id="ipToggle" style="display:none" aria-hidden="true"></button>
 
-      <div id="ipForm">
-        <p class="ip-intro">Cuéntanos sobre ti y te mostramos cómo El Niño podría impactar tu vida directamente.</p>
+    <h2 class="ip-title">¿Cómo afecta al resto del Perú?</h2>
+    <p class="ip-intro">Cuéntanos sobre ti y te mostramos cómo El Niño podría impactar tu vida directamente.</p>
 
-        <div class="ip-field">
-          <label class="ip-label" for="ipName">Tu nombre</label>
-          <input type="text" id="ipName" class="ip-input" placeholder="Escribe tu nombre" />
-        </div>
+    <div id="ipForm">
+      <div class="ip-box">
+        <input type="text" id="ipName" class="ip-name" placeholder="Escribe tu nombre aquí" />
 
-        <div class="ip-field">
+        <div class="ip-line"></div>
+        <div class="ip-gender">
           <label class="ip-label">Género</label>
           <div class="ip-radio-group">
             <label class="ip-radio-label"><input type="radio" name="gender" value="hombre" class="ip-radio-input" checked /><span>Hombre</span></label>
-            <label class="ip-radio-label"><input type="radio" name="gender" value="mujer"  class="ip-radio-input" /><span>Mujer</span></label>
-            <label class="ip-radio-label"><input type="radio" name="gender" value="otro"   class="ip-radio-input" /><span>Otro</span></label>
+            <label class="ip-radio-label"><input type="radio" name="gender" value="mujer" class="ip-radio-input" /><span>Mujer</span></label>
+          </div>
+        </div>
+        <div class="ip-line"></div>
+
+        <div class="ip-cols">
+          <div class="ip-field">
+            <label class="ip-label" for="ipAge">Edad</label>
+            <select id="ipAge" class="ip-select">
+              <option value="">Selecciona tu edad</option>
+              <option value="15-20">15–20 años</option>
+              <option value="21-30">21–30 años</option>
+              <option value="31-40">31–40 años</option>
+              <option value="41-55">41–55 años</option>
+              <option value="56+">56 o más años</option>
+            </select>
+          </div>
+          <div class="ip-field">
+            <label class="ip-label" for="ipProfession">Profesión</label>
+            <select id="ipProfession" class="ip-select"><option value="">Selecciona tu profesión</option></select>
+          </div>
+          <div class="ip-field">
+            <label class="ip-label" for="ipRegion">Región</label>
+            <select id="ipRegion" class="ip-select"><option value="">Selecciona tu región</option></select>
           </div>
         </div>
 
-        <div class="ip-field">
-          <label class="ip-label" for="ipAge">Edad</label>
-          <select id="ipAge" class="ip-select">
-            <option value="">Selecciona...</option>
-            <option value="15-20">15–20 años</option>
-            <option value="21-30">21–30 años</option>
-            <option value="31-40">31–40 años</option>
-            <option value="41-55">41–55 años</option>
-            <option value="56+">56 o más años</option>
-          </select>
-        </div>
-
-        <div class="ip-field">
-          <label class="ip-label" for="ipProfession">Profesión</label>
-          <select id="ipProfession" class="ip-select">
-            <option value="">Selecciona...</option>
-          </select>
-        </div>
-
-        <div class="ip-field">
-          <label class="ip-label" for="ipRegion">Tu región</label>
-          <select id="ipRegion" class="ip-select">
-            <option value="">Selecciona...</option>
-          </select>
-        </div>
-
-        <button id="ipSubmit" class="ip-submit">Ver mi impacto →</button>
-        <div class="ip-error" id="ipError"></div>
+        <button id="ipSubmit" class="ip-submit">Ver mi impacto</button>
       </div>
-
-      <div id="ipResult" style="display:none">
-        <div class="ip-result-greeting" id="ipResultGreeting"></div>
-        <div class="ip-result-context"  id="ipResultContext"></div>
-        <div class="ip-divider"></div>
-        <div class="ip-result-body"    id="ipResultBody"></div>
-        <div class="ip-divider"></div>
-        <div class="ip-result-age"     id="ipResultAge"></div>
-        <button class="ip-back" id="ipBack">← Cambiar datos</button>
-      </div>
-
+      <div class="ip-error" id="ipError"></div>
     </div>
-  </div>
+
+    <div id="ipResult" style="display:none">
+      <div class="ip-result-greeting" id="ipResultGreeting"></div>
+      <div class="ip-result-context"  id="ipResultContext"></div>
+      <div class="ip-divider"></div>
+      <div class="ip-result-body"    id="ipResultBody"></div>
+      <div class="ip-divider"></div>
+      <div class="ip-result-age"     id="ipResultAge"></div>
+      <button class="ip-back" id="ipBack">← Cambiar datos</button>
+    </div>
+
+  </section>
 
 <script>
 // ─────────────────────────────────────────────
@@ -525,16 +452,21 @@ function initImpactPanel() {
 
     document.getElementById('ipForm').style.display   = 'none';
     document.getElementById('ipResult').style.display = '';
+    postHeight();
   });
 
   document.getElementById('ipBack').addEventListener('click', () => {
     document.getElementById('ipForm').style.display   = '';
     document.getElementById('ipResult').style.display = 'none';
     document.getElementById('ipError').textContent    = '';
+    postHeight();
   });
 }
 
-loadSheetData().then(() => initImpactPanel());
+function postHeight(){ try{ parent.postMessage({ type:'ipHeight', h: Math.ceil(document.body.getBoundingClientRect().height) }, '*'); }catch(e){} }
+window.addEventListener('load', function(){ setTimeout(postHeight, 90); });
+window.addEventListener('resize', postHeight);
+loadSheetData().then(() => { initImpactPanel(); setTimeout(postHeight, 90); });
 </script>
 </body>
 </html>

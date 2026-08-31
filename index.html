@@ -64,6 +64,22 @@
 
     
 
+    <!-- Cortador: banda negra con muesca (inline; el usuario dejó .section-cut en display:none) -->
+    <div aria-hidden="true" style="position:relative; width:100%; height:92px; background:#ffffff; overflow:hidden;">
+      <div style="position:absolute; top:0; left:0; right:0; height:56px; background:#000;"></div>
+      <div style="position:absolute; top:56px; left:50%; transform:translateX(-50%); width:0; height:0; border-left:27px solid transparent; border-right:27px solid transparent; border-top:30px solid #000;"></div>
+    </div>
+
+    <!-- Herramienta: ¿Cómo afecta al resto del Perú? (impact-panel.html incrustado) -->
+    <div id="impactBox" style="background:#fff;">
+      <iframe id="impactFrame"
+              data-src="./impact-panel.html"
+              title="¿Cómo afecta al resto del Perú? — herramienta de impacto personal"
+              loading="lazy"
+              scrolling="no"
+              style="width:100%; min-height:760px; border:0; display:block; overflow:hidden;"></iframe>
+    </div>
+
     <section class="mapa-fen" id="mapaFen">
       <div class="mapa-inner">
         <h3>¿Dónde golpea más El Niño?</h3>
@@ -829,6 +845,24 @@
     } else {
       load();   // navegadores sin soporte: carga directa
     }
+  })();
+  </script>
+  <script>
+  /* Carga diferida + auto-alto del iframe de la herramienta de impacto */
+  (function () {
+    var frame = document.getElementById('impactFrame');
+    if (!frame || !frame.dataset.src) return;
+    var started = false;
+    function load(){ if (started) return; started = true; frame.src = frame.dataset.src; }
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (es) {
+        es.forEach(function (e) { if (e.isIntersecting) { load(); io.disconnect(); } });
+      }, { rootMargin: '400px 0px' });
+      io.observe(frame);
+    } else { load(); }
+    window.addEventListener('message', function (e) {
+      if (e.data && e.data.type === 'ipHeight' && e.data.h) { frame.style.height = e.data.h + 'px'; }
+    });
   })();
   </script>
 </body>
