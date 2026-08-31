@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Cajamarca: triangulación de evidencia — El Niño</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
+<style>
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  @font-face{ font-family:'Monoglyphic Bold';    src:url('fonts/Monoglyphic-Bold.woff2') format('woff2'); font-display:swap; }
+  @font-face{ font-family:'Monoglyphic Regular'; src:url('fonts/Monoglyphic-Regular.woff2') format('woff2'); font-display:swap; }
+  @font-face{ font-family:'Monoglyphic Light';   src:url('fonts/Monoglyphic-Light.woff2') format('woff2'); font-display:swap; }
+
+  :root{
+    --bg:#ffffff; --title:#0a0a0a; --ink:#242424; --muted:#8a8a8a; --faint:#e6e6e6;
+    --card:#ffffff; --cardbd:#e7e7e7; --grid:rgba(0,0,0,.06);
+    --a1:#ee5522; --a2:#c2892a; --a3:#2b7fb8; --a4:#7a5b8f;
+    --ctx:#c2c2c2;
+  }
+  html,body{ background:var(--bg); }
+  body{ font-family:'Monoglyphic Regular', system-ui, -apple-system, sans-serif; color:var(--ink); padding:40px 22px 44px; }
+
+  .wrap{ max-width:1040px; margin:0 auto; }
+  .eyebrow{ font-family:system-ui,sans-serif; font-size:.66rem; letter-spacing:.16em; text-transform:uppercase; color:var(--a1); text-align:center; margin-bottom:10px; }
+  .title{ font-family:'Monoglyphic Bold', system-ui, sans-serif; font-size:2rem; line-height:1.12; color:#000; text-align:center; }
+  .sub{ font-family:'Monoglyphic Light', system-ui, sans-serif; font-size:1.05rem; line-height:1.5; color:#3a3a3a; max-width:680px; margin:15px auto 0; text-align:center; }
+  .expo{ font-family:system-ui,sans-serif; font-size:.86rem; line-height:1.5; color:#6a6a6a; max-width:640px; margin:14px auto 0; text-align:center; font-style:italic; }
+
+  .grid{ display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:34px; }
+  .panel{ background:var(--card); border:1px solid var(--cardbd); border-radius:10px; padding:20px 20px 18px; display:flex; flex-direction:column; }
+  .p-head{ display:flex; align-items:flex-start; gap:11px; margin-bottom:4px; }
+  .p-num{ flex:0 0 auto; width:26px; height:26px; border-radius:50%; color:#fff; font-family:'Monoglyphic Bold',system-ui,sans-serif; font-size:.9rem; display:flex; align-items:center; justify-content:center; margin-top:1px; }
+  .p1 .p-num{ background:var(--a1); } .p2 .p-num{ background:var(--a2); } .p3 .p-num{ background:var(--a3); } .p4 .p-num{ background:var(--a4); }
+  .p-titles h3{ font-family:'Monoglyphic Bold',system-ui,sans-serif; font-size:1.12rem; line-height:1.15; color:#111; }
+  .p-titles p{ font-family:system-ui,sans-serif; font-size:.82rem; color:#8a8a8a; margin-top:3px; }
+  .chart{ width:100%; height:250px; margin-top:8px; }
+  .p-note{ font-family:system-ui,sans-serif; font-size:.78rem; line-height:1.5; color:#7a7a7a; margin-top:10px; border-top:1px solid #f0f0f0; padding-top:9px; }
+  .p-src{ font-family:system-ui,sans-serif; font-size:.72rem; color:#a0a0a0; margin-top:7px; }
+
+  /* Área 2 — tarjetas estructurales */
+  .stk{ display:flex; flex-direction:column; gap:16px; margin-top:12px; }
+  .struct .lbl{ font-family:system-ui,sans-serif; font-size:.84rem; color:#4a4a4a; margin-bottom:8px; }
+  .struct .big{ font-family:'Monoglyphic Bold',system-ui,sans-serif; font-size:2.1rem; color:var(--a2); line-height:1; }
+  .struct .big small{ font-size:.95rem; color:#8a8a8a; font-family:system-ui,sans-serif; margin-left:5px; }
+  .bar{ height:12px; background:#f0ece3; border-radius:6px; overflow:hidden; margin-top:9px; }
+  .bar > i{ display:block; height:100%; background:var(--a2); border-radius:6px; }
+  .badge{ display:inline-block; font-family:'Monoglyphic Bold',system-ui,sans-serif; font-size:.72rem; letter-spacing:.03em; color:#fff; background:var(--a2); padding:3px 9px; border-radius:20px; margin-left:8px; vertical-align:middle; }
+
+  /* Área 4 — impacto */
+  .kpis{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:12px; }
+  .kpi{ background:#faf7fb; border:1px solid #ece4f1; border-radius:8px; padding:13px 13px 12px; }
+  .kpi .n{ font-family:'Monoglyphic Bold',system-ui,sans-serif; font-size:1.55rem; color:var(--a4); line-height:1; }
+  .kpi .n small{ font-size:.78rem; color:#9a86a6; font-family:system-ui,sans-serif; }
+  .kpi .k{ font-family:system-ui,sans-serif; font-size:.76rem; color:#6a6a6a; margin-top:6px; line-height:1.35; }
+  .cmp{ margin-top:14px; }
+  .cmp .lbl{ font-family:system-ui,sans-serif; font-size:.8rem; color:#4a4a4a; margin-bottom:8px; }
+  .cbar{ display:flex; align-items:center; gap:9px; margin-bottom:7px; }
+  .cbar span.name{ font-family:system-ui,sans-serif; font-size:.76rem; color:#6a6a6a; width:70px; flex:0 0 auto; }
+  .cbar .track{ flex:1; height:16px; background:#f2eef5; border-radius:4px; overflow:hidden; }
+  .cbar .track > i{ display:block; height:100%; border-radius:4px; }
+  .cbar span.val{ font-family:'Monoglyphic Bold',system-ui,sans-serif; font-size:.78rem; color:#4a4a4a; width:74px; flex:0 0 auto; text-align:right; }
+
+  /* Lectura final */
+  .readme{ margin-top:24px; background:#fbf6ef; border:1px solid #efe4d4; border-left:4px solid #c2892a; border-radius:9px; padding:18px 22px; }
+  .readme h4{ font-family:'Monoglyphic Bold',system-ui,sans-serif; font-size:.95rem; color:#111; margin-bottom:6px; }
+  .readme p{ font-family:system-ui,sans-serif; font-size:.95rem; line-height:1.55; color:#3a3a3a; }
+  .foot{ font-family:system-ui,sans-serif; font-size:.76rem; line-height:1.55; color:#9a9a9a; margin-top:18px; text-align:center; max-width:820px; margin-left:auto; margin-right:auto; }
+
+  @media (max-width:760px){
+    body{ padding:30px 14px 34px; }
+    .grid{ grid-template-columns:1fr; gap:14px; }
+    .title{ font-size:1.6rem; }
+    .kpis{ grid-template-columns:1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="eyebrow">Cajamarca · Triangulación de evidencia</div>
+    <h2 class="title">Cajamarca: el golpe que no se ve</h2>
+    <p class="sub">Cuatro áreas de evidencia, medidas con fuentes distintas, coinciden en la misma región.</p>
+    <p class="expo">El FEN le llega por lluvias en cuenca alta, huaicos y pérdida de campaña — no por el mar. Series indexadas a 2022 = 100, el año previo al último evento (episodios de referencia: 2017 y 2023).</p>
+
+    <div class="grid">
+      <!-- ÁREA 1 -->
+      <div class="panel p1">
+        <div class="p-head">
+          <div class="p-num">1</div>
+          <div class="p-titles"><h3>Señales en el tiempo</h3><p>¿Qué se movió alrededor del evento?</p></div>
+        </div>
+        <div id="chart1" class="chart"></div>
+        <p class="p-note">Índice 2022 = 100. El dengue de Cajamarca dobló su nivel en 2023 (204,8). CEM y leishmaniasis se despegan de su comparador nacional en 2024–2025. El dengue va sin comparador nacional: el resto del país creció más rápido.</p>
+        <p class="p-src">Fuentes: MINSA/CDC (dengue, leishmaniasis) y MIMP/Programa Aurora (CEM, ventana enero–abril). 2026* es corte parcial.</p>
+      </div>
+
+      <!-- ÁREA 2 -->
+      <div class="panel p2 struct">
+        <div class="p-head">
+          <div class="p-num">2</div>
+          <div class="p-titles"><h3>Condiciones previas</h3><p>¿Cómo llega Cajamarca al evento?</p></div>
+        </div>
+        <div class="stk">
+          <div>
+            <div class="lbl">Cultivos que dependen del secano</div>
+            <div class="big">82,7<small>% de cultivos</small></div>
+            <div class="bar"><i style="width:82.7%"></i></div>
+          </div>
+          <div>
+            <div class="lbl">Infraestructura crítica expuesta <span class="badge">4.º del país</span></div>
+            <div class="big">15,43<small>por 100 mil hab.</small></div>
+          </div>
+        </div>
+        <p class="p-note">No son series anuales: explican cómo llega Cajamarca al evento, no qué pasó durante. La dependencia del secano vuelve a la agricultura muy sensible a la lluvia.</p>
+        <p class="p-src">Fuentes: IPE y CENEPRED.</p>
+      </div>
+
+      <!-- ÁREA 3 -->
+      <div class="panel p3">
+        <div class="p-head">
+          <div class="p-num">3</div>
+          <div class="p-titles"><h3>Capacidad de respuesta</h3><p>¿Pudo el Estado reaccionar?</p></div>
+        </div>
+        <div id="chart3" class="chart"></div>
+        <p class="p-note">Ejecución del PP0068 (Reducción de vulnerabilidad y atención de emergencias), en porcentaje real. En 2025 la ejecución sube a 96 % — un dato que juega en contra del argumento y se incluye a propósito. 2026* es corte parcial a agosto, no comparable como año cerrado.</p>
+        <p class="p-src">Fuente: MEF / Consulta Amigable.</p>
+      </div>
+
+      <!-- ÁREA 4 -->
+      <div class="panel p4">
+        <div class="p-head">
+          <div class="p-num">4</div>
+          <div class="p-titles"><h3>Impacto económico</h3><p>¿Qué quedó inmovilizado?</p></div>
+        </div>
+        <div class="kpis">
+          <div class="kpi"><div class="n">143</div><div class="k">obras paralizadas (jun. 2024)</div></div>
+          <div class="kpi"><div class="n">S/ 2.789<small> M</small></div><div class="k">monto inmovilizado</div></div>
+        </div>
+        <div class="cmp">
+          <div class="lbl">Costo promedio por obra paralizada (S/ millones)</div>
+          <div class="cbar"><span class="name">Cajamarca</span><div class="track"><i style="width:100%; background:var(--a4)"></i></div><span class="val">24,6</span></div>
+          <div class="cbar"><span class="name">Cusco</span><div class="track"><i style="width:46.3%; background:#c3b3cf"></i></div><span class="val">11,4</span></div>
+        </div>
+        <div class="cmp">
+          <div class="lbl">Exportaciones expuestas (US$ millones, 2023–24)</div>
+          <div class="cbar"><span class="name">Cajamarca</span><div class="track"><i style="width:100%; background:var(--a4)"></i></div><span class="val">945,7</span></div>
+          <div class="cbar"><span class="name">Callao</span><div class="track"><i style="width:94.5%; background:#c3b3cf"></i></div><span class="val">893,7</span></div>
+          <div class="cbar"><span class="name">Lima Metrop.</span><div class="track"><i style="width:48.1%; background:#c3b3cf"></i></div><span class="val">455,1</span></div>
+        </div>
+        <p class="p-src">Fuentes: Contraloría / Infobras (obras) y MINCETUR (exportaciones). Comparaciones puntuales entre regiones, no un ranking nacional.</p>
+      </div>
+    </div>
+
+    <div class="readme">
+      <h4>Cómo leer esto</h4>
+      <p>No todas suben a la vez ni el FEN las causa por sí solo: lo que coincide son las cuatro áreas. La triangulación no significa que todas las variables aumenten al mismo tiempo ni que el FEN las cause directamente; muestra que en Cajamarca coinciden señales temporales, vulnerabilidades estructurales, capacidad de respuesta pública y exposición económica.</p>
+    </div>
+    <p class="foot">Fuentes: MIMP/Aurora, MINSA/CDC, IPE, CENEPRED, MEF, Contraloría e Infobras, MINCETUR. CEM medido en la ventana enero–abril. 2026 es corte parcial. El otro clúster —la destrucción que sí se ve— lo encabezan Piura y La Libertad en viviendas destruidas; Cajamarca casi no aparece ahí.</p>
+  </div>
+
+<script>
+(function(){
+  var FF = 'Monoglyphic Regular, system-ui, -apple-system, sans-serif';
+  var FB = 'Monoglyphic Bold, system-ui, sans-serif';
+  var years = ['2022','2023','2024','2025','2026*'];
+  var charts = [];
+
+  // ---------- ÁREA 1: líneas indexadas ----------
+  var c1 = echarts.init(document.getElementById('chart1'));
+  c1.setOption({
+    textStyle:{ fontFamily:FF },
+    grid:{ left:38, right:14, top:34, bottom:26 },
+    legend:{ top:0, left:'center', itemWidth:14, itemHeight:9, itemGap:12,
+             textStyle:{ fontSize:11, color:'#6a6a6a', fontFamily:'system-ui,sans-serif' } },
+    tooltip:{ trigger:'axis', valueFormatter:function(v){ return v==null?'—':(''+v).replace('.',','); } },
+    xAxis:{ type:'category', data:years, boundaryGap:false,
+            axisLine:{ lineStyle:{ color:'#d9d9d9' } }, axisTick:{ show:false },
+            axisLabel:{ color:'#9a9a9a', fontSize:11, fontFamily:'system-ui,sans-serif' } },
+    yAxis:{ type:'value', min:0, max:230,
+            splitLine:{ lineStyle:{ color:'rgba(0,0,0,.06)' } },
+            axisLabel:{ color:'#9a9a9a', fontSize:11, fontFamily:'system-ui,sans-serif' } },
+    series:[
+      { name:'Dengue Cajamarca', type:'line', data:[100,204.8,78.3,173.3,null], connectNulls:false,
+        symbol:'circle', symbolSize:7, lineStyle:{ width:3, color:'#ee5522' },
+        itemStyle:{ color:'#ee5522' }, z:5,
+        markPoint:{ symbol:'pin', symbolSize:1, data:[], silent:true },
+        markLine:{ silent:true, symbol:'none', lineStyle:{ type:'dashed', color:'#cfcfcf', width:1 },
+                   label:{ show:true, formatter:'100', position:'insideEndTop', color:'#b0b0b0', fontSize:10, fontFamily:'system-ui,sans-serif' },
+                   data:[{ yAxis:100 }] } },
+      { name:'CEM Cajamarca', type:'line', data:[100,89.3,127.6,null,null], connectNulls:false,
+        symbol:'circle', symbolSize:6, lineStyle:{ width:2, color:'#2b7fb8' }, itemStyle:{ color:'#2b7fb8' } },
+      { name:'Leishmaniasis Cajamarca', type:'line', data:[100,91.6,118.5,117.5,null], connectNulls:false,
+        symbol:'circle', symbolSize:6, lineStyle:{ width:2, color:'#6a8f3a' }, itemStyle:{ color:'#6a8f3a' } },
+      { name:'CEM resto país', type:'line', data:[100,98.7,101.5,null,null], connectNulls:false,
+        symbol:'none', lineStyle:{ width:1.4, color:'#c8c8c8', type:'dashed' }, itemStyle:{ color:'#c8c8c8' } },
+      { name:'Leishm. resto país', type:'line', data:[100,94.3,90.5,81.9,null], connectNulls:false,
+        symbol:'none', lineStyle:{ width:1.4, color:'#d8d8d8', type:'dashed' }, itemStyle:{ color:'#d8d8d8' } }
+    ]
+  });
+  charts.push(c1);
+
+  // ---------- ÁREA 3: barras ejecución % ----------
+  var exec = [81.7,77.9,81.4,96,55.4];
+  var barColors = ['#b9c4cc','#2b7fb8','#b9c4cc','#d9a441','#e7cbb0'];
+  var c3 = echarts.init(document.getElementById('chart3'));
+  c3.setOption({
+    textStyle:{ fontFamily:FF },
+    grid:{ left:34, right:14, top:24, bottom:26 },
+    tooltip:{ trigger:'axis', valueFormatter:function(v){ return (''+v).replace('.',',')+' %'; } },
+    xAxis:{ type:'category', data:years,
+            axisLine:{ lineStyle:{ color:'#d9d9d9' } }, axisTick:{ show:false },
+            axisLabel:{ color:'#9a9a9a', fontSize:11, fontFamily:'system-ui,sans-serif' } },
+    yAxis:{ type:'value', min:0, max:100,
+            splitLine:{ lineStyle:{ color:'rgba(0,0,0,.06)' } },
+            axisLabel:{ color:'#9a9a9a', fontSize:11, formatter:'{value}%', fontFamily:'system-ui,sans-serif' } },
+    series:[{
+      type:'bar', data:exec.map(function(v,i){
+        return { value:v, itemStyle:{ color:barColors[i], borderRadius:[4,4,0,0],
+                 borderColor: i===4?'#c99a6a':'transparent', borderType:'dashed', borderWidth: i===4?1.4:0 } };
+      }), barWidth:'52%',
+      label:{ show:true, position:'top', formatter:function(p){ return (''+p.value).replace('.',',')+(p.dataIndex===4?'*':''); },
+              color:'#4a4a4a', fontSize:11, fontFamily:FB }
+    }]
+  });
+  charts.push(c3);
+
+  function resizeAll(){ charts.forEach(function(c){ try{ c.resize(); }catch(e){} }); }
+  function postHeight(){ try{ parent.postMessage({ type:'triHeight', h:Math.ceil(document.body.getBoundingClientRect().height) }, '*'); }catch(e){} }
+
+  window.addEventListener('resize', function(){ resizeAll(); postHeight(); });
+  if (window.ResizeObserver){ new ResizeObserver(function(){ postHeight(); }).observe(document.body); }
+  if (document.fonts && document.fonts.ready){ document.fonts.ready.then(function(){ resizeAll(); postHeight(); }); }
+  setTimeout(function(){ resizeAll(); postHeight(); }, 60);
+  setTimeout(postHeight, 400);
+  postHeight();
+})();
+</script>
+</body>
+</html>

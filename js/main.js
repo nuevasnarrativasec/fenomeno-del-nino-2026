@@ -798,6 +798,25 @@
 })();
 
 // ============================================================
+// 8b) Carga diferida + auto-alto de Triangulación Cajamarca (iframe)
+// ============================================================
+(function () {
+  var frame = document.getElementById('triFrame');
+  if (!frame || !frame.dataset.src) return;
+  var started = false;
+  function load(){ if (started) return; started = true; frame.src = frame.dataset.src; }
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { load(); io.disconnect(); } });
+    }, { rootMargin: '500px 0px' });
+    io.observe(frame);
+  } else { load(); }
+  window.addEventListener('message', function (e) {
+    if (e.data && e.data.type === 'triHeight' && e.data.h) { frame.style.height = e.data.h + 'px'; }
+  });
+})();
+
+// ============================================================
 // 8) Carga diferida del widget externo "Manda tu carta" (iframe)
 // ============================================================
 (function () {
