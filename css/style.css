@@ -21,6 +21,15 @@
   html,body{ background:var(--bg); }
 
 @font-face {
+    font-family: 'Monoglyphic Thin';
+    src: url('../fonts/Monoglyphic-Thin.woff2') format('woff2'),
+        url('../fonts/Monoglyphic-Thin.woff') format('woff');
+    font-weight: 100;
+    font-style: normal;
+    font-display: swap;
+} 
+
+@font-face {
     font-family: 'Monoglyphic Light';
     src: url('../fonts/Monoglyphic-Light.woff2') format('woff2'),
         url('../fonts/Monoglyphic-Light.woff') format('woff');
@@ -551,3 +560,56 @@
         .mapa-map{ width:min(78vw,360px); }
         .mapa-panel{ width:100%; max-width:460px; }
       }
+
+  /* ============================================================
+     PORTADA "Todo está conectado" + FLIP de personajes + DECOR
+     (añadido; no altera lo previo)
+     ============================================================ */
+  .stage-title{
+    position:absolute; z-index:6; transform:translateX(-50%);
+    text-align:center; white-space:nowrap;
+    font-family:'Monoglyphic Thin', system-ui, -apple-system, sans-serif;
+    font-size:4rem; letter-spacing:.16em; text-transform:uppercase;
+    color:#e9e2d7;
+  }
+  @media (max-width:760px){ .stage-title{ font-size:1.4rem; letter-spacing:.1em; } }
+
+  /* Etiqueta de cada personaje en la fila intro (solo decorativa) */
+  .intro-lbl{ position:absolute; z-index:8; width:0; height:0; }
+  .intro-lbl .il-tag{
+    position:absolute; left:0; bottom:56px; transform:translateX(-50%);
+    display:inline-flex; align-items:center; gap:5px; white-space:nowrap;
+  }
+  .intro-lbl .il-name{
+    background:#111; color:#e9e2d7; padding:3px 7px;
+    font:600 .62rem/1 system-ui,-apple-system,sans-serif; letter-spacing:.02em;
+  }
+  .intro-lbl .il-sq{
+    width:15px; height:15px; border-radius:3px; background:#ee0c0c; color:#fff;
+    font:800 .62rem/1 system-ui,sans-serif;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .intro-lbl .il-region{
+    position:absolute; left:0; top:54px; transform:translateX(-50%);
+    color:var(--orange-soft); white-space:nowrap;
+    font:.58rem/1 system-ui,sans-serif; letter-spacing:.06em;
+  }
+  .intro-arrows{
+    position:absolute; z-index:6; transform:translate(-50%,-50%);
+    color:#5a5348; font-size:1.2rem; letter-spacing:.18em;
+    font-family:system-ui,sans-serif;
+  }
+
+  /* Sol / nubes que entran por los lados con el scroll */
+  .decor{ position:absolute; z-index:2; pointer-events:none; }
+  .decor-sun{
+    border-radius:50%;
+    background: url('../img/sol.png') no-repeat center center/cover;
+  }
+  .decor-cloud{
+    background: url('../img/lluvia.png') no-repeat center center/cover;
+  }
+
+  /* Etiquetas de la fila inferior escalonadas (nivel superior) */
+  .fig-num.above{ margin-top:0; transform:translate(-50%,-100%); }
+  .fig-lbl.above{ transform:translate(-50%,-100%); }

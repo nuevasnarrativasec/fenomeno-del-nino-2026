@@ -7,13 +7,11 @@
 <link rel="stylesheet" href="./css/style.css">
 
 </head>
-<body class="pre-scroll">
+<body>
 
   <div class="topbar">Para ver más información presiona el botón <span class="chev">›</span> sobre cada persona</div>
 
-  <section class="hero" style="height: 10vh; min-height: 10vh;">
-    <div class="cue">Desliza para comenzar <span>▾</span></div>
-  </section>
+  <!-- (la portada "Todo está conectado" ahora vive dentro del #stage) -->
 
     <div id="stageWrap">
         <div id="stage">
@@ -330,7 +328,14 @@
   STATIONS.forEach(s=> s.cx += CX_OFFSET);
   const YO_X = 1000;   // "Yo" al extremo derecho: destino del zig-zag y de la fila
   YO.cx = YO_X;
-  STATIONS.forEach((s,i)=>{ s.cy = START_Y + i*GAP; });
+
+  /* Fila intro "Todo está conectado": los círculos arrancan aquí y vuelan
+     hasta su estación del zig-zag conforme se hace scroll (FLIP). */
+  const ROW_Y_INTRO = 320;                 // y del centro de los círculos en la fila intro
+  const INTRO_GAP   = 380;                 // aire entre la fila intro y la 1ª estación
+  const ROW_L = 24, ROW_R = STAGE_W - 60;  // extensión horizontal de la fila intro (más aire entre personas)
+  STATIONS.forEach((s,i)=>{ s._rowX = Math.round(ROW_L + (ROW_R-ROW_L)*i/(STATIONS.length-1)); });
+  STATIONS.forEach((s,i)=>{ s.cy = ROW_Y_INTRO + INTRO_GAP + i*GAP; });
   YO.cy = STATIONS[STATIONS.length-1].cy + Math.round(GAP*1.1);
   STATIONS.forEach((s,i)=>{
     s.infoTop = s.cy - 44;
@@ -399,10 +404,22 @@
   STATIONS.forEach((s, i)=>{
     const node = el('div','node');
 
-    // círculo con la ilustración del personaje
-    const circle = el('div','circle reveal', `<img src="${IMG_BASE}personaje-${i+1}.png" alt="${s.role}">`);
-    circle.style.left = s.cx+'px'; circle.style.top = s.cy+'px';
+    // círculo con la ilustración del personaje — arranca en la FILA INTRO
+    // (visible al cargar) y vuela hasta su estación con el scroll.
+    const circle = el('div','circle', `<img src="${IMG_BASE}personaje-${i+1}.png" alt="${s.role}">`);
+    circle.style.left = s._rowX+'px'; circle.style.top = ROW_Y_INTRO+'px';
     node.appendChild(circle);
+
+    // etiqueta de la fila intro: nombre + región (caja roja), ambos ARRIBA del personaje
+    const introLbl = el('div','intro-lbl',
+      `<div style="position:absolute;left:0;bottom:64px;transform:translateX(-50%);text-align:center;white-space:nowrap;">`+
+        `<div style="color:#f4efe7;font:800 1.02rem/1 'Monoglyphic Bold';">${s.name}</div>`+
+        `<div style="margin-top:7px;background:#ee0c0c;color:#000;font:700 .74rem/1.05 'Monoglyphic Bold';letter-spacing:.03em;padding:4px 11px;display:inline-block;">${s.region}</div>`+
+      `</div>`);
+    introLbl.style.left = s._rowX+'px';
+    introLbl.style.top  = ROW_Y_INTRO+'px';
+    node.appendChild(introLbl);
+    s._introLbl = introLbl;
 
     // Posición horizontal del cuadro blanco (fuente única para cuadro y botón)
     const ibLeft = s.side==='right' ? (s.cx + CIRCLE_R + 8) : (s.cx - CIRCLE_R - 8 - INFO_W);
@@ -441,6 +458,35 @@
     stage.appendChild(node);
   });
 
+  /* ── Portada "Todo está conectado" + elementos decorativos ───── */
+  const stageTitle = el('div','stage-title','Todo está conectado');
+  stageTitle.style.left = Math.round(STAGE_W/2)+'px';
+  stageTitle.style.top  = '92px';
+  stage.appendChild(stageTitle);
+
+  // Flechas blancas entre los personajes de la fila intro
+  for(let i=0;i<STATIONS.length-1;i++){
+    const arw = el('div','intro-arrows');
+    arw.style.left = ((STATIONS[i]._rowX + STATIONS[i+1]._rowX)/2)+'px';
+    arw.style.top  = ROW_Y_INTRO+'px';
+    arw.style.width='0'; arw.style.height='0';
+    arw.style.borderTop='9px solid transparent';
+    arw.style.borderBottom='9px solid transparent';
+    arw.style.borderLeft='14px solid #ffffff';
+    stage.appendChild(arw);
+  }
+
+  function decor(cls, html, cx, cy, w, h){
+    const d = el('div','decor '+cls, html);
+    d.style.left = (cx - w/2)+'px'; d.style.top = (cy - h/2)+'px';
+    d.style.width = w+'px'; d.style.height = h+'px';
+    stage.appendChild(d); return d;
+  }
+  const sunEl   = decor('decor-sun','',           30,           STATIONS[0].cy,       300, 300);
+  const rainEl  = decor('decor-cloud', '', STAGE_W - 66, STATIONS[2].cy + 150, 240, 206);   // lluvia.png (desde CSS .decor-cloud)
+  const stormEl = decor('decor-cloud', '', 60,           STATIONS[6].cy + 10,  236, 200);
+  stormEl.style.background = "url('img/rayos.png') no-repeat center center/cover";   // rayos.png
+
   // 3) Fila inferior: figuras con los pies sobre la línea + etiquetas
   //    escalonadas (dos niveles alternados) para que no se amontonen.
   const figrow = el('div','figrow');
@@ -463,16 +509,18 @@
     figrow.appendChild(f);
     if(r.me){ r._x = x; }
     if(!r.me){
-      // número grande (1..9)
+      // número grande (1..9) + etiqueta, escalonados en dos niveles:
+      // pares ARRIBA de la figura, impares ABAJO (evita que se amontonen).
       figNum++;
-      const num = el('div','fig-num reveal', String(figNum));
+      const above = (figNum % 2 === 0);
+      const num = el('div','fig-num reveal'+(above?' above':''), String(figNum));
       num.style.left = x+'px';
-      num.style.top  = (ROW_Y + NUM_DY)+'px';
+      num.style.top  = (above ? (ROW_Y - FIG_H - 10) : (ROW_Y + NUM_DY))+'px';
       figrow.appendChild(num);
-      // etiqueta alineada (el "Yo" no lleva etiqueta)
-      const lab = el('div','fig-lbl reveal', r.lbl);
+      // etiqueta (el "Yo" no lleva etiqueta)
+      const lab = el('div','fig-lbl reveal'+(above?' above':''), r.lbl);
       lab.style.left = x+'px';
-      lab.style.top  = (ROW_Y + LBL_BASE)+'px';
+      lab.style.top  = (above ? (ROW_Y - FIG_H - 40) : (ROW_Y + LBL_BASE))+'px';
       figrow.appendChild(lab);
     }
   });
@@ -513,7 +561,7 @@
   yoNode.appendChild(yob);
 
   // texto Lorem
-  const ycap = el('div','final-caption reveal','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.');
+  const ycap = el('div','final-caption reveal','');
   ycap.style.left = RBOX_CX+'px';
   ycap.style.top  = (YO.cy + CAP_DY)+'px';
   yoNode.appendChild(ycap);
@@ -639,7 +687,7 @@
     gsap.to(clipRect, {
       attr:{ height: STAGE_H },
       ease:'none',
-      scrollTrigger:{ trigger: wrap, start:'top 80%', end:'bottom 80%', scrub:0.5 }
+      scrollTrigger:{ trigger: wrap, start:'top top', end:'bottom 80%', scrub:0.5 }
     });
 
     // Secuencia escalonada por scroll. Para cada personaje, todos los
@@ -665,14 +713,34 @@
       });
     }
 
-    // 1) Personajes del zigzag
+    // 1) FLIP: cada personaje vuela de la fila intro a su estación cuando ésta
+    //    entra en pantalla; sus textos aparecen al llegar (ancla fija = cuadro blanco).
     STATIONS.forEach(s=>{
-      revealAt(s._circle, s._circle, 0);         // el personaje…
-      revealAt(s._nw,     s._circle, 0);         // …con su nombre y cargo
-      revealAt(s._ib,     s._circle, STEP);      // el cuadro blanco…
-      revealAt(s._btn,    s._circle, STEP);      // …y su botón de info aparecen JUNTOS
-      revealAt(s._ob,     s._circle, STEP*2);    // por último el cuadro naranja
+      gsap.fromTo(s._circle,
+        { left:s._rowX, top:ROW_Y_INTRO },
+        { left:s.cx, top:s.cy, ease:'power2.out',
+          scrollTrigger:{ trigger:s._ib, start:'top center', end:'top 38%', scrub:0.7 } });
+      revealAt(s._nw,  s._ib, 0);                // nombre y cargo
+      revealAt(s._ib,  s._ib, STEP);            // cuadro blanco
+      revealAt(s._btn, s._ib, STEP);            // botón de info
+      revealAt(s._ob,  s._ib, STEP*2);          // cuadro naranja
     });
+
+    // Portada: título, etiquetas y flechas se desvanecen al empezar a bajar
+    gsap.to('.stage-title', { opacity:0, y:-18, ease:'none',
+      scrollTrigger:{ trigger:wrap, start:'top top', end:'+=340', scrub:true } });
+    gsap.to('.intro-lbl', { opacity:0, ease:'none',
+      scrollTrigger:{ trigger:wrap, start:'top top', end:'+=300', scrub:true } });
+    gsap.to('.intro-arrows', { opacity:0, ease:'none',
+      scrollTrigger:{ trigger:wrap, start:'top top', end:'+=200', scrub:true } });
+
+    // Decor: sol y nubes entran suave por los lados al acercarse su tramo
+    gsap.fromTo(sunEl,  { x:-360, opacity:0 }, { x:0, opacity:1, ease:'power2.out',
+      scrollTrigger:{ trigger:STATIONS[0]._ib, start:'top center', end:'top 42%', scrub:0.9 } });
+    gsap.fromTo(rainEl, { x:360, opacity:0 },  { x:0, opacity:1, ease:'power2.out',
+      scrollTrigger:{ trigger:STATIONS[2]._ib, start:'top center', end:'top 44%', scrub:0.9 } });
+    gsap.fromTo(stormEl,{ x:-360, opacity:0 }, { x:0, opacity:1, ease:'power2.out',
+      scrollTrigger:{ trigger:STATIONS[6]._ib, start:'top center', end:'top 44%', scrub:0.9 } });
 
     // 2) Fila inferior + estación "Yo" (sin botón de popup)
     document.querySelectorAll('.figrow .reveal').forEach(f=> revealAt(f, yoFigEl, 0));
