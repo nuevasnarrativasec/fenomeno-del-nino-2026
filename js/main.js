@@ -798,6 +798,40 @@
 })();
 
 // ============================================================
+// 4b) Carga diferida del riel "fiebre vertical" ICEN (iframe, rellena su contenedor)
+// ============================================================
+(function () {
+  var frame = document.getElementById('railFrame');
+  var wrap  = document.getElementById('railWrap');
+  if (!frame || !wrap || !frame.dataset.src) return;
+  var started = false;
+  function load(){ if (started) return; started = true; frame.src = frame.dataset.src; }
+  var footEl = document.querySelector('.main-footer');
+  function sync(){
+    var h = wrap.scrollHeight;
+    if (footEl) {
+      var wTop = wrap.getBoundingClientRect().top + window.pageYOffset;
+      var fTop = footEl.getBoundingClientRect().top + window.pageYOffset;
+      if (fTop > wTop) h = fTop - wTop;   // exacto: hasta el inicio del footer
+    }
+    frame.style.height = h + 'px';
+  }
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { load(); io.disconnect(); } });
+    }, { rootMargin: '900px 0px' });
+    io.observe(frame);
+  } else { load(); }
+  // Mantener el alto del riel igual al del bloque envuelto (los iframes internos
+  // cambian de alto al autoajustarse, así que observamos el contenedor).
+  if ('ResizeObserver' in window) { new ResizeObserver(sync).observe(wrap); }
+  window.addEventListener('resize', sync);
+  window.addEventListener('load', sync);
+  [200,600,1200,2500].forEach(function(t){ setTimeout(sync, t); });
+  sync();
+})();
+
+// ============================================================
 // 8b) Carga diferida + auto-alto de Triangulación Cajamarca (iframe)
 // ============================================================
 (function () {
