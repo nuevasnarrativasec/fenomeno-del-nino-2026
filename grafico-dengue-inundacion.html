@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dengue e inundaciones — El Niño 2023</title>
+<style>
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  @font-face{ font-family:'Monoglyphic Bold';    src:url('fonts/Monoglyphic-Bold.woff2') format('woff2'); font-display:swap; }
+  @font-face{ font-family:'Monoglyphic Regular'; src:url('fonts/Monoglyphic-Regular.woff2') format('woff2'); font-display:swap; }
+  @font-face{ font-family:'Monoglyphic Light';   src:url('fonts/Monoglyphic-Light.woff2') format('woff2'); font-display:swap; }
+
+  :root{
+    --bg:#ffffff; --title:#0a0a0a; --ink:#242424; --muted:#8a8a8a; --faint:#e2e2e2;
+    --accent:#ee5522; --grid:rgba(0,0,0,.06); --axis:#cccccc;
+  }
+  html,body{ background:var(--bg); }
+  body{ font-family:'Monoglyphic Regular', system-ui, -apple-system, sans-serif; color:var(--ink); padding:40px 24px 46px; }
+
+  .viz{ max-width:1000px; margin:0 auto; position:relative; }
+  .viz-eyebrow{ font-family:system-ui,sans-serif; font-size:.66rem; letter-spacing:.16em; text-transform:uppercase; color:var(--accent); margin-bottom:10px; }
+  .viz-title{     font-family: 'Monoglyphic Bold', system-ui, sans-serif;
+    font-size: 1.8rem;
+    color: #000;
+    text-align: center;
+    margin: 0 auto; }
+  .viz-sub{ font-family: 'Monoglyphic Light', system-ui, sans-serif;
+    font-size: 1.05rem;
+    line-height: 1.5;
+    color: #3a3a3a;
+    max-width: 660px;
+    margin: 16px auto 8px;
+    text-align: center; }
+
+  .viz-stat{
+    display:inline-flex; align-items:baseline; gap:12px; flex-wrap:wrap;
+    margin:22px 0 4px; padding:11px 16px; border:1px solid var(--faint);
+    border-left:3px solid var(--accent); border-radius:7px; background:#fdf1ec;
+  }
+  .viz-stat b{ font-family:'Monoglyphic Bold',system-ui,sans-serif; color:var(--title); font-size:1.05rem; }
+  .viz-stat .sp{ color:var(--accent); font-weight:700; }
+  .viz-stat span{ font-family:system-ui,sans-serif; font-size:.82rem; color:#6a6a6a; }
+
+  /* Selector de región */
+  .viz-pick{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin:20px 0 4px; }
+  .viz-pick label{ font-family:system-ui,sans-serif; font-size:.74rem; letter-spacing:.06em; text-transform:uppercase; color:#6a6a6a; }
+  .viz-pick select{
+    font-family:'Monoglyphic Regular', system-ui, sans-serif; font-size:.92rem; color:var(--title);
+    background:#fff; border:1px solid #2a2a2a; border-radius:0; padding:11px 34px 11px 13px; min-width:230px;
+    outline:none; cursor:pointer; -webkit-appearance:none; appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%238a8a8a' stroke-width='1.6'/%3E%3C/svg%3E");
+    background-repeat:no-repeat; background-position:right 13px center;
+  }
+  .viz-pick select:focus{ border-color:var(--accent); }
+  .viz-pick .clear{
+    font-family:system-ui,sans-serif; font-size:.78rem; color:#8a8a8a; background:none; border:none;
+    cursor:pointer; text-decoration:underline; opacity:0; pointer-events:none; transition:opacity .15s;
+  }
+  .viz-pick .clear.on{ opacity:1; pointer-events:auto; }
+
+  .chart-wrap{ position:relative; margin-top:14px; }
+  svg{ display:block; width:100%; height:auto; overflow:visible; }
+  .grid line{ stroke:var(--grid); stroke-width:1; }
+  .axis line{ stroke:var(--axis); stroke-width:1; }
+  .tick text{ font-family:system-ui,sans-serif; fill:#9a9a9a; font-size:12px; }
+  .axis-title{ font-family:system-ui,sans-serif; fill:#6a6a6a; font-size:12.5px; letter-spacing:.02em; }
+  .trend{ stroke:#c4c4c4; stroke-width:1.4; stroke-dasharray:3 5; }
+  .trend-lbl{ font-family:system-ui,sans-serif; fill:#a5a5a5; font-size:11.5px; font-style:italic; }
+
+  .dot{ fill:var(--accent); stroke:#fff; stroke-width:1.6; cursor:pointer; transition:opacity .18s; }
+  .dot0{ fill:#fff; stroke:#b3b3b3; stroke-width:1.6; cursor:pointer; transition:opacity .18s; }
+  .zero-band{ fill:rgba(0,0,0,.025); }
+  .anno line{ stroke:#c0392b00; }
+  .anno .lead{ stroke:#c2c2c2; stroke-width:1; }
+  .anno text{ font-family:system-ui,sans-serif; fill:#4a4a4a; font-size:12.5px; }
+  .anno .ttl{ fill:var(--title); font-family:'Monoglyphic Bold',system-ui,sans-serif; }
+  .dimmed{ opacity:.22 !important; }
+  .halo{ fill:var(--accent); opacity:.18; }
+  .sel-ring{ fill:none; stroke:var(--title); stroke-width:2; }
+  .zeronote{ font-family:system-ui,sans-serif; fill:#8a8a8a; font-size:12px; }
+
+  .viz-foot{ font-family:'Monoglyphic Light',system-ui,sans-serif; font-size:.78rem; color:#9a9a9a; margin-top:22px; line-height:1.5; }
+
+  .tip{
+    position:absolute; pointer-events:none; opacity:0; transform:translate(-50%,-116%);
+    background:#0a0a0a; color:#fff; border-radius:7px; padding:9px 12px;
+    font-family:system-ui,sans-serif; white-space:nowrap; z-index:5; transition:opacity .12s;
+    box-shadow:0 10px 30px rgba(0,0,0,.28);
+  }
+  .tip.below{ transform:translate(-50%,16%); }
+  .tip .r{ color:#fff; font-weight:700; font-size:.85rem; margin-bottom:4px; }
+  .tip .rw{ color:#c9c9c9; font-size:.74rem; }
+  .tip .rw b{ color:#ff8a4d; font-weight:700; }
+</style>
+</head>
+<body data-palette="#ee5522">
+
+  <div class="viz">
+    <h2 class="viz-title">Donde más se inunda, más dengue hay</h2>
+    <p class="viz-sub">Cruzamos el riesgo de inundación de cada región con sus casos de dengue en 2023. A más riesgo, más dengue: la tendencia se sostiene en las 24 regiones del país, incluso descontando extremos como Piura. El agua estancada que deja El Niño no solo moja: también incuba al mosquito que transmite la enfermedad.</p>
+
+    <div class="viz-stat">
+      <b>Spearman <span class="sp">r = 0,559</span></b>
+      <span>p = 0,004 · 24 regiones · asociación real y significativa — es una <b style="color:#3a3a3a">tendencia</b>, no una proporción estricta</span>
+    </div>
+
+    <div class="viz-pick">
+      <label for="regionSel">Resalta tu región:</label>
+      <select id="regionSel"><option value="">— elige una región —</option></select>
+      <button class="clear" id="clearSel">limpiar</button>
+    </div>
+
+    <div class="chart-wrap">
+      <svg id="chart" viewBox="0 0 980 686" role="img" aria-label="Dispersión: riesgo de inundación vs casos de dengue por región, 2023"></svg>
+      <div class="tip" id="tt"></div>
+      <div class="tip" id="sel"></div>
+    </div>
+
+    <p class="viz-foot">Fuentes: CENEPRED (vía Plan Multisectorial FEN 2023–2024, D.S. Nº 101-2023-PCM) y MINSA/CDC. Prueba estadística: correlación de Spearman (rangos), robusta a valores extremos. También se probó Pearson bruto (r=0,836, inflado por Piura) y Pearson log-log (r=0,391, al límite): Spearman es la métrica más honesta.</p>
+  </div>
+
+<script>
+const DATA = [
+  {r:"Piura", risk:406989, d:79304}, {r:"Ucayali", risk:161252, d:8174},
+  {r:"Áncash", risk:61380, d:11658}, {r:"La Libertad", risk:48378, d:26502},
+  {r:"Lambayeque", risk:47950, d:31460}, {r:"Loreto", risk:34741, d:6582},
+  {r:"Tumbes", risk:16815, d:12890}, {r:"San Martín", risk:12175, d:6890},
+  {r:"Lima", risk:11166, d:30735}, {r:"Cajamarca", risk:9018, d:7451},
+  {r:"Puno", risk:3330, d:267}, {r:"Ayacucho", risk:2769, d:695},
+  {r:"Huancavelica", risk:2713, d:0}, {r:"Apurímac", risk:1647, d:0},
+  {r:"Madre de Dios", risk:1274, d:1853}, {r:"Huánuco", risk:1202, d:2298},
+  {r:"Tacna", risk:1025, d:0}, {r:"Pasco", risk:925, d:1156},
+  {r:"Arequipa", risk:565, d:0}, {r:"Cusco", risk:526, d:2630},
+  {r:"Moquegua", risk:456, d:0}, {r:"Amazonas", risk:254, d:3271},
+  {r:"Junín", risk:63, d:3580}, {r:"Ica", risk:13, d:16889},
+];
+
+const NS="http://www.w3.org/2000/svg";
+const svg=document.getElementById('chart');
+const tt=document.getElementById('tt');
+const sel=document.getElementById('sel');
+const wrap=document.querySelector('.chart-wrap');
+
+const L=78, R=44, T=54, B=176, W=980, H=686;
+const pL=L, pR=W-R, pT=T, pB=H-B, pW=pR-pL, pH=pB-pT;
+const XMIN=10, XMAX=1e6, YMIN=100, YMAX=1e5;
+const lx=v=> pL + (Math.log10(v)-Math.log10(XMIN))/(Math.log10(XMAX)-Math.log10(XMIN))*pW;
+const ly=v=> pB - (Math.log10(v)-Math.log10(YMIN))/(Math.log10(YMAX)-Math.log10(YMIN))*pH;
+const ZY = pB + 74;
+const fmt=n=> n.toLocaleString('es-PE');
+
+function el(tag, attrs, txt){ const e=document.createElementNS(NS,tag); for(const k in attrs) e.setAttribute(k, attrs[k]); if(txt!=null) e.textContent=txt; return e; }
+function add(parent, tag, attrs, txt){ const e=el(tag,attrs,txt); parent.appendChild(e); return e; }
+
+// Grid + ejes
+const gGrid=add(svg,'g',{class:'grid'});
+const gAxis=add(svg,'g',{class:'axis'});
+const xticks=[10,100,1000,10000,100000,1000000];
+const xlabels={10:'10',100:'100',1000:'1,000',10000:'10,000',100000:'100,000',1000000:'1,000,000'};
+xticks.forEach(t=>{ const x=lx(t); add(gGrid,'line',{x1:x,y1:pT,x2:x,y2:pB}); const g=add(svg,'g',{class:'tick'}); add(g,'text',{x:x,y:pB+22,'text-anchor':'middle'}, xlabels[t]); });
+const yticks=[100,1000,10000,100000];
+const ylabels={100:'100',1000:'1,000',10000:'10,000',100000:'100,000'};
+yticks.forEach(t=>{ const y=ly(t); add(gGrid,'line',{x1:pL,y1:y,x2:pR,y2:y}); const g=add(svg,'g',{class:'tick'}); add(g,'text',{x:pL-10,y:y+4,'text-anchor':'end'}, ylabels[t]); });
+add(gAxis,'line',{x1:pL,y1:pT,x2:pL,y2:pB});
+add(gAxis,'line',{x1:pL,y1:pB,x2:pR,y2:pB});
+add(svg,'text',{class:'axis-title',x:pL+pW/2,y:H-24,'text-anchor':'middle'},'Población en riesgo de inundación (CENEPRED)  ·  escala logarítmica  →');
+add(svg,'text',{class:'axis-title',x:0,y:0,'text-anchor':'middle',transform:`translate(${pL-54} ${pT+pH/2}) rotate(-90)`},'←  Casos de dengue, 2023 (MINSA)');
+
+// Franja 0 casos
+add(svg,'rect',{class:'zero-band',x:pL,y:ZY-16,width:pW,height:32,rx:5});
+add(svg,'line',{x1:pL,y1:ZY-16,x2:pR,y2:ZY-16,stroke:'#d5d5d5','stroke-dasharray':'2 5','stroke-width':1});
+add(svg,'text',{class:'tick',x:pL-10,y:ZY+4,'text-anchor':'end'},'0');
+add(svg,'text',{class:'zeronote',x:pR,y:ZY-22,'text-anchor':'end'},'0 casos — 5 regiones de sierra, pese al riesgo (el dengue casi no prospera en altura)');
+
+// Tendencia
+(function(){
+  const pts=DATA.filter(o=>o.d>0).map(o=>[Math.log10(o.risk),Math.log10(o.d)]);
+  const n=pts.length, mx=pts.reduce((s,p)=>s+p[0],0)/n, my=pts.reduce((s,p)=>s+p[1],0)/n;
+  let num=0,den=0; pts.forEach(p=>{num+=(p[0]-mx)*(p[1]-my); den+=(p[0]-mx)**2;});
+  const slope=num/den, intercept=my-slope*mx, x1=Math.log10(30), x2=Math.log10(600000);
+  const pred=x=>Math.pow(10, slope*x+intercept);
+  add(svg,'line',{class:'trend',x1:lx(Math.pow(10,x1)),y1:ly(pred(x1)),x2:lx(Math.pow(10,x2)),y2:ly(pred(x2))});
+  add(svg,'text',{class:'trend-lbl',x:lx(Math.pow(10,x2)),y:ly(pred(x2))-8,'text-anchor':'end'},'tendencia');
+})();
+
+// Grupos para halo/anillo (detrás de los puntos) y puntos
+const gHalo=add(svg,'g',{});
+const gDots=add(svg,'g',{});
+const byRegion={};
+DATA.forEach(o=>{
+  const x=lx(o.risk), zero=o.d===0, y=zero?ZY:ly(o.d);
+  const c=add(gDots,'circle',{class:zero?'dot0':'dot', cx:x, cy:y, r:zero?5:6.5});
+  byRegion[o.r]={el:c, x, y, o, zero, r0:zero?5:6.5};
+  c.addEventListener('mouseenter',()=>showTip(tt,o,x,y,false));
+  c.addEventListener('mousemove',()=>showTip(tt,o,x,y,false));
+  c.addEventListener('mouseleave',()=>{ tt.style.opacity=0; });
+});
+
+// Anotaciones clave
+function anno(region, dx, dy, lines, anchor){
+  const b=byRegion[region]; const g=add(svg,'g',{class:'anno'});
+  const tx=b.x+dx, ty=b.y+dy;
+  add(g,'line',{class:'lead',x1:b.x,y1:b.y,x2:tx,y2:ty});
+  lines.forEach((ln,i)=> add(g,'text',{x:tx+(anchor==='end'?-8:8),y:ty+i*16,'text-anchor':anchor, class:ln.b?'ttl':''}, ln.t));
+}
+anno('Piura', -14, 40, [{t:'Piura — el extremo',b:1},{t:'407,000 en riesgo · 79,304 casos'}], 'end');
+anno('Ica', 32, -4, [{t:'Ica — casi sin riesgo (13),',b:1},{t:'pero 16,889 casos: pesa el calor'}], 'start');
+
+// Tooltip / callout de selección
+function tipXY(x,y){ const bb=svg.getBoundingClientRect(), wb=wrap.getBoundingClientRect();
+  return { sx: bb.left + (x/W)*bb.width - wb.left, sy: bb.top + (y/H)*bb.height - wb.top }; }
+function tipHTML(o){ return '<div class="r">'+o.r+'</div>'+
+  '<div class="rw">Riesgo de inundación: <b>'+fmt(o.risk)+'</b></div>'+
+  '<div class="rw">Casos de dengue 2023: <b>'+(o.d===0?'0':fmt(o.d))+'</b></div>'; }
+function showTip(node,o,x,y){ const {sx,sy}=tipXY(x,y); node.innerHTML=tipHTML(o);
+  node.classList.toggle('below', sy<86); node.style.left=sx+'px'; node.style.top=sy+'px'; node.style.opacity=1; }
+
+// Selector de región
+const selEl=document.getElementById('regionSel');
+DATA.slice().sort((a,b)=>a.r.localeCompare(b.r,'es')).forEach(o=>{
+  const op=document.createElement('option'); op.value=o.r; op.textContent=o.r; selEl.appendChild(op);
+});
+let haloEl=null, ringEl=null, current='';
+function clearHi(){
+  Object.values(byRegion).forEach(b=>{ b.el.classList.remove('dimmed'); b.el.setAttribute('r', b.r0); });
+  if(haloEl){ haloEl.remove(); haloEl=null; } if(ringEl){ ringEl.remove(); ringEl=null; }
+  sel.style.opacity=0; document.getElementById('clearSel').classList.remove('on'); current='';
+}
+function highlight(region){
+  clearHi(); if(!region) return; const b=byRegion[region]; if(!b) return; current=region;
+  Object.values(byRegion).forEach(o=>{ if(o!==b) o.el.classList.add('dimmed'); });
+  haloEl=add(gHalo,'circle',{class:'halo',cx:b.x,cy:b.y,r:16});
+  b.el.setAttribute('r', b.r0+2.5); gDots.appendChild(b.el);
+  ringEl=add(gDots,'circle',{class:'sel-ring',cx:b.x,cy:b.y,r:b.r0+6});
+  showTip(sel,b.o,b.x,b.y);
+  document.getElementById('clearSel').classList.add('on');
+}
+selEl.addEventListener('change', e=> highlight(e.target.value));
+document.getElementById('clearSel').addEventListener('click', ()=>{ selEl.value=''; clearHi(); });
+
+// Auto-alto para el iframe + reposición al redimensionar
+function postHeight(){ try{ parent.postMessage({type:'chartHeight', h:Math.ceil(document.body.getBoundingClientRect().height)}, '*'); }catch(e){} }
+window.addEventListener('load', ()=>setTimeout(postHeight,90));
+window.addEventListener('resize', ()=>{ if(current){ const b=byRegion[current]; showTip(sel,b.o,b.x,b.y); } postHeight(); });
+</script>
+</body>
+</html>
