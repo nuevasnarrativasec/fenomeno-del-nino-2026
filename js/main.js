@@ -806,16 +806,11 @@
   if (!frame || !wrap || !frame.dataset.src) return;
   var started = false;
   function load(){ if (started) return; started = true; frame.src = frame.dataset.src; }
-  var footEl = document.querySelector('.main-footer');
-  function sync(){
-    var h = wrap.scrollHeight;
-    if (footEl) {
-      var wTop = wrap.getBoundingClientRect().top + window.pageYOffset;
-      var fTop = footEl.getBoundingClientRect().top + window.pageYOffset;
-      if (fTop > wTop) h = fTop - wTop;   // exacto: hasta el inicio del footer
-    }
-    frame.style.height = h + 'px';
-  }
+  // El riel llega hasta el FONDO DEL CONTENIDO (fin de la metodología), no hasta el
+  // tope del footer: el footer tiene margin-top y el body es oscuro, así que si el
+  // riel cruzara ese margen su parte transparente mostraría el fondo del body y
+  // parecería invadir el footer.
+  function sync(){ frame.style.height = wrap.scrollHeight + 'px'; }
   if ('IntersectionObserver' in window) {
     var io = new IntersectionObserver(function (es) {
       es.forEach(function (e) { if (e.isIntersecting) { load(); io.disconnect(); } });

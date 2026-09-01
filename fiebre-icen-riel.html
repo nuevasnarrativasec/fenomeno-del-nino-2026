@@ -11,12 +11,16 @@
   body{ position:relative; font-family:'Monoglyphic Bold', system-ui, sans-serif; overflow:visible; }
   #stage{ position:absolute; inset:0; }
   #rib{ position:absolute; left:0; top:0; width:76px; height:100%; }
-  .yr{ position:absolute; left:3px; transform:translateY(-50%);
-       font:700 10px 'Monoglyphic Bold', system-ui, sans-serif; letter-spacing:.03em;
-       color:#fff; background:#111; padding:2px 6px; border-radius:4px; white-space:nowrap; }
-  .pk{ position:absolute; transform:translateY(-50%); display:flex; align-items:center; gap:5px; white-space:nowrap; }
-  .pk .dot{ width:9px; height:9px; border-radius:50%; background:#fff; border:2.4px solid #ee3d2f; box-sizing:border-box; flex:0 0 auto; }
-  .pk .lab{ font:700 11px 'Monoglyphic Bold', system-ui, sans-serif; color:#d92316; }
+  /* años de inicio / fin de la medición */
+  .yr{ position:absolute; left:3px; font:700 11px 'Monoglyphic Bold', system-ui, sans-serif;
+       letter-spacing:.03em; color:#fff; background:#111; padding:3px 8px; border-radius:4px; white-space:nowrap; }
+  /* años-pico con desglose */
+  .pk-block{ position:absolute; left:56px; width:128px; transform:translateY(-50%); }
+  .pk-yr{ display:inline-block; font:700 15px 'Monoglyphic Bold', system-ui, sans-serif;
+          color:#fff; background:#111; padding:3px 11px; border-radius:5px; letter-spacing:.02em; }
+  .pk-desc{ margin-top:6px; }
+  .pk-desc .m{ display:block; font:700 10.5px 'Monoglyphic Bold', system-ui, sans-serif; color:#c0281b; }
+  .pk-desc .d{ display:block; margin-top:2px; font:400 10px system-ui, -apple-system, sans-serif; color:#565656; line-height:1.35; }
 </style>
 </head>
 <body>
@@ -57,48 +61,73 @@ const yr = i => 1980 + Math.floor(i/12);
 
 (function(){
   const N = ICEN.length;
-  const VW = 76;                 // ancho del viewBox = ancho del riel (sin distorsión horizontal)
-  const VH = N - 1;              // alto del viewBox en "meses" (se estira a la altura real)
-  const centerX = 44;            // eje 0
-  const k = 6.6;                 // px(viewBox) por unidad de anomalía
-  const X = v => centerX + v*k;
+  const VW = 76;                 // ancho del viewBox = ancho del riel
+  const VH = N - 1;              // alto en "meses" (se estira a la altura real)
+  const MIN = Math.min.apply(null, ICEN);     // mes más frío (~ -1.66)
+  const MAX = Math.max.apply(null, ICEN);     // mes más cálido (~ 4.32)
+  const scale = 9;               // px(viewBox) por unidad de anomalía (riel delgado)
+  const cx = v => (v - MIN) * scale;          // x anclada al borde izquierdo
+  const maxC = cx(MAX);          // extensión máxima hacia la derecha
+  const zeroX = cx(0);           // línea neutra (ICEN = 0)
 
   const svg = document.getElementById('rib');
   svg.setAttribute('viewBox', '0 0 '+VW+' '+VH);
   const NS='http://www.w3.org/2000/svg';
   function el(t,a){ const e=document.createElementNS(NS,t); for(const k in a) e.setAttribute(k,a[k]); return e; }
 
+  // corridas de meses fríos (ICEN < 0) -> rects de recorte para el azul
+  let coldRects = '', runStart = null;
+  for (let i=0;i<=N;i++){
+    const cold = (i<N) && (ICEN[i] < 0);
+    if (cold && runStart===null) runStart = i;
+    if (!cold && runStart!==null){
+      coldRects += '<rect x="-2" y="'+(runStart-0.5)+'" width="'+(VW+4)+'" height="'+((i-1)-runStart+1)+'"/>';
+      runStart = null;
+    }
+  }
+
   const defs = el('defs',{});
   defs.innerHTML =
-    '<linearGradient id="gW" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#f7c9c2"/><stop offset="0.55" stop-color="#ee5a48"/><stop offset="1" stop-color="#d92316"/></linearGradient>'+
-    '<linearGradient id="gC" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#cfeaf7"/><stop offset="0.6" stop-color="#37a8e0"/><stop offset="1" stop-color="#1f8ecb"/></linearGradient>'+
-    '<clipPath id="cR"><rect x="'+centerX+'" y="-4" width="'+(VW-centerX)+'" height="'+(VH+8)+'"/></clipPath>'+
-    '<clipPath id="cL"><rect x="0" y="-4" width="'+centerX+'" height="'+(VH+8)+'"/></clipPath>';
+    '<linearGradient id="gW" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="'+maxC+'" y2="0">'+
+      '<stop offset="0" stop-color="#f6bdb4"/><stop offset="0.5" stop-color="#ee5a48"/><stop offset="1" stop-color="#d31d12"/></linearGradient>'+
+    '<linearGradient id="gC" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="'+maxC+'" y2="0">'+
+      '<stop offset="0" stop-color="#1f8ecb"/><stop offset="0.4" stop-color="#37a8e0"/><stop offset="1" stop-color="#bfe3f5"/></linearGradient>'+
+    '<clipPath id="cCold">'+coldRects+'</clipPath>';
   svg.appendChild(defs);
 
-  let d = 'M '+X(ICEN[0])+' 0';
-  for(let i=1;i<N;i++){ d += ' L '+X(ICEN[i])+' '+i; }
-  d += ' L '+centerX+' '+(N-1)+' L '+centerX+' 0 Z';
+  // área anclada al borde izquierdo (x=0) hasta la curva (a la derecha)
+  let d = 'M 0 0 L '+cx(ICEN[0]).toFixed(2)+' 0';
+  for(let i=1;i<N;i++){ d += ' L '+cx(ICEN[i]).toFixed(2)+' '+i; }
+  d += ' L 0 '+(N-1)+' Z';
 
-  svg.appendChild(el('path',{ d:d, fill:'url(#gW)', 'clip-path':'url(#cR)' }));
-  svg.appendChild(el('path',{ d:d, fill:'url(#gC)', 'clip-path':'url(#cL)' }));
-  svg.appendChild(el('line',{ x1:centerX, y1:0, x2:centerX, y2:(N-1), stroke:'rgba(0,0,0,.25)', 'stroke-width':0.4, 'vector-effect':'non-scaling-stroke' }));
+  svg.appendChild(el('path',{ d:d, fill:'url(#gW)' }));                                  // cálido (base)
+  svg.appendChild(el('path',{ d:d, fill:'url(#gC)', 'clip-path':'url(#cCold)' }));       // frío encima
+  // línea neutra (ICEN = 0), sutil
+  svg.appendChild(el('line',{ x1:zeroX, y1:0, x2:zeroX, y2:VH, stroke:'rgba(255,255,255,.55)', 'stroke-width':0.6, 'stroke-dasharray':'2 3', 'vector-effect':'non-scaling-stroke' }));
 
   const stage = document.getElementById('stage');
-  // etiquetas de década (posición por %)
-  [1980,1990,2000,2010,2020,2026].forEach(function(Y){
-    let idx=(Y-1980)*12; if(idx>N-1) idx=N-1;
-    const t=document.createElement('div'); t.className='yr'; t.textContent=Y;
-    t.style.top = (idx/(N-1)*100)+'%';
-    stage.appendChild(t);
-  });
-  // picos (dot + año), posición por %
-  PEAK_IDX.forEach(function(i){
-    const w=document.createElement('div'); w.className='pk';
-    w.style.top=(i/(N-1)*100)+'%';
-    w.style.left=X(ICEN[i])+'px';
-    w.innerHTML='<span class="dot"></span><span class="lab">'+yr(i)+'</span>';
-    stage.appendChild(w);
+  // Año de inicio (arriba, completo, sin cortarse)
+  const yStart = document.createElement('div'); yStart.className='yr'; yStart.textContent='1980';
+  yStart.style.top='5px'; stage.appendChild(yStart);
+  // Año final (abajo, anclado por su base para no montarse sobre el footer)
+  const yEnd = document.createElement('div'); yEnd.className='yr'; yEnd.textContent='2026';
+  yEnd.style.bottom='7px'; stage.appendChild(yEnd);
+
+  // Años-pico con desglose (texto pequeño). El mes y la anomalía salen de la serie;
+  // el descriptor del evento es editable por la redacción.
+  const PEAKS = [
+    { i:41,  m:'Jun. 1983 · +4,3 °C', d:'El Niño extraordinario, el más intenso de la serie.' },
+    { i:147, m:'Abr. 1992 · +2,0 °C', d:'El Niño de intensidad moderada.' },
+    { i:432, m:'Ene. 2016 · +1,8 °C', d:'El Niño muy fuerte a escala global; moderado en la costa.' },
+    { i:446, m:'Mar. 2017 · +1,3 °C', d:'El Niño Costero: huaicos e inundaciones en la costa norte.' },
+    { i:522, m:'Jul. 2023 · +2,9 °C', d:'El Niño Costero: lluvias, inundaciones y brote de dengue.' }
+  ];
+  PEAKS.forEach(function(pk){
+    const b=document.createElement('div'); b.className='pk-block';
+    b.style.top=(pk.i/(N-1)*100)+'%';
+    b.innerHTML='<span class="pk-yr">'+yr(pk.i)+'</span>'+
+                '<div class="pk-desc"><span class="m">'+pk.m+'</span><span class="d">'+pk.d+'</span></div>';
+    stage.appendChild(b);
   });
 })();
 </script>
