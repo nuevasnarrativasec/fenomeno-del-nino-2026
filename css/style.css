@@ -745,6 +745,18 @@ span.separador-logo {
           .hero h1{
             font-size: 3rem;
           }
+        .main-contenido h3{
+            padding: 0 20px;
+        }
+        p.bajada-mapa-3d{
+          padding: 20px;
+        }
+        #taBox p.previo-nlp{
+            padding: 80px 20px 20px;
+        }
+        .footer-content ul{
+          display: block;
+        }
 
 
       }

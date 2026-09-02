@@ -70,6 +70,9 @@
       /* Popup del botón "›" (dato extra) */
       #stmPop{ position:fixed; inset:0; z-index:120; display:flex; align-items:flex-end; justify-content:center;
         background:rgba(0,0,0,.55); opacity:0; transition:opacity .2s ease; }
+      #stmPop[hidden]{ display:none !important; }            /* respeta el atributo hidden (no bloquear clics) */
+      #stmPop:not(.on){ pointer-events:none; }               /* mientras se desvanece, deja pasar los clics */
+      #stmPop.on{ pointer-events:auto; }
       #stmPop.on{ opacity:1; }
       #stmPop .stm-pop-card{ position:relative; width:100%; max-width:560px; background:#0f0f10;
         border:1px solid #262626; border-radius:16px 16px 0 0; padding:22px 20px 30px; transform:translateY(16px);
@@ -308,9 +311,21 @@ El resultado muestra cuántas de esas diez señales coinciden en cada departamen
         .gal-slide figcaption{ margin-top:14px; font-family:system-ui,-apple-system,Arial,sans-serif;
           font-size:.78rem; letter-spacing:.05em; color:#b8b8b8; text-align:center; }
         @media (max-width:720px){
-          .gal-track{ height:520vh; }
-          .gal-header{ padding:34px 16px 4px; }
-          .gal-chev{ width:34px; height:34px; }
+          /* En móvil: SIN pin a pantalla completa. Las fotos (16:9) se apilan una
+             debajo de otra con su crédito, evitando los vacíos negros. El crossfade
+             por scroll se mantiene solo en desktop. */
+          .gal-track{ height:auto; }
+          .gal-sticky{ position:static; height:auto; display:block; overflow:visible; }
+          .gal-header{ padding:34px 16px 20px; }
+          .gal-title{ font-size:1.5rem; }
+          .gal-sub{ font-size:.95rem; }
+          .gal-chev{ display:none; }
+          .gal-stage{ position:static; height:auto; }
+          .gal-slide{ position:static; inset:auto; opacity:1 !important; transform:none !important;
+            padding:0 12px 30px; pointer-events:auto; justify-content:flex-start; }
+          .gal-slide img{ width:100%; height:auto; max-width:100%; max-height:none;
+            box-shadow:0 8px 26px rgba(0,0,0,.5); }
+          .gal-slide figcaption{ margin-top:11px; }
         }
         @media (prefers-reduced-motion:reduce){ .gal-slide{ transition:none; } }
       </style>

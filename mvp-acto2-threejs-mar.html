@@ -1017,6 +1017,51 @@
     #glFallback .glf-btn{ font-family:'Monoglyphic Bold', system-ui, sans-serif; background:#e05c2a; color:#fff; border:0;
       border-radius:8px; padding:11px 24px; font-size:.95rem; cursor:pointer; }
     #glFallback .glf-btn:hover{ background:#c74d20; }
+
+    /* Chip que colapsa el panel de instrucciones (visible solo en móvil) */
+    #riToggle{ display:none; align-items:center; gap:7px; position:absolute; top:110px; left:8px; z-index:23;
+      background:rgba(4,8,15,0.92); border:1px solid #1e2a3e; border-radius:8px; padding:8px 12px; cursor:pointer;
+      font-family:'Monoglyphic Regular', system-ui, sans-serif; font-size:0.74rem; color:#c8c0b4; backdrop-filter:blur(6px); }
+    #riToggle .ri-tog-chev{ transition:transform .2s ease; color:#e05c2a; font-weight:700; }
+    #riToggle.open .ri-tog-chev{ transform:rotate(180deg); }
+
+    /* ============ MÓVIL (≤640px) ============ */
+    @media (max-width: 640px){
+      header{ padding: 9px 12px 8px; }
+      header h1{ font-size: 0.82rem; line-height: 1.15; letter-spacing: 0; }
+      .header-top{ margin-bottom: 8px; }
+      .slider-label{ font-size: 0.56rem; }
+      .slider-ticks{ display: none; }              /* décadas: fuera para limpiar */
+      .slider-peak .pk-year{ display: none; }       /* años de picos se encabalgan */
+      .mech-row{ margin-bottom: 0; font-size: 0.62rem; }
+      .mech-row #mechText, .mech-row .mech-sep{ display: none; }  /* texto largo fuera */
+
+      /* Cuadro de anomalía: barra full-width arriba */
+      #sstBox{ top: 8px; left: 8px; right: 8px; width: auto; padding: 10px 12px; }
+      #sstBox .sst-title{ font-size: 0.8rem; }
+      #sstBox .sst-sub, #sstBox .sst-val{ font-size: 0.74rem; }
+
+      /* Instrucciones: colapsadas tras el chip */
+      #riToggle{ display: inline-flex; }
+      #regions-info{ display: none; }
+      #regions-info.ri-open{ display: block; top: 158px; left: 8px; right: 8px; max-width: none; max-height: 50vh; z-index: 24; }
+
+      /* Zoom + leyenda de corrientes: subir sobre la barra */
+      #zoom-ctrl{ right: 10px; bottom: 104px; }
+      .zoom-btn{ width: 34px; height: 34px; }
+      #current-legend{ left: 8px; right: 8px; transform: none; bottom: 104px; width: auto; }
+
+      /* Barra inferior: apilar en filas */
+      #bottom-bar{ height: auto; flex-wrap: wrap; padding: 8px 10px; gap: 6px; row-gap: 8px; justify-content: center; }
+      .bar-section{ flex: 0 0 auto; gap: 6px; }
+      .bar-section.center{ order: 3; width: 100%; flex-direction: row; justify-content: center; }
+      .bar-section.center .dots-caption{ display: none; }
+      .ctrl-btn{ font-size: 0.64rem; padding: 5px 9px; }
+
+      /* Popups como hoja inferior / full-width */
+      #story-popup{ top: auto; bottom: 112px; left: 8px; right: 8px; width: auto; max-height: 44vh; }
+      #region-popup{ width: calc(100% - 24px); }
+    }
   </style>
 </head>
 <body>
@@ -2259,6 +2304,20 @@ function showGlobeFallback(){
 window.addEventListener('error', function(e){
   if(e && e.message && /WebGL context|creating WebGL/i.test(e.message)) showGlobeFallback();
 });
+
+// Panel de instrucciones colapsable (chip visible solo en móvil por CSS).
+(function(){
+  var ri=document.getElementById('regions-info');
+  if(!ri) return;
+  var tog=document.createElement('button');
+  tog.id='riToggle'; tog.type='button';
+  tog.innerHTML='<span>¿Cómo usar el mapa?</span><span class="ri-tog-chev">⌄</span>';
+  ri.parentNode.insertBefore(tog, ri);
+  function setOpen(o){ ri.classList.toggle('ri-open', o); tog.classList.toggle('open', o); }
+  tog.addEventListener('click', function(){ setOpen(!ri.classList.contains('ri-open')); });
+  // Móvil: arranca colapsado. Desktop: abierto (el chip se oculta por CSS).
+  setOpen(!window.matchMedia('(max-width:640px)').matches);
+})();
 
 // Envoltura: detecta WebGL y captura cualquier fallo de inicialización.
 function initGlobe(data){
