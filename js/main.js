@@ -1015,6 +1015,32 @@
   if (!frame || !frame.dataset.src) return;
   var started = false;
   function load(){ if (started) return; started = true; frame.src = frame.dataset.src; }
+
+  // Auto-alto: la herramienta ahora es LOCAL (mismo origen), así que el padre
+  // puede medir su altura real y ajustar el iframe -> sin scroll interno. El
+  // formulario cambia de alto según el paso, por eso ResizeObserver + re-medida.
+  function fitCarta(){
+    try{
+      var d = frame.contentDocument || (frame.contentWindow && frame.contentWindow.document);
+      if(!d) return;
+      var h = Math.max(d.documentElement.scrollHeight, d.body ? d.body.scrollHeight : 0);
+      if(h) frame.style.height = h + 'px';
+    }catch(e){}
+  }
+  frame.addEventListener('load', function(){
+    fitCarta();
+    try{
+      var d = frame.contentDocument;
+      if(window.ResizeObserver && d && d.body){ new ResizeObserver(fitCarta).observe(d.body); }
+      if(d){
+        d.addEventListener('click', function(){ setTimeout(fitCarta, 60); });
+        d.addEventListener('input', function(){ setTimeout(fitCarta, 60); });
+      }
+    }catch(e){}
+    [120, 350, 800, 1500].forEach(function(ms){ setTimeout(fitCarta, ms); });
+  });
+  window.addEventListener('resize', fitCarta);
+
   if ('IntersectionObserver' in window) {
     var io = new IntersectionObserver(function (es) {
       es.forEach(function (e) { if (e.isIntersecting) { load(); io.disconnect(); } });

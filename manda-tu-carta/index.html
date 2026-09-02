@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Widget — Exige acción a tu autoridad regional</title>
+<style>
+
+@font-face {
+    font-family: 'Monoglyphic Bold';
+    src: url('./fonts/Monoglyphic-Bold.woff2') format('woff2'),
+        url('./fonts/Monoglyphic-Bold.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Monoglyphic Regular';
+    src: url('./fonts/Monoglyphic-Regular.woff2') format('woff2'),
+        url('./fonts/Monoglyphic-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+:root{
+  --bg:#ffffff;
+  --card:#ffffff;
+  --ink:#111111;
+  --muted:#8a8a8a;
+  --muted-2:#b3b3b3;
+  --line:#e2e2e2;
+  --border:#1f1f1f;
+  --cyan:#00aeef;
+  --olive:#a0a200;
+  --red:#e23b2f;
+  --green:#12b21a;
+  --radius:6px;
+  --font-reg:'Monoglyphic Regular','Trebuchet MS',system-ui,sans-serif;
+  --font-bold:'Monoglyphic Bold','Trebuchet MS',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-reg);min-height:auto;display:flex;align-items:flex-start;justify-content:center;padding:2rem 1rem;}
+b,strong,.b{font-family:var(--font-bold);font-weight:normal;}
+
+.widget{width:100%;max-width:780px;background:var(--card);border:1.5px solid #2b2b2b;border-radius:10px;overflow:hidden;}
+
+/* ── PASOS / TABS ─────────────────────────── */
+.pasos{display:flex;align-items:center;justify-content:center;gap:2.5rem;padding:1.4rem 1.6rem .1rem;border-bottom:1.5px solid var(--line);}
+.paso-tab{display:flex;align-items:center;gap:.5rem;padding:0 0 .9rem;font-family:var(--font-bold);font-size:.92rem;letter-spacing:.02em;text-transform:uppercase;color:var(--muted-2);border-bottom:3px solid transparent;margin-bottom:-1.5px;user-select:none;}
+.paso-num{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;border:2px solid var(--muted-2);color:var(--muted-2);font-size:.8rem;font-family:var(--font-bold);flex-shrink:0;}
+.paso-tab.reached{color:var(--cyan);}
+.paso-tab.reached .paso-num{background:var(--cyan);border-color:var(--cyan);color:#fff;}
+.paso-tab.activo{border-bottom-color:var(--cyan);}
+@media(max-width:560px){
+  .pasos{gap:1.2rem;padding:1rem 1rem .1rem;justify-content:flex-start;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+  .pasos::-webkit-scrollbar{display:none;}
+  .paso-tab{font-size:.8rem;flex-shrink:0;white-space:nowrap;}
+}
+
+.seccion{display:none;}.seccion.activa{display:block;}
+
+/* ── ESCALA DE VULNERABILIDAD ─────────────── */
+.vuln{padding:1.6rem 1.6rem .4rem;}
+.vuln-title{text-align:center;font-family:var(--font-bold);font-size:.9rem;letter-spacing:.03em;text-transform:uppercase;color:#4a4a4a;margin-bottom:1.4rem;}
+.escala{position:relative;padding:0 .2rem;}
+.escala-nums{display:flex;justify-content:space-between;margin-bottom:.55rem;}
+.escala-nums span{flex:1;text-align:center;font-family:var(--font-bold);font-size:1.15rem;color:var(--muted-2);position:relative;z-index:2;}
+.escala-nums span.past{color:#6a6a6a;}
+.escala-nums span.cur{color:#fff;}
+.escala-nums span.cur::before{content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:34px;height:34px;border-radius:50%;background:var(--lvl,var(--olive));z-index:-1;}
+.escala-track{position:relative;height:6px;border-radius:6px;background:var(--line);overflow:hidden;}
+.escala-fill{position:absolute;left:0;top:0;height:100%;border-radius:6px;background:var(--lvl,var(--olive));transition:width .4s ease;}
+.escala-labels{display:flex;justify-content:space-between;margin-top:.7rem;}
+.escala-labels span{font-family:var(--font-bold);font-size:.82rem;letter-spacing:.02em;text-transform:uppercase;color:#4a4a4a;max-width:9rem;line-height:1.25;}
+.escala-labels span:last-child{text-align:right;}
+
+.badge-wrap{display:flex;justify-content:center;margin:1.4rem 0 .2rem;position:relative;}
+.vuln-badge{display:inline-flex;align-items:center;gap:.6rem;padding:.55rem 1.4rem;border:2px solid var(--lvl,var(--olive));border-radius:30px;font-family:var(--font-bold);font-size:1.05rem;letter-spacing:.02em;text-transform:uppercase;color:var(--lvl,var(--olive));background:#fff;}
+.info-icon{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:var(--lvl,var(--olive));color:#fff;font-family:var(--font-bold);font-size:.8rem;cursor:help;flex-shrink:0;text-transform:none;}
+.tooltip{position:absolute;top:calc(100% + 10px);left:50%;transform:translateX(-50%);background:#fff;border:1.5px solid #d5d5d5;box-shadow:0 8px 24px rgba(0,0,0,.14);border-radius:10px;padding:1.1rem 1.3rem;font-size:1rem;color:#222;line-height:1.55;width:min(430px,92%);z-index:99;display:none;text-align:left;}
+.badge-wrap.show-tip .tooltip{display:block;}
+
+/* ── FORMULARIO ───────────────────────────── */
+.form-section{padding:1.6rem 1.6rem .4rem;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1.4rem 3rem;margin-bottom:1.4rem;}
+.form-group{display:flex;flex-direction:column;}
+.form-label{font-family:var(--font-bold);font-size:.95rem;letter-spacing:.02em;text-transform:uppercase;color:#2a2a2a;margin-bottom:.55rem;}
+.form-input,.form-select{width:100%;background:#fff;border:1.5px solid var(--border);border-radius:2px;color:var(--ink);font-family:var(--font-reg);font-size:1.05rem;letter-spacing:.02em;padding:.8rem .95rem;outline:none;transition:border-color .15s;appearance:none;-webkit-appearance:none;text-transform:uppercase;}
+.form-input::placeholder{color:var(--muted-2);text-transform:uppercase;}
+.form-input:focus,.form-select:focus{border-color:var(--cyan);}
+.form-select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 12 12'%3E%3Cpath fill='%23111' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .9rem center;padding-right:2.2rem;cursor:pointer;}
+.form-hint{font-family:var(--font-bold);font-size:.82rem;letter-spacing:.02em;text-transform:uppercase;color:var(--muted);margin-top:.55rem;line-height:1.35;}
+
+/* ── CONSENTIMIENTO ───────────────────────── */
+.consentimiento{display:flex;align-items:flex-start;gap:.7rem;padding:.4rem 1.6rem 0;}
+.consentimiento input[type="checkbox"]{appearance:none;-webkit-appearance:none;width:20px;height:20px;border:1.5px solid var(--border);border-radius:2px;margin-top:2px;flex-shrink:0;cursor:pointer;position:relative;background:#fff;}
+.consentimiento input[type="checkbox"]:checked{background:var(--cyan);border-color:var(--cyan);}
+.consentimiento input[type="checkbox"]:checked::after{content:'';position:absolute;left:6px;top:2px;width:5px;height:10px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg);}
+.consentimiento label{font-size:1rem;color:#3a3a3a;line-height:1.5;cursor:pointer;}
+.consentimiento label a{color:var(--cyan);text-decoration:underline;}
+
+/* ── ACCIONES ─────────────────────────────── */
+.acciones{padding:1.6rem;text-align:center;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;padding:.95rem 2.6rem;border:none;border-radius:2px;font-family:var(--font-bold);font-size:1.05rem;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;transition:opacity .15s,transform .15s;}
+.btn-primary{background:#000;color:var(--cyan);}
+.btn-primary:hover:not(:disabled){transform:translateY(-1px);}
+.btn-primary:disabled{opacity:.4;cursor:not-allowed;}
+.spinner{width:15px;height:15px;border:2px solid currentColor;border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;display:inline-block;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── PASO 2 · EDITOR ──────────────────────── */
+.editor-section{padding:1.6rem;}
+.editor-intro{font-size:1.05rem;color:#2a2a2a;line-height:1.55;padding-bottom:1.2rem;border-bottom:1.5px solid var(--line);margin-bottom:1.4rem;}
+.editor-label{font-family:var(--font-bold);font-size:.95rem;letter-spacing:.02em;text-transform:uppercase;color:#2a2a2a;margin-bottom:.55rem;display:block;}
+.editor-asunto{width:100%;background:#fff;border:1.5px solid var(--border);border-radius:2px;color:var(--ink);font-family:var(--font-reg);font-size:1rem;letter-spacing:.02em;padding:.85rem .95rem;outline:none;margin-bottom:1.4rem;transition:border-color .15s;text-transform:uppercase;}
+.editor-asunto:focus{border-color:var(--cyan);}
+.editor-cuerpo{width:100%;min-height:340px;background:#fff;border:1.5px solid var(--border);border-radius:2px;color:var(--ink);font-family:var(--font-reg);font-size:1.02rem;padding:1.1rem 1.2rem;outline:none;line-height:1.7;resize:vertical;transition:border-color .15s;}
+.editor-cuerpo:focus{border-color:var(--cyan);}
+.editor-foot{display:flex;justify-content:space-between;align-items:self-start;margin-top:1.1rem;}
+.link-btn{background:none;border:none;font-family:var(--font-bold);font-size:.95rem;letter-spacing:.02em;text-transform:uppercase;color:#1f1f1f;text-decoration:underline;cursor:pointer;display:inline-flex;align-items:center;gap:.45rem;padding:0;}
+.link-btn:hover{color:var(--cyan);}
+.link-btn svg{width:17px;height:17px;}
+.estado{margin:0 1.6rem 1rem;padding:.85rem 1rem;border-radius:4px;font-size:.95rem;line-height:1.5;display:none;}
+.estado.visible{display:block;}
+.estado.exito{background:rgba(18,178,26,.1);border:1px solid rgba(18,178,26,.35);color:#0d7a13;}
+.estado.error{background:rgba(226,59,47,.1);border:1px solid rgba(226,59,47,.35);color:#b32115;}
+
+/* ── PASO 3 · CONFIRMACIÓN ────────────────── */
+.confirmacion{padding:2.2rem 1.6rem;text-align:center;}
+.conf-icon{margin:0 auto 1.2rem;width:74px;height:74px;color:var(--green);}
+.conf-icon svg{width:100%;height:100%;}
+.conf-titulo{font-family:var(--font-bold);font-size:1.5rem;color:var(--green);margin-bottom:1rem;}
+.conf-texto{font-size:1.05rem;color:#2a2a2a;line-height:1.6;max-width:33rem;margin:0 auto 1.8rem;}
+.conf-dato{border:1.5px solid var(--line);border-radius:6px;padding:1.3rem 1.5rem;font-size:1rem;color:#2a2a2a;line-height:2;text-align:left;text-transform:uppercase;letter-spacing:.02em;max-width:36rem;margin:0 auto 1.8rem;}
+.conf-dato strong{color:#111;}
+
+/* ── Móvil: inputs apilados ─────────────────── */
+@media(max-width:560px){
+  .form-row{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<div class="widget" id="widget-accion">
+
+  <!-- PASOS -->
+  <div class="pasos">
+    <div class="paso-tab reached activo" id="tab-1"><span class="paso-num">1</span><span class="txt">Ingresa tus datos</span></div>
+    <div class="paso-tab" id="tab-2"><span class="paso-num">2</span><span class="txt">Genera mi solicitud</span></div>
+    <div class="paso-tab" id="tab-3"><span class="paso-num">3</span><span class="txt">Confirmación</span></div>
+  </div>
+
+  <!-- PASO 1 -->
+  <div class="seccion activa" id="paso-1">
+    <div class="vuln" id="vuln-box" style="display:none">
+      <div class="vuln-title" id="vuln-title">Nivel de vulnerabilidad de la región</div>
+      <div class="escala">
+        <div class="escala-nums" id="escala-nums"></div>
+        <div class="escala-track"><div class="escala-fill" id="escala-fill"></div></div>
+        <div class="escala-labels"><span>Menos vulnerable</span><span>Más vulnerable</span></div>
+      </div>
+      <div class="badge-wrap" id="badge-wrap">
+        <div class="vuln-badge" id="vuln-badge">
+          <span id="vuln-badge-text">Vulnerabilidad</span>
+          <span class="info-icon" id="info-icon">i</span>
+        </div>
+        <div class="tooltip"><strong>Score calculado con 10 indicadores:</strong> recurrencia de emergencias, viviendas destruidas, fallecidos, dengue, leishmaniasis, secano, proyectos abandonados, infraestructura, GLP y violencia.<br>1 = menos vulnerable<br>10 = más vulnerable</div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="input-nombre">Tu nombre</label>
+          <input class="form-input" id="input-nombre" type="text" placeholder="Nombre y apellido" autocomplete="name">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="input-email">Tu correo electrónico</label>
+          <input class="form-input" id="input-email" type="email" placeholder="tucorreo@gmail.com" autocomplete="email">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="input-region">Tu región</label>
+          <select class="form-select" id="input-region">
+            <option value="">Selecciona...</option>
+            <option>Amazonas</option><option>Apurímac</option><option>Arequipa</option>
+            <option>Ayacucho</option><option>Cajamarca</option><option>Callao</option>
+            <option>Cusco</option><option>Huancavelica</option><option>Huánuco</option>
+            <option>Ica</option><option>Junín</option><option>La Libertad</option>
+            <option>Lambayeque</option><option>Lima Metropolitana</option>
+            <option>Lima Provincias</option><option>Loreto</option>
+            <option>Madre de Dios</option><option>Moquegua</option><option>Pasco</option>
+            <option>Piura</option><option>Puno</option><option>San Martín</option>
+            <option>Tacna</option><option>Tumbes</option><option>Ucayali</option>
+            <option>Áncash</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="input-dni">DNI (opcional)</label>
+          <input class="form-input" id="input-dni" type="text" placeholder="00000000" maxlength="8" inputmode="numeric">
+          <div class="form-hint">Incluirlo da más peso legal a la solicitud, pero no es obligatorio.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="consentimiento">
+      <input type="checkbox" id="check-consentimiento">
+      <label for="check-consentimiento">Acepto que El Comercio registre mi región y la fecha de esta solicitud con fines periodísticos. No se almacenarán mi nombre ni mi DNI. <a href="#" onclick="return false">Ver política de datos</a></label>
+    </div>
+
+    <div class="acciones">
+      <button class="btn btn-primary" id="btn-paso1" onclick="irAPaso2()" disabled>Genera mi solicitud</button>
+    </div>
+  </div>
+
+  <!-- PASO 2 -->
+  <div class="seccion" id="paso-2">
+    <div class="editor-section">
+      <div class="editor-intro">Este es tu correo. <strong>Léelo, edítalo y personalízalo como quieras</strong> — la última palabra es tuya. Cuando estés conforme, haz clic en "Abrir y enviar en Gmail".</div>
+      <label class="editor-label">Asunto</label>
+      <input class="editor-asunto" id="editor-asunto" type="text">
+      <label class="editor-label">Correo</label>
+      <textarea class="editor-cuerpo" id="editor-cuerpo" spellcheck="true"></textarea>
+      <div class="editor-foot">
+        <button class="link-btn" onclick="irAPaso1()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          Volver y cambiar mis datos
+        </button>
+        <button class="link-btn" onclick="descargarImprimir()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Imprimir
+        </button>
+      </div>
+    </div>
+    <div class="estado" id="estado-msg-2"></div>
+    <div class="acciones">
+      <button class="btn btn-primary" id="btn-abrir-gmail" onclick="abrirGmail()">Abrir y enviar en Gmail</button>
+    </div>
+  </div>
+
+  <!-- PASO 3 -->
+  <div class="seccion" id="paso-3">
+    <div class="confirmacion">
+      <div class="conf-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="1.5"/><path d="M2.5 5.5 12 13l9.5-7.5"/></svg>
+      </div>
+      <div class="conf-titulo">Tu solicitud está lista en Gmail</div>
+      <div class="conf-texto">Revisa el correo en tu Gmail, confirma los destinatarios y envíalo. Guarda el número de registro que te devuelva mesa de partes — con eso puedes hacer seguimiento y, si no responden en 30 días hábiles, presentar una queja ante la Defensoría del Pueblo.</div>
+      <div class="conf-dato" id="confirmacion-datos"></div>
+      <button class="btn btn-primary" onclick="reiniciar()">Enviar otra solicitud</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const N8N_WEBHOOK = 'https://labec.app.n8n.cloud/webhook/fen-correo-ciudadano';
+
+// ── DIRECTORIO REAL (del Excel curado) ───────────────────────
+const DIRECTORIO = {
+  'Amazonas':         { gobernador:'Gilmer Wilson Horna Corrales',              email_gob:'ghorna@regionamazonas.gob.pe',             email_ppto:'auwer01@gmail.com',                           email_riesgo:'veguitap@hotmail.com' },
+  'Áncash':           { gobernador:'Fabián Koki Noriega Brito',                 email_gob:'fnoriega@regionancash.gob.pe',              email_ppto:'nbarretos@regionancash.gob.pe',               email_riesgo:'gmacedo@regionancash.gob.pe' },
+  'Apurímac':         { gobernador:'Percy Godoy Medina',                        email_gob:'gobernador@regionapurimac.gob.pe',          email_ppto:'gerencia.planeamiento@regionapurimac.gob.pe', email_riesgo:'defensacivil@regionapurimac.gob.pe' },
+  'Arequipa':         { gobernador:'Rohel Sánchez Sánchez',                     email_gob:'rsanchez@regionarequipa.gob.pe',            email_ppto:'rquispe@regionarequipa.gob.pe',               email_riesgo:'jcarrera@regionarequipa.gob.pe' },
+  'Ayacucho':         { gobernador:'Wilfredo Oscorima Núñez',                   email_gob:'woscorima@regionayacucho.gob.pe',           email_ppto:'sgpresupuesto@regionayacucho.gob.pe',         email_riesgo:'jberriosf@regionayacucho.gob.pe' },
+  'Cajamarca':        { gobernador:'Roger Guevara Rodríguez',                   email_gob:'rguevara@regioncajamarca.gob.pe',           email_ppto:'lvallejos@regioncajamarca.gob.pe',            email_riesgo:'' },
+  'Callao':           { gobernador:'Ciro Castillo Rojo',                        email_gob:'ccastillor@regioncallao.gob.pe',            email_ppto:'kyepes@regioncallao.gob.pe',                  email_riesgo:'fpisfil@regioncallao.gob.pe' },
+  'Cusco':            { gobernador:'Werner Máximo Salcedo Álvarez',             email_gob:'wsalcedo@regioncusco.gob.pe',               email_ppto:'wqquenta@regioncusco.gob.pe',                 email_riesgo:'malejandro@regioncusco.gob.pe' },
+  'Huancavelica':     { gobernador:'Leoncio Huayllani Taype',                   email_gob:'gobernacion@regionhuancavelica.gob.pe',     email_ppto:'grplaneamientop@regionhuancavelica.gob.pe',   email_riesgo:'odefensacivil@regionhuancavelica.gob.pe' },
+  'Huánuco':          { gobernador:'Antonio Pulgar Lucas',                      email_gob:'apulgar@regionhuanuco.gob.pe',              email_ppto:'oolmos@regionhuanuco.gob.pe',                 email_riesgo:'' },
+  'Ica':              { gobernador:'Jorge Carlos Hurtado Herrera',              email_gob:'jhurtado@regionica.gob.pe',                 email_ppto:'gmiranda@regionica.gob.pe',                   email_riesgo:'rguillen@regionica.gob.pe' },
+  'Junín':            { gobernador:'Zósimo Cárdenas Muje',                      email_gob:'zcardenas@regionjunin.gob.pe',              email_ppto:'ptiza@regionjunin.gob.pe',                    email_riesgo:'jvasquez@regionjunin.gob.pe' },
+  'La Libertad':      { gobernador:'Joana Del Rosario Cabrera Pimentel',        email_gob:'jcabrerap@regionlalibertad.gob.pe',         email_ppto:'aramosdlc@regionlalibertad.gob.pe',           email_riesgo:'wagustind@regionlalibertad.gob.pe' },
+  'Lambayeque':       { gobernador:'Humberto Acuña Peralta',                    email_gob:'grppm@regionlambayeque.gob.pe',             email_ppto:'',                                            email_riesgo:'' },
+  'Lima Metropolitana':{ gobernador:'Renzo Andres Reggiardo Barreto',           email_gob:'renzo.reggiardo@munlima.gob.pe',            email_ppto:'hugo.mego@munlima.gob.pe',                    email_riesgo:'mario.casaretto@munlima.gob.pe' },
+  'Lima Provincias':  { gobernador:'Nicolás Oscar Barrera Morán',               email_gob:'nbarrera@regionlima.gob.pe',                email_ppto:'ylunarejo@regionlima.gob.pe',                 email_riesgo:'' },
+  'Loreto':           { gobernador:'Jorge Rene Chavez Silvano',                 email_gob:'rene.chavez@regionloreto.gob.pe',           email_ppto:'aorozco@regionloreto.gob.pe',                 email_riesgo:'lchong@regionloreto.gob.pe' },
+  'Madre de Dios':    { gobernador:'Lisett Sharon Revollar Caceres',            email_gob:'goremad@regionmadrededios.gob.pe',          email_ppto:'',                                            email_riesgo:'' },
+  'Moquegua':         { gobernador:'Gilia Gutiérrez Mamani',                    email_gob:'ggutierrez@regionmoquegua.gob.pe',          email_ppto:'rflores@regionmoquegua.gob.pe',               email_riesgo:'' },
+  'Pasco':            { gobernador:'Juan Luis Chombo Heredia',                  email_gob:'presidencia@regionpasco.gob.pe',            email_ppto:'gerenciaplaneamiento@regionpasco.gob.pe',     email_riesgo:'gestionderiesgo@regionpasco.gob.pe' },
+  'Piura':            { gobernador:'Luis Ernesto Neyra León',                   email_gob:'lneyra@regionpiura.gob.pe',                 email_ppto:'dlopez@regionpiura.gob.pe',                   email_riesgo:'' },
+  'Puno':             { gobernador:'Richard Hancco Soncco',                     email_gob:'gobernacion@regionpuno.gob.pe',             email_ppto:'',                                            email_riesgo:'' },
+  'San Martín':       { gobernador:'Walter Grundel Jiménez',                    email_gob:'wgrundel@regionsanmartin.gob.pe',           email_ppto:'apereyra@regionsanmartin.gob.pe',             email_riesgo:'' },
+  'Tacna':            { gobernador:'Luis Ramón Torres Robledo',                 email_gob:'ltorres@regiontacna.gob.pe',                email_ppto:'framos@regiontacna.gob.pe',                   email_riesgo:'' },
+  'Tumbes':           { gobernador:'Avelina Del Rosario Palacios De De Lama',   email_gob:'apalacios@regiontumbes.gob.pe',             email_ppto:'',                                            email_riesgo:'edinson.cruz@regiontumbes.gob.pe' },
+  'Ucayali':          { gobernador:'Ángel Gutiérrez Rodríguez',                 email_gob:'presidencia@regionucayali.gob.pe',          email_ppto:'planeamiento.presupuesto@regionucayali.gob.pe', email_riesgo:'' },
+};
+
+// ── DATOS VULNERABILIDAD ──────────────────────────────────────
+const VULN = {
+  'Cajamarca':         { nivel:'Alto',  score:9,   emergencias:3.05, viviendas:2.23,  patron:'subregistro en ambos FEN', casos17:-145, casos23:-236 },
+  'Piura':             { nivel:'Alto',  score:8,   emergencias:4.68, viviendas:14.73, patron:'subregistro FEN 2017',     casos17:-198, casos23:null },
+  'La Libertad':       { nivel:'Alto',  score:8,   emergencias:4.56, viviendas:29.26, patron:'subregistro FEN 2017',     casos17:-238, casos23:null },
+  'Lima Provincias':   { nivel:'Alto',  score:8,   emergencias:11.54,viviendas:18.27, patron:'sin datos',                casos17:null, casos23:null },
+  'Lambayeque':        { nivel:'Alto',  score:7,   emergencias:3.80, viviendas:42.51, patron:'subregistro FEN 2017',     casos17:-139, casos23:null },
+  'Áncash':            { nivel:'Alto',  score:7,   emergencias:5.40, viviendas:22.91, patron:'sin patrón claro',         casos17:null, casos23:null },
+  'Tumbes':            { nivel:'Medio', score:6,   emergencias:3.66, viviendas:2.53,  patron:'subregistro FEN 2023',     casos17:null, casos23:-70  },
+  'Ayacucho':          { nivel:'Medio', score:4,   emergencias:0.50, viviendas:0.12,  patron:'subregistro en ambos FEN + rebote', casos17:-147, casos23:-227 },
+  'Amazonas':          { nivel:'Medio', score:4,   emergencias:0.54, viviendas:0.09,  patron:'sin patrón claro',         casos17:null, casos23:null },
+  'Puno':              { nivel:'Medio', score:4,   emergencias:0.60, viviendas:0.03,  patron:'subregistro en ambos FEN + rebote', casos17:-201, casos23:-349 },
+  'Ica':               { nivel:'Medio', score:4,   emergencias:4.67, viviendas:1.95,  patron:'sin patrón claro',         casos17:null, casos23:null },
+  'Lima Metropolitana':{ nivel:'Medio', score:4,   emergencias:1.67, viviendas:15.08, patron:'subregistro FEN 2017',     casos17:-1145,casos23:null },
+  'Huancavelica':      { nivel:'Bajo',  score:3.5, emergencias:1.07, viviendas:0.27,  patron:'sin patrón claro',         casos17:null, casos23:null },
+  'Madre de Dios':     { nivel:'Bajo',  score:3,   emergencias:0.66, viviendas:0.06,  patron:'subregistro en ambos FEN', casos17:-29,  casos23:-44  },
+  'Pasco':             { nivel:'Bajo',  score:3,   emergencias:1.03, viviendas:0.33,  patron:'subregistro FEN 2017 + rebote', casos17:-29, casos23:null },
+  'San Martín':        { nivel:'Bajo',  score:3,   emergencias:0.70, viviendas:0.10,  patron:'subregistro FEN 2023',     casos17:null, casos23:-183 },
+  'Arequipa':          { nivel:'Bajo',  score:3,   emergencias:0.83, viviendas:0.68,  patron:'subregistro FEN 2017 + rebote', casos17:-345, casos23:null },
+  'Huánuco':           { nivel:'Bajo',  score:2,   emergencias:0.24, viviendas:0.03,  patron:'subregistro FEN 2017',     casos17:-57,  casos23:null },
+  'Moquegua':          { nivel:'Bajo',  score:2,   emergencias:0.53, viviendas:0.06,  patron:'subregistro FEN 2017 + rebote', casos17:-21, casos23:null },
+  'Cusco':             { nivel:'Bajo',  score:2,   emergencias:0.24, viviendas:0.02,  patron:'subregistro en ambos FEN', casos17:-226, casos23:-348 },
+  'Loreto':            { nivel:'Bajo',  score:2,   emergencias:0.80, viviendas:0.02,  patron:'sin patrón claro',         casos17:null, casos23:null },
+  'Ucayali':           { nivel:'Bajo',  score:2,   emergencias:0.76, viviendas:0.02,  patron:'sin patrón claro',         casos17:null, casos23:null },
+  'Apurímac':          { nivel:'Bajo',  score:2,   emergencias:0.78, viviendas:0.18,  patron:'subregistro FEN 2023 + rebote', casos17:null, casos23:-137 },
+  'Junín':             { nivel:'Bajo',  score:2,   emergencias:0.42, viviendas:0.20,  patron:'subregistro FEN 2017',     casos17:-253, casos23:null },
+  'Tacna':             { nivel:'Bajo',  score:2,   emergencias:0.69, viviendas:0.02,  patron:'subregistro FEN 2017 + rebote', casos17:-183, casos23:null },
+  'Callao':            { nivel:'Bajo',  score:1,   emergencias:0.15, viviendas:0.00,  patron:'subregistro FEN 2017',     casos17:-63,  casos23:null },
+};
+
+// Color por nivel de vulnerabilidad
+const COLOR_NIVEL = { 'Alto':'#e23b2f', 'Medio':'#a0a200', 'Bajo':'#12b21a' };
+
+let asuntoOriginal='', cuerpoOriginal='', datosRespuesta=null;
+
+// ── VALIDACIÓN ────────────────────────────────────────────────
+document.getElementById('input-email').addEventListener('input', validarPaso1);
+document.getElementById('input-nombre').addEventListener('input', validarPaso1);
+document.getElementById('input-region').addEventListener('change', ()=>{ cargarPerfil(); validarPaso1(); });
+document.getElementById('check-consentimiento').addEventListener('change', validarPaso1);
+
+// Tooltip toggle (clic en la "i")
+document.getElementById('info-icon').addEventListener('click', function(e){
+  e.stopPropagation();
+  document.getElementById('badge-wrap').classList.toggle('show-tip');
+});
+document.addEventListener('click', ()=> document.getElementById('badge-wrap').classList.remove('show-tip'));
+
+function validarPaso1(){
+  const ok = document.getElementById('input-nombre').value.trim() &&
+             document.getElementById('input-region').value &&
+             document.getElementById('check-consentimiento').checked;
+  document.getElementById('btn-paso1').disabled = !ok;
+}
+
+// ── ESCALA DE VULNERABILIDAD ─────────────────────────────────
+function cargarPerfil(){
+  const region = document.getElementById('input-region').value;
+  const d = VULN[region];
+  const box = document.getElementById('vuln-box');
+  if(!d){ box.style.display='none'; return; }
+
+  const color = COLOR_NIVEL[d.nivel] || '#a0a200';
+  box.style.setProperty('--lvl', color);
+
+  document.getElementById('vuln-title').textContent = `Nivel de vulnerabilidad de la región ${region}`;
+
+  const cur = Math.round(d.score);
+  let nums = '';
+  for(let i=0;i<=10;i++){
+    const cls = i===cur ? 'cur' : (i<cur ? 'past' : '');
+    nums += `<span class="${cls}">${i}</span>`;
+  }
+  document.getElementById('escala-nums').innerHTML = nums;
+  document.getElementById('escala-fill').style.width = (d.score/10*100) + '%';
+
+  const nivelTxt = { 'Alto':'Alta', 'Medio':'Media', 'Bajo':'Baja' }[d.nivel] || d.nivel;
+  document.getElementById('vuln-badge-text').textContent = `Vulnerabilidad ${nivelTxt}`;
+
+  box.style.display='block';
+}
+
+// ── PASO 1 → 2 ───────────────────────────────────────────────
+async function irAPaso2(){
+  const nombre = capitalizar(document.getElementById('input-nombre').value.trim());
+  const region = document.getElementById('input-region').value;
+  const dni    = document.getElementById('input-dni').value.trim();
+  const email_ciudadano = document.getElementById('input-email').value.trim();
+  const consentimiento = document.getElementById('check-consentimiento').checked;
+
+  document.getElementById('btn-paso1').disabled = true;
+  document.getElementById('btn-paso1').innerHTML = '<span class="spinner"></span> Preparando...';
+
+  const dir = DIRECTORIO[region] || {};
+  const gobernador = dir.gobernador || 'Gobernador/a Regional';
+
+  try {
+    const res = await fetch(N8N_WEBHOOK, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ nombre_ciudadano:nombre, region, dni, email_ciudadano, consentimiento })
+    });
+    const data = await res.json();
+    datosRespuesta = data;
+
+    if(data.ok && data.cuerpo){
+      asuntoOriginal = data.asunto || '';
+      cuerpoOriginal = data.cuerpo || '';
+    } else {
+      throw new Error('fallback');
+    }
+  } catch(e){
+    // Fallback local
+    asuntoOriginal = `Solicitud de información — Plan de prevención FEN y ejecución PP 0068 · Región ${region}`;
+    cuerpoOriginal = generarCuerpo(nombre, region, dni, gobernador);
+    datosRespuesta = {
+      destinatario: dir.email_gob || '',
+      cc_ppto:      dir.email_ppto || '',
+      cc_riesgo:    dir.email_riesgo || '',
+      asunto:       asuntoOriginal,
+      cuerpo:       cuerpoOriginal
+    };
+  }
+
+  document.getElementById('editor-asunto').value = asuntoOriginal;
+  document.getElementById('editor-cuerpo').value = cuerpoOriginal;
+  irPaso(2);
+  document.getElementById('btn-paso1').disabled = false;
+  document.getElementById('btn-paso1').textContent = 'Preparar mi correo';
+}
+
+function capitalizar(str){
+  return str.replace(/\b\w/g, c => c.toUpperCase());
+}
+
+function generarCuerpo(nombre, region, dni, gobernador){
+  const hoy = new Date().toLocaleDateString('es-PE',{day:'2-digit',month:'long',year:'numeric'});
+  return `Señor/a
+${gobernador}
+Gobernador/a Regional de ${region}
+Presente.—
+
+Yo, ${nombre}${dni ? ', DNI ' + dni : ''}, ciudadano/a de la región ${region}, al amparo del derecho de petición reconocido en el artículo 2, inciso 20 de la Constitución Política del Perú y en la Ley N.° 27444, me dirijo a usted para solicitar lo siguiente:
+
+1. Que se me informe sobre el plan de prevención y reducción de riesgos ante el Fenómeno El Niño de la región ${region}, su estado de implementación y las obras priorizadas para la presente temporada.
+
+2. El estado de ejecución del Programa Presupuestal 0068 (Reducción de la vulnerabilidad y atención de emergencias por desastres) asignado al Gobierno Regional de ${region} para el año fiscal en curso.
+
+3. El cronograma de obras y acciones de prevención priorizadas antes del inicio de la temporada de lluvias.
+
+Solicito respuesta escrita en el plazo de 30 días hábiles, conforme al artículo 123 del TUO de la Ley N.° 27444. De no recibir respuesta, me reservo el derecho de presentar queja ante la Defensoría del Pueblo.
+
+Atentamente,
+
+${nombre}
+${dni ? 'DNI: ' + dni : ''}
+${region}, ${hoy}`;
+}
+
+// ── IMPRIMIR ──────────────────────────────────────────────────
+function descargarImprimir(){
+  const asunto = document.getElementById('editor-asunto').value;
+  const cuerpo = document.getElementById('editor-cuerpo').value;
+  const region = document.getElementById('input-region').value;
+  const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
+  <title>Solicitud formal — ${region}</title>
+  <style>body{font-family:Georgia,serif;max-width:700px;margin:3rem auto;padding:2rem;color:#111;line-height:1.7;}
+  h2{font-size:1rem;color:#555;margin-bottom:.5rem;}
+  .asunto{background:#f5f5f5;padding:.75rem 1rem;border-radius:4px;margin-bottom:2rem;font-size:.9rem;}
+  pre{white-space:pre-wrap;font-family:Georgia,serif;font-size:.95rem;}
+  @media print{body{margin:1rem;}}</style></head>
+  <body><h2>Asunto:</h2><div class="asunto">${asunto}</div><pre>${cuerpo}</pre></body></html>`;
+  const blob = new Blob([html], {type:'text/html'});
+  const url  = URL.createObjectURL(blob);
+  const w    = window.open(url,'_blank');
+  if(w) setTimeout(()=> w.print(), 800);
+}
+
+// ── ABRIR GMAIL ───────────────────────────────────────────────
+function abrirGmail(){
+  const asunto = document.getElementById('editor-asunto').value;
+  const cuerpo = document.getElementById('editor-cuerpo').value;
+  const region = document.getElementById('input-region').value;
+  const dir    = DIRECTORIO[region] || {};
+
+  const to   = datosRespuesta?.destinatario || dir.email_gob || '';
+  const cc_parts = [
+    datosRespuesta?.cc_ppto  || dir.email_ppto  || '',
+    datosRespuesta?.cc_riesgo|| dir.email_riesgo|| ''
+  ].filter(Boolean);
+  const cc = cc_parts.join(',');
+
+  const params = new URLSearchParams({view:'cm',fs:'1',to,su:asunto,body:cuerpo});
+  if(cc) params.append('cc', cc);
+  window.open(`https://mail.google.com/mail/?${params.toString()}`, '_blank');
+
+  document.getElementById('confirmacion-datos').innerHTML =
+    `<strong>Región:</strong> ${region}<br>
+     <strong>Gobernador/a:</strong> ${dir.gobernador || '—'}<br>
+     <strong>Destinatario principal:</strong> ${to || '(pendiente de verificación)'}<br>
+     <strong>Con copia a:</strong> ${cc || '—'}<br>
+     <strong>Recuerda:</strong> Guarda el número de registro de mesa de partes.`;
+  irPaso(3);
+}
+
+// ── NAVEGACIÓN ────────────────────────────────────────────────
+function irPaso(n){
+  [1,2,3].forEach(i=>{
+    document.getElementById(`paso-${i}`).classList.toggle('activa', i===n);
+    const tab = document.getElementById(`tab-${i}`);
+    tab.classList.remove('activo','reached');
+    if(i<=n) tab.classList.add('reached');
+    if(i===n) tab.classList.add('activo');
+  });
+}
+function irAPaso1(){ irPaso(1); }
+
+function reiniciar(){
+  document.getElementById('input-email').value='';
+  document.getElementById('input-nombre').value='';
+  document.getElementById('input-region').value='';
+  document.getElementById('input-dni').value='';
+  document.getElementById('check-consentimiento').checked=false;
+  document.getElementById('vuln-box').style.display='none';
+  document.getElementById('btn-paso1').disabled=true;
+  datosRespuesta=null;
+  irPaso(1);
+}
+</script>
+</body>
+</html>
