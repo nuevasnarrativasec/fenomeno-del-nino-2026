@@ -738,6 +738,15 @@ span.separador-logo {
         .main-metodologia{ padding:40px 14px; }
         .met-inner{ padding:30px 22px; }
         .met-title{ font-size:1.7rem; }
+
+        #hero-main{
+          background-position-x: right;
+        }
+          .hero h1{
+            font-size: 3rem;
+          }
+
+
       }
 
 p.previo-nlp{
