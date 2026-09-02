@@ -20,10 +20,11 @@
   .viz{ max-width:1000px; margin:0 auto; position:relative; }
   .viz-eyebrow{ font-family:system-ui,sans-serif; font-size:.66rem; letter-spacing:.16em; text-transform:uppercase; color:var(--accent); margin-bottom:10px; }
   .viz-title{     font-family: 'Monoglyphic Bold', system-ui, sans-serif;
-    font-size: 1.8rem;
+        font-size: 2rem;
     color: #000;
     text-align: center;
-    margin: 0 auto; }
+    margin: 0 auto;
+    max-width: 550px; }
   .viz-sub{ font-family: 'Monoglyphic Light', system-ui, sans-serif;
     font-size: 1.05rem;
     line-height: 1.5;
@@ -42,7 +43,7 @@
   .viz-stat span{ font-family:system-ui,sans-serif; font-size:.82rem; color:#6a6a6a; }
 
   /* Selector de región */
-  .viz-pick{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin:20px 0 4px; }
+  .viz-pick{ display:flex; align-items:center; justify-content:center; gap:12px; flex-wrap:wrap; margin:20px 0 4px; }
   .viz-pick label{ font-family:system-ui,sans-serif; font-size:.74rem; letter-spacing:.06em; text-transform:uppercase; color:#6a6a6a; }
   .viz-pick select{
     font-family:'Monoglyphic Regular', system-ui, sans-serif; font-size:.92rem; color:var(--title);
@@ -96,10 +97,10 @@
 <body data-palette="#ee5522">
 
   <div class="viz">
-    <h2 class="viz-title">Donde más se inunda, más dengue hay</h2>
-    <p class="viz-sub">Cruzamos el riesgo de inundación de cada región con sus casos de dengue en 2023. A más riesgo, más dengue: la tendencia se sostiene en las 24 regiones del país, incluso descontando extremos como Piura. El agua estancada que deja El Niño no solo moja: también incuba al mosquito que transmite la enfermedad.</p>
+    <h2 class="viz-title">Inundación y dengue: una relación que se repite </h2>
+    <p class="viz-sub">En todo el país, donde aumentó el riesgo de inundación también se registraron más casos de dengue meses después. La relación existe, pero no demuestra causa-efecto.</p>
 
-    <div class="viz-stat">
+    <div class="viz-stat" style="display: none;">
       <b>Spearman <span class="sp">r = 0,559</span></b>
       <span>p = 0,004 · 24 regiones · asociación real y significativa — es una <b style="color:#3a3a3a">tendencia</b>, no una proporción estricta</span>
     </div>
