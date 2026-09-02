@@ -304,7 +304,6 @@
   }
   const BEND_X = 870;  // codo de la diagonal "Yo" → "¿Y tú?" (menor = más inclinada)
   dline([[YO_X, YO.cy + 12], [BEND_X, YO.cy + YT_DY], [YT_X + 80, YO.cy + YT_DY]]);  // "Yo" → "¿Y tú?" (diagonal + horizontal)
-  dline([[YT_X, YO.cy + YT_DY + 46], [YT_X, YO.cy + RBOX_DY - 14]]);               // "¿Y tú?" → caja roja
 
   // 2) Estaciones (círculo + botón + nombre + cuadro blanco + cuadro naranja)
   STATIONS.forEach((s, i)=>{
@@ -388,9 +387,9 @@
     d.style.width = w+'px'; d.style.height = h+'px';
     stage.appendChild(d); return d;
   }
-  const sunEl   = decor('decor-sun','',           30,           STATIONS[0].cy,       300, 300);
-  const rainEl  = decor('decor-cloud', '', STAGE_W - 66, STATIONS[2].cy + 150, 240, 206);   // lluvia.png (desde CSS .decor-cloud)
-  const stormEl = decor('decor-cloud', '', 60,           STATIONS[6].cy + 10,  236, 200);
+  const sunEl   = decor('decor-sun','',    -150,           STATIONS[0].cy,       600, 600);
+  const rainEl  = decor('decor-cloud', '', STAGE_W - 16, STATIONS[2].cy + 150, 450, 400);   // lluvia.png (desde CSS .decor-cloud)
+  const stormEl = decor('decor-cloud', '', 60,           STATIONS[6].cy + -10,  436, 400);
   stormEl.style.background = "url('img/rayos.png') no-repeat center center/cover";   // rayos.png
 
   // 3) Fila inferior: figuras con los pies sobre la línea + etiquetas
@@ -451,20 +450,10 @@
   const yoNode = el('div','node');
 
   // "¿Y tú?"
-  const yq = el('div','final-q reveal','¿Y, a ti?');
+  const yq = el('div','final-q reveal','¿Y si la siguiente historia fuera la tuya?');
   yq.style.left = YT_X+'px';
   yq.style.top  = (YO.cy + YT_DY)+'px';
   yoNode.appendChild(yq);
-
-  // caja roja con el dato
-  const yob = el('div','orangebox final reveal',
-    `<span class="stmt"><strong>9 variables de las 10</strong> que constituyen una catástrofe la viven millones de peruanos.</span>`);
-  yob.style.width = RBOX_W+'px';
-  yob.style.left  = RBOX_CX+'px';
-  yob.style.top   = (YO.cy + RBOX_DY)+'px';
-  yob.style.transform = 'translateX(-50%)';
-  yob._baseTransform = 'translateX(-50%)';
-  yoNode.appendChild(yob);
 
   // texto Lorem
   const ycap = el('div','final-caption reveal','');
@@ -604,7 +593,7 @@
     // sale de golpe: hay que seguir scrolleando para revelar cada parte.
     // toggleActions 'play none none reverse' => se deshace al volver a subir.
     const STEP = 150;      // px de scroll extra entre cada aparición dentro de un personaje
-    const START = 'top 55%';  // cada estación se revela cuando sube al tercio superior:
+    const START = 'top 75%';  // cada estación se revela cuando entra en la zona media-baja:
                               // así en el primer scroll solo aparece la 1ª (María) y no varias a la vez
 
     function revealAt(node, anchor, offset){
@@ -612,7 +601,7 @@
       gsap.set(node, { opacity:0 });
       // El desfase se multiplica por la escala actual para que el ORDEN se
       // conserve también cuando el lienzo se reduce en pantallas chicas.
-      const start = offset>0 ? (()=> 'top+=' + (offset*curScale) + ' 55%') : START;
+      const start = offset>0 ? (()=> 'top+=' + (offset*curScale) + ' 75%') : START;
       gsap.to(node, {
         opacity:1, duration:1, ease:'power2.out',
         scrollTrigger:{ trigger: anchor, start, toggleActions:'play none none reverse' }
@@ -625,7 +614,7 @@
       gsap.fromTo(s._circle,
         { left:s._rowX, top:ROW_Y_INTRO },
         { left:s.cx, top:s.cy, ease:'power2.out',
-          scrollTrigger:{ trigger:s._ib, start:'top center', end:'top 38%', scrub:0.7 } });
+          scrollTrigger:{ trigger:s._ib, start:'top 70%', end:'top 58%', scrub:0.7 } });
       revealAt(s._nw,  s._ib, 0);                // nombre y cargo
       revealAt(s._ib,  s._ib, STEP);            // cuadro blanco
       revealAt(s._btn, s._ib, STEP);            // botón de info
@@ -642,17 +631,33 @@
 
     // Decor: sol y nubes entran suave por los lados al acercarse su tramo
     gsap.fromTo(sunEl,  { x:-360, opacity:0 }, { x:0, opacity:1, ease:'power2.out',
-      scrollTrigger:{ trigger:STATIONS[0]._ib, start:'top center', end:'top 42%', scrub:0.9 } });
+      scrollTrigger:{ trigger:STATIONS[0]._ib, start:'top 70%', end:'top 62%', scrub:0.9 } });
     gsap.fromTo(rainEl, { x:360, opacity:0 },  { x:0, opacity:1, ease:'power2.out',
-      scrollTrigger:{ trigger:STATIONS[2]._ib, start:'top center', end:'top 44%', scrub:0.9 } });
+      scrollTrigger:{ trigger:STATIONS[2]._ib, start:'top 70%', end:'top 64%', scrub:0.9 } });
     gsap.fromTo(stormEl,{ x:-360, opacity:0 }, { x:0, opacity:1, ease:'power2.out',
-      scrollTrigger:{ trigger:STATIONS[6]._ib, start:'top center', end:'top 44%', scrub:0.9 } });
+      scrollTrigger:{ trigger:STATIONS[6]._ib, start:'top 70%', end:'top 64%', scrub:0.9 } });
 
     // 2) Fila inferior + estación "Yo" (sin botón de popup)
     document.querySelectorAll('.figrow .reveal').forEach(f=> revealAt(f, yoFigEl, 0));
     revealAt(yq,   yoFigEl, STEP);             // "¿Y tú?"
-    revealAt(yob,  yoFigEl, STEP*2);           // caja roja del dato
     revealAt(ycap, yoFigEl, STEP*3);           // texto Lorem
+
+    // ── Topbar: la ayuda "presiona el botón" aparece recién cuando la 1ª
+    //    persona (María) llega a su posición, y se oculta al llegar el hero-main. ──
+    (function(){
+      var tb = document.querySelector('.topbar');
+      var hm = document.getElementById('hero-main');
+      if(!tb) return;
+      tb.classList.add('is-hidden');           // oculto durante la portada/intro
+      if(STATIONS[0] && STATIONS[0]._ib && hm){
+        ScrollTrigger.create({
+          trigger: STATIONS[0]._ib,
+          start: 'top 58%',                    // mismo punto donde María termina su vuelo
+          endTrigger: hm, end: 'top top',      // se oculta de nuevo al llegar el hero-main
+          onToggle: function(self){ tb.classList.toggle('is-hidden', !self.isActive); }
+        });
+      }
+    })();
 
     ScrollTrigger.refresh();
   } else {
@@ -687,17 +692,9 @@
       window.addEventListener('scroll', releasePreScroll, { passive:true });
     }
 
-    /* ── 1) Ocultar el topbar cuando el #hero-main llega arriba ── */
-    function updateTopbar(){
-      if(!topbar || !heroMain) return;
-      var top = heroMain.getBoundingClientRect().top;
-      var h   = topbar.offsetHeight || 0;
-      if(top <= h) topbar.classList.add('is-hidden');
-      else         topbar.classList.remove('is-hidden');
-    }
-    window.addEventListener('scroll', updateTopbar, { passive:true });
-    window.addEventListener('resize', updateTopbar);
-    updateTopbar();
+    /* ── 1) La visibilidad del topbar ahora la controla un ScrollTrigger
+          (aparece cuando la 1ª persona llega a su sitio; ver bloque GSAP).
+          Sin GSAP, el topbar queda visible por defecto. ── */
   })();
   
 

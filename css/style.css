@@ -269,7 +269,7 @@
   .final-q{
     position:absolute; z-index:7; transform:translate(-50%,-50%);
     font-family:system-ui,-apple-system,sans-serif;
-    color:#f7f2ea; font-weight:800; font-size:3rem; line-height:1;
+    color:#f7f2ea; font-weight:800; font-size:2rem; line-height:1;
     letter-spacing:.01em; white-space:nowrap;
   }
   /* Texto inferior de la sección final */
@@ -428,10 +428,11 @@
     }
     .main-contenido h3{
         font-family: 'Monoglyphic Bold';
-        font-size: 1.8rem;
-        color: #fff;
-        text-align: center;
-        margin: 0 auto;
+      font-size: 1.7rem;
+      color: #fff;
+      text-align: center;
+      margin: 0 auto;
+      max-width: 700px;
     }
     p.bajada-mapa-3d{
       font-family: 'Monoglyphic Light', system-ui, sans-serif;
