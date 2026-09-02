@@ -23,7 +23,7 @@
   .wrap{ max-width:1040px; margin:0 auto; }
   .eyebrow{ font-family:system-ui,sans-serif; font-size:.66rem; letter-spacing:.16em; text-transform:uppercase; color:var(--a1); text-align:center; margin-bottom:10px; }
   .title{ font-family:'Monoglyphic Bold', system-ui, sans-serif; font-size:2rem; line-height:1.12; color:#000; text-align:center; }
-  .sub{ font-family:'Monoglyphic Light', system-ui, sans-serif; font-size:1.05rem; line-height:1.5; color:#3a3a3a; max-width:680px; margin:15px auto 0; text-align:center; }
+  .sub{ font-family:'Monoglyphic Light', system-ui, sans-serif; font-size:1.05rem; line-height:1.5; color:#3a3a3a; max-width:600px; margin:15px auto 0; text-align:center; }
   .expo{ font-family:system-ui,sans-serif; font-size:.86rem; line-height:1.5; color:#6a6a6a; max-width:640px; margin:14px auto 0; text-align:center; font-style:italic; }
 
   .grid{ display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:34px; }
@@ -32,7 +32,12 @@
   .p-num{ flex:0 0 auto; width:26px; height:26px; border-radius:50%; color:#fff; font-family:'Monoglyphic Bold',system-ui,sans-serif; font-size:.9rem; display:flex; align-items:center; justify-content:center; margin-top:1px; }
   .p1 .p-num{ background:var(--a1); } .p2 .p-num{ background:var(--a2); } .p3 .p-num{ background:var(--a3); } .p4 .p-num{ background:var(--a4); }
   .p-titles h3{ font-family:'Monoglyphic Bold',system-ui,sans-serif; font-size:1.12rem; line-height:1.15; color:#111; }
-  .p-titles p{ font-family:system-ui,sans-serif; font-size:.82rem; color:#8a8a8a; margin-top:3px; }
+  .p-titles p{     
+    font-family: 'Monoglyphic Light', system-ui, sans-serif;
+    font-size: .9rem;
+    color: #8a8a8a;
+    margin-top: 3px;
+    line-height: 1.5;}
   .chart{ width:100%; height:250px; margin-top:8px; }
   .p-note{ font-family:system-ui,sans-serif; font-size:.78rem; line-height:1.5; color:#7a7a7a; margin-top:10px; border-top:1px solid #f0f0f0; padding-top:9px; }
   .p-src{ font-family:system-ui,sans-serif; font-size:.72rem; color:#a0a0a0; margin-top:7px; }
@@ -76,16 +81,19 @@
 </head>
 <body>
   <div class="wrap">
-    <h2 class="title">Cajamarca: el golpe que no se ve</h2>
-    <p class="sub">Cuatro áreas de evidencia, medidas con fuentes distintas, coinciden en la misma región.</p>
-    <p class="expo">El FEN le llega por lluvias en cuenca alta, huaicos y pérdida de campaña — no por el mar. Series indexadas a 2022 = 100, el año previo al último evento (episodios de referencia: 2017 y 2023).</p>
+    <h2 class="title">Cajamarca: los riesgos que no siempre se ven</h2>
+    <p class="sub">Esta región reúne 9 de los 10 indicadores del análisis. Para entender qué hay detrás, los agrupamos en cuatro áreas de evidencia construidas con fuentes distintas.</p>
+    <p class="expo" style="display: none;">El FEN le llega por lluvias en cuenca alta, huaicos y pérdida de campaña — no por el mar. Series indexadas a 2022 = 100, el año previo al último evento (episodios de referencia: 2017 y 2023).</p>
 
     <div class="grid">
       <!-- ÁREA 1 -->
       <div class="panel p1">
         <div class="p-head">
           <div class="p-num">1</div>
-          <div class="p-titles"><h3>Señales en el tiempo</h3><p>¿Qué se movió alrededor del evento?</p></div>
+          <div class="p-titles">
+            <h3>¿Qué cambió alrededor del evento?</h3>
+            <p>Tres alertas —dengue, leishmaniasis y atenciones por violencia— cambiaron en una misma ventana de tiempo. Coincidir no significa tener la misma causa.</p>
+          </div>
         </div>
         <div id="chart1" class="chart"></div>
         <p class="p-note">Índice 2022 = 100. El dengue de Cajamarca dobló su nivel en 2023 (204,8). CEM y leishmaniasis se despegan de su comparador nacional en 2024–2025. El dengue va sin comparador nacional: el resto del país creció más rápido.</p>
@@ -96,7 +104,7 @@
       <div class="panel p2 struct">
         <div class="p-head">
           <div class="p-num">2</div>
-          <div class="p-titles"><h3>Condiciones previas</h3><p>¿Cómo llega Cajamarca al evento?</p></div>
+          <div class="p-titles"><h3>¿Qué tan vulnerable era antes?</h3><p>83 de cada 100 hectáreas cultivadas dependen solo de la lluvia y su infraestructura crítica está entre las más expuestas.</p></div>
         </div>
         <div class="stk">
           <div>
@@ -117,7 +125,10 @@
       <div class="panel p3">
         <div class="p-head">
           <div class="p-num">3</div>
-          <div class="p-titles"><h3>Capacidad de respuesta</h3><p>¿Pudo el Estado reaccionar?</p></div>
+          <div class="p-titles">
+            <h3>¿Cómo responden?</h3>
+            <p>A agosto de 2026 se había ejecutado el 55,4% del presupuesto de prevención. El dato es parcial porque el año aún no había terminado.</p>
+          </div>
         </div>
         <div id="chart3" class="chart"></div>
         <p class="p-note">Ejecución del PP0068 (Reducción de vulnerabilidad y atención de emergencias), en porcentaje real. En 2025 la ejecución sube a 96 % — un dato que juega en contra del argumento y se incluye a propósito. 2026* es corte parcial a agosto, no comparable como año cerrado.</p>
@@ -128,7 +139,10 @@
       <div class="panel p4">
         <div class="p-head">
           <div class="p-num">4</div>
-          <div class="p-titles"><h3>Impacto económico</h3><p>¿Qué quedó inmovilizado?</p></div>
+          <div class="p-titles">
+            <h3>¿Qué se paraliza?</h3>
+            <p>A junio de 2024, Cajamarca tenía 143 obras públicas paralizadas y S/2.789 millones de inversión inmovilizada.</p>
+          </div>
         </div>
         <div class="kpis">
           <div class="kpi"><div class="n">143</div><div class="k">obras paralizadas (jun. 2024)</div></div>
@@ -149,7 +163,7 @@
       </div>
     </div>
 
-    <div class="readme">
+    <div class="readme" style="display: none;">
       <h4>Cómo leer esto</h4>
       <p>No todas suben a la vez ni el FEN las causa por sí solo: lo que coincide son las cuatro áreas. La triangulación no significa que todas las variables aumenten al mismo tiempo ni que el FEN las cause directamente; muestra que en Cajamarca coinciden señales temporales, vulnerabilidades estructurales, capacidad de respuesta pública y exposición económica.</p>
     </div>

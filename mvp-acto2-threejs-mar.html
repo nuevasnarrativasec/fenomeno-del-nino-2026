@@ -2457,7 +2457,31 @@ function enableOceanLayer() {
   if (ob) ob.classList.add('active');
   updateOceanLayer();
 }
-slider.addEventListener('input', () => { enableOceanLayer(); updateSlider(parseInt(slider.value, 10)); });
+// ── Mantener Perú (la zona de interés) a la vista al manipular el slider ──
+// Si el globo está girado y Perú quedó fuera de la zona visible, se detiene la
+// rotación y se gira suavemente de vuelta hacia Perú.
+const PERU_POV = { lat: -9.2, lng: -75 };   // mismo centro con el que carga el mapa
+let peruSnapping = false;
+function angDistDeg(lat1, lng1, lat2, lng2){
+  const d = Math.PI / 180;
+  const c = Math.sin(lat1*d)*Math.sin(lat2*d) +
+            Math.cos(lat1*d)*Math.cos(lat2*d)*Math.cos((lng2 - lng1)*d);
+  return Math.acos(Math.max(-1, Math.min(1, c))) / d;   // grados
+}
+function ensurePeruVisible(){
+  if (!world || peruSnapping) return;
+  const pov = world.pointOfView();
+  // <=65° del centro => Perú se aprecia bien; más allá queda al borde/oculto.
+  if (angDistDeg(pov.lat, pov.lng, PERU_POV.lat, PERU_POV.lng) <= 65) return;
+  autoRotating = false;
+  world.controls().autoRotate = false;
+  const rb = document.getElementById('rotateBtn');
+  if (rb) { rb.classList.remove('active'); rb.textContent = '⟳ Rotar'; }
+  peruSnapping = true;
+  world.pointOfView({ lat: PERU_POV.lat, lng: PERU_POV.lng, altitude: pov.altitude }, 1000);
+  setTimeout(() => { peruSnapping = false; }, 1050);
+}
+slider.addEventListener('input', () => { enableOceanLayer(); ensurePeruVisible(); updateSlider(parseInt(slider.value, 10)); });
 
 // ── Picos de temperatura: los meses con los valores ICEN más altos de la serie
 // (eventos cálidos fuertes/extraordinarios). Se resaltan como rombos naranjas

@@ -497,12 +497,12 @@
       .mapa-inner{ max-width:1040px; margin:0 auto; }
       .mapa-fen h3{
         font-family:'Monoglyphic Bold', system-ui, sans-serif;
-        font-size:1.8rem; color:#000; text-align:center; margin:0 auto;
+        font-size:2rem; color:#000; text-align:center; margin:0 auto;
       }
       .mapa-intro{
         font-family:'Monoglyphic Light', system-ui, sans-serif;
         font-size:1.05rem; line-height:1.5; color:#3a3a3a;
-        max-width:660px; margin:16px auto 8px; text-align:center;
+        max-width:700px; margin:16px auto 8px; text-align:center;
       }
       .mapa-intro strong{ color:#1f7a70; font-family:'Monoglyphic Bold', system-ui, sans-serif; }
       .mapa-layout{
@@ -555,7 +555,7 @@
       }
       .mp-card{
         border:1px solid #e6e0d6; border-top:3px solid #1f7a70;
-        background:#fbf9f6; border-radius:8px; padding:20px 22px;
+        background:#fbf9f6; padding:20px 22px;
         box-shadow:0 8px 26px rgba(0,0,0,.06);
       }
       .mp-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; }

@@ -26,13 +26,16 @@
 
     .ip-title{
       font-family:'Monoglyphic Bold', system-ui, sans-serif;
-      font-size:clamp(1.9rem, 4.2vw, 3.1rem); line-height:1.05; color:var(--ip-ink);
-      margin-bottom:22px;
+        font-size: clamp(1.9rem, 4.2vw, 2rem);
+      line-height: 1.2;
+      color: var(--ip-ink);
+      margin: 0 auto 22px;
+      max-width: 615px;
     }
     .ip-intro{
       font-family:'Monoglyphic Regular', system-ui, sans-serif;
-      font-size:clamp(1rem,1.5vw,1.3rem); line-height:1.42; color:#2b2b2b;
-      max-width:600px; margin:0 auto 58px;
+      font-size:clamp(1rem,1.5vw,1.1rem); line-height:1.42; color:#2b2b2b;
+      max-width:550px; margin:0 auto 58px;
     }
 
     /* Caja con borde; el nombre y el botón solapan sus bordes */
@@ -107,8 +110,10 @@
   <section id="impact-panel">
     <button id="ipToggle" style="display:none" aria-hidden="true"></button>
 
-    <h2 class="ip-title">¿Cómo afecta al resto del Perú?</h2>
-    <p class="ip-intro">Cuéntanos sobre ti y te mostramos cómo El Niño podría impactar tu vida directamente.</p>
+    <h2 class="ip-title">Cómo afecta al resto del Perú por ¿Qué tiene que ver El Niño contigo? </h2>
+    <p class="ip-intro">
+      Selecciona tu departamento y algunas características de tu entorno. Con datos de eventos anteriores, te mostramos qué impactos se observaron en situaciones similares.
+    <br>Nota: No es una predicción.</p>
 
     <div id="ipForm">
       <div class="ip-box">
