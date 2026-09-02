@@ -150,6 +150,108 @@
       </div>
     </section>
 
+    <!-- ============================================================
+         Galería de fotos "Archivo histórico" — crossfade por scroll.
+         Fotos en img/galeria/bg-galeria-1..7.jpg. Los créditos están en
+         cada <figcaption> (una línea por foto): edítalos ahí.
+         ============================================================ -->
+    <section class="galeria" id="galeria" aria-label="Archivo histórico del Fenómeno del Niño">
+      <style>
+        .galeria{ position:relative; background:#000; color:#fff; }
+        .gal-track{ height:560vh; }                 /* ~80vh de scroll por foto (7 fotos) */
+        .gal-sticky{ position:sticky; top:0; height:100vh; display:flex; flex-direction:column; overflow:hidden; }
+        .gal-header{ flex:0 0 auto; text-align:center; padding:46px 20px 6px; }
+        .gal-title{ font-family:'Monoglyphic Bold','Helvetica Neue',Arial,sans-serif; font-weight:700;
+          font-size:clamp(1.8rem,3.2vw,2.5rem); line-height:1.1; margin:0 0 8px; color:#fff; }
+        .gal-sub{ font-family:'Monoglyphic Bold','Helvetica Neue',Arial,sans-serif; font-weight:700;
+          font-size:clamp(1rem,1.6vw,1.35rem); line-height:1.25; margin:0; color:#fff; }
+        .gal-chev{ margin:18px auto 0; width:40px; height:40px; border:1px solid rgba(255,255,255,.5);
+          display:flex; align-items:center; justify-content:center; border-radius:2px; }
+        .gal-chev svg{ width:22px; height:22px; stroke:#fff; }
+        .gal-stage{ position:relative; flex:1 1 auto; width:100%; min-height:0; }
+        .gal-slide{ position:absolute; inset:0; display:flex; flex-direction:column;
+          align-items:center; justify-content:center; padding:14px 24px 26px; opacity:0;
+          will-change:opacity; pointer-events:none; }
+        .gal-slide:first-child{ opacity:1; }
+        .gal-slide img{ display:block; width:auto; height:auto; max-width:min(1120px,100%);
+          max-height:calc(100% - 44px); object-fit:contain; box-shadow:0 10px 40px rgba(0,0,0,.5); }
+        .gal-slide figcaption{ margin-top:14px; font-family:system-ui,-apple-system,Arial,sans-serif;
+          font-size:.78rem; letter-spacing:.05em; color:#b8b8b8; text-align:center; }
+        @media (max-width:720px){
+          .gal-track{ height:520vh; }
+          .gal-header{ padding:34px 16px 4px; }
+          .gal-chev{ width:34px; height:34px; }
+        }
+        @media (prefers-reduced-motion:reduce){ .gal-slide{ transition:none; } }
+      </style>
+      <div class="gal-track">
+        <div class="gal-sticky">
+          <div class="gal-header">
+            <h2 class="gal-title">Archivo histórico</h2>
+            <p class="gal-sub">Así se vivió el Fenómeno del Niño en los últimos 40 años</p>
+            <div class="gal-chev" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </div>
+          </div>
+          <div class="gal-stage">
+          <figure class="gal-slide">
+            <img src="img/galeria/bg-galeria-1.jpg" alt="Archivo histórico del Fenómeno del Niño — foto 1" loading="eager" />
+            <figcaption>Foto 1 · Archivo El Comercio</figcaption>
+          </figure>
+          <figure class="gal-slide">
+            <img src="img/galeria/bg-galeria-2.jpg" alt="Archivo histórico del Fenómeno del Niño — foto 2" loading="lazy" />
+            <figcaption>Foto 2 · Archivo El Comercio</figcaption>
+          </figure>
+          <figure class="gal-slide">
+            <img src="img/galeria/bg-galeria-3.jpg" alt="Archivo histórico del Fenómeno del Niño — foto 3" loading="lazy" />
+            <figcaption>Foto 3 · Archivo El Comercio</figcaption>
+          </figure>
+          <figure class="gal-slide">
+            <img src="img/galeria/bg-galeria-4.jpg" alt="Archivo histórico del Fenómeno del Niño — foto 4" loading="lazy" />
+            <figcaption>Foto 4 · Archivo El Comercio</figcaption>
+          </figure>
+          <figure class="gal-slide">
+            <img src="img/galeria/bg-galeria-5.jpg" alt="Archivo histórico del Fenómeno del Niño — foto 5" loading="lazy" />
+            <figcaption>Foto 5 · Archivo El Comercio</figcaption>
+          </figure>
+          <figure class="gal-slide">
+            <img src="img/galeria/bg-galeria-6.jpg" alt="Archivo histórico del Fenómeno del Niño — foto 6" loading="lazy" />
+            <figcaption>Foto 6 · Archivo El Comercio</figcaption>
+          </figure>
+          <figure class="gal-slide">
+            <img src="img/galeria/bg-galeria-7.jpg" alt="Archivo histórico del Fenómeno del Niño — foto 7" loading="lazy" />
+            <figcaption>Foto 7 · Archivo El Comercio</figcaption>
+          </figure>
+          </div>
+        </div>
+      </div>
+      <script>
+      (function(){
+        var sec=document.getElementById('galeria');
+        if(!sec) return;
+        var slides=[].slice.call(sec.querySelectorAll('.gal-slide'));
+        var N=slides.length; if(!N) return;
+        var ticking=false;
+        function render(){
+          ticking=false;
+          var r=sec.getBoundingClientRect();
+          var total=sec.offsetHeight-window.innerHeight;      // rango scrollable de la sección
+          var prog=total>0 ? Math.min(1,Math.max(0,(-r.top)/total)) : 0;
+          var pos=prog*(N-1);                                 // 0 .. N-1
+          for(var i=0;i<N;i++){
+            var o=1-Math.min(1,Math.abs(pos-i));              // crossfade suave con el vecino
+            slides[i].style.opacity=o.toFixed(3);
+          }
+        }
+        function onScroll(){ if(!ticking){ ticking=true; requestAnimationFrame(render); } }
+        window.addEventListener('scroll',onScroll,{passive:true});
+        window.addEventListener('resize',onScroll);
+        render();
+      })();
+      </script>
+    </section>
+
+
     <!-- Gráfico: triangulación de evidencia en Cajamarca (caso regional) -->
     <div id="triBox" style="background:#fff;">
       <iframe id="triFrame"
