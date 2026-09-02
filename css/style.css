@@ -427,7 +427,7 @@
         padding: 40px 0 0;
     }
     .main-contenido h3{
-        font-family: 'Monoglyphic Bold';
+      font-family: 'Monoglyphic Bold';
       font-size: 1.7rem;
       color: #fff;
       text-align: center;
@@ -437,11 +437,28 @@
     p.bajada-mapa-3d{
       font-family: 'Monoglyphic Light', system-ui, sans-serif;
       padding: 20px 0;
-      text-align: center;
       line-height: 1.4;
-      max-width: 540px;
+      max-width: 600px;
       margin: 0 auto;
     }
+      ul.bajada-mapa-3d-ul{
+        list-style: none;
+        padding: 0;
+        margin: 0 auto;
+        max-width: 400px;
+      }
+        ul.bajada-mapa-3d-ul li{
+          font-family: 'Monoglyphic Light', system-ui, sans-serif;
+          font-size: 1rem;
+          line-height: 1.4;
+          color: #fff;
+          margin-bottom: 8px;
+        }
+          p.bajada-mapa-3d span,
+          ul.bajada-mapa-3d-ul li span{
+            font-family: 'Monoglyphic Bold', system-ui, sans-serif;
+            color: #cf5727;
+          }
     .box-globo-3d{
             margin: 40px auto 10px;
         position: relative;
