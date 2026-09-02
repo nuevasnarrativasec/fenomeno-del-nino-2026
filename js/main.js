@@ -688,85 +688,151 @@
 
 
 // ============================================================
-// 2b) STAGE MÓVIL — reflow vertical (<=820px). Reusa STATIONS + YO_STATION
-//     en tarjetas apiladas con aparición por scroll. El zig-zag desktop
-//     (#stageWrap) se oculta por CSS en ese ancho.
+// 2b) STAGE MÓVIL — zig-zag con vuelo (FLIP) adaptado a móvil (<=820px).
+//     Grilla 3×3 -> cada personaje vuela a un zig-zag angosto -> cierre
+//     vertical. Reutiliza STATIONS/YO_STATION/ROW + clases del desktop.
 // ============================================================
-  (function(){
+  if(IS_MOBILE_STAGE) (function(){
     var host = document.getElementById('stageWrap');
-    if(!host || document.getElementById('stageMobile')) return;
+    if(!host || document.getElementById('stageM')) return;
+    var NS='http://www.w3.org/2000/svg';
+    function el(tag,cls,html){ var e=document.createElement(tag); if(cls)e.className=cls; if(html!=null)e.innerHTML=html; return e; }
 
-    function card(o, opts){
-      opts = opts || {};
-      var age  = o.age ? ' <span>('+o.age+')</span>' : '';
-      var role = o.role && o.role!=='Yo' ? '<div class="sm-role">'+o.role+'</div>' : '';
-      var pop  = (o.popT||o.popB) ?
-        '<button class="sm-more" type="button" aria-expanded="false"><span>'+(o.popE||'Ver más')+'</span><span class="chev">›</span></button>'+
-        '<div class="sm-pop" hidden><strong>'+(o.popT||'')+'</strong><span>'+(o.popB||'')+'</span></div>' : '';
-      return '<article class="sm-card'+(opts.cls?(' '+opts.cls):'')+'">'+
-        '<div class="sm-top">'+
-          '<div class="sm-circle'+(opts.yo?' sm-circle-yo':'')+'"><img src="'+opts.img+'" alt="'+(o.role||o.name||'')+'"></div>'+
-          '<div class="sm-id">'+
-            '<div class="sm-name">'+(o.name||'Yo')+age+'</div>'+
-            role+
-            '<div class="sm-region">'+o.region+'</div>'+
-          '</div>'+
-        '</div>'+
-        '<p class="sm-info">'+o.info+'</p>'+
-        pop+
-        '<div class="sm-q'+(opts.finalQ?' sm-q-final':'')+'">'+o.q+'</div>'+
-      '</article>';
-    }
+    var SW=390, CR=38;                         // ancho de diseño y radio de círculo
+    var wrap=el('div'); wrap.id='stageWrapM';
+    var stage=el('div'); stage.id='stageM';
+    wrap.appendChild(stage);
+    host.parentNode.insertBefore(wrap, host);
 
-    var html = '<h2 class="sm-title">Todo está conectado</h2>'+
-      '<p class="sm-lead">Nueve personas. Historias que representan situaciones en distintos departamentos del país. Diez señales aparentemente desconectadas.</p>'+
-      '<button class="sm-cta" type="button">Descubre qué tienen en común <span class="cta-chev">⌄</span></button>';
-    STATIONS.forEach(function(s,i){ html += card(s, { img: IMG_BASE+'personaje-'+(i+1)+'.png' }); });
-    html += card(YO_STATION, { img: IMG_BASE+'personaje-yo.png', yo:true, cls:'sm-yo', finalQ:true });
-    html += '<p class="sm-final">¿Y si la siguiente historia fuera la tuya?</p>';
+    var svg=document.createElementNS(NS,'svg'); svg.id='connectorM';
+    svg.setAttribute('preserveAspectRatio','none'); svg.setAttribute('aria-hidden','true');
+    stage.appendChild(svg);
 
-    var m = document.createElement('section');
-    m.id = 'stageMobile';
-    m.setAttribute('aria-label','Todo está conectado — historias de El Niño');
-    m.innerHTML = html;
-    host.parentNode.insertBefore(m, host);
+    // ---- Cabecera ----
+    var title=el('div','stm-title','Todo está conectado'); title.style.top='46px'; stage.appendChild(title);
+    var baja=el('div','stm-baja','Nueve personas. Historias que representan situaciones en distintos departamentos del país. Diez señales aparentemente desconectadas.');
+    baja.style.top='104px'; stage.appendChild(baja);
+    var cta=el('div','stm-cta','Descubre qué tienen en común <span class="cta-chev">⌄</span>');
+    cta.style.top='210px';
+    cta.addEventListener('click', function(){ window.scrollTo({ top: Math.round(window.innerHeight*0.9), behavior:'smooth' }); });
+    stage.appendChild(cta);
 
-    // Expandir / colapsar el dato extra
-    m.addEventListener('click', function(e){
-      var cta = e.target.closest('.sm-cta');
-      if(cta){ var f = m.querySelector('.sm-card'); if(f) f.scrollIntoView({behavior:'smooth', block:'start'}); return; }
-      var b = e.target.closest('.sm-more'); if(!b) return;
-      var open = b.getAttribute('aria-expanded')==='true';
-      b.setAttribute('aria-expanded', String(!open));
-      b.classList.toggle('open', !open);
-      var pop = b.nextElementSibling;
-      if(pop && pop.classList.contains('sm-pop')) pop.hidden = open;
+    // ---- Grilla 3x3 (intro): etiquetas + flechas ----
+    var COLX=[80,195,310], GY=[345,515,685];
+    var introEls=[];
+    STATIONS.forEach(function(s,i){
+      var gx=COLX[i%3], gy=GY[(i/3)|0];
+      s._gx=gx; s._gy=gy;
+      var lbl=el('div','stm-glbl','<div class="stm-gname">'+s.name+'</div><div class="stm-greg">'+s.region+'</div>');
+      lbl.style.left=gx+'px'; lbl.style.top=(gy-CR-8)+'px';
+      stage.appendChild(lbl); introEls.push(lbl);
+    });
+    [[0,1],[1,2]].forEach(function(pr){ GY.forEach(function(gy){
+      var ar=el('div','stm-arrow'); ar.style.left=((COLX[pr[0]]+COLX[pr[1]])/2)+'px'; ar.style.top=gy+'px';
+      stage.appendChild(ar); introEls.push(ar);
+    });});
+    introEls.push(title, baja, cta);
+
+    // ---- Estaciones: el círculo vuela de la grilla a su sitio ----
+    var ST0=810, SGAP=540, INFO_W=330, IBX=(SW-INFO_W)/2;
+    STATIONS.forEach(function(s,i){
+      var sy=ST0+i*SGAP, scx=(i%2===0)?135:255;
+      s._sx=scx; s._sy=sy;
+      var c=el('div','circle','<img src="'+IMG_BASE+'personaje-'+(i+1)+'.png" alt="'+s.role+'">');
+      c.style.left=s._gx+'px'; c.style.top=s._gy+'px'; stage.appendChild(c); s._circle=c;
+      var nw=el('div','namewrap reveal','<div class="nm">'+s.name+' ('+s.age+')</div><div class="role">'+s.role+'</div>');
+      nw.style.left=scx+'px'; nw.style.top=(sy+CR+12)+'px'; stage.appendChild(nw); s._nw=nw;
+      var ib=el('div','infobox reveal','<span class="region">'+s.region+'.</span> '+s.info);
+      ib.style.width=INFO_W+'px'; ib.style.left=IBX+'px'; ib.style.top=(sy+CR+52)+'px'; stage.appendChild(ib); s._ib=ib;
+      var btn=el('button','infobtn reveal','›'); btn.dataset.idx=i;
+      btn.style.left=(IBX+INFO_W)+'px'; btn.style.top=(sy+CR+52)+'px'; stage.appendChild(btn); s._btn=btn;
+      var ob=el('div','orangebox reveal','<span class="q" style="margin-top:0">'+s.q+'</span>');
+      ob.style.width='300px'; ob.style.left=(SW/2)+'px'; ob.style.top=(sy+330)+'px'; ob.style.transform='translateX(-50%)';
+      stage.appendChild(ob); s._ob=ob;
     });
 
-    // Aparición por scroll (fade + slide)
-    var items = m.querySelectorAll('.sm-card, .sm-final');
-    // La 1ª tarjeta se revela SÍNCRONAMENTE (siempre visible al cargar, sin
-    // depender de rAF/IO, que se suspenden si la pestaña está oculta).
-    if(items[0]) items[0].classList.add('in');
-    if('IntersectionObserver' in window){
-      var io = new IntersectionObserver(function(es){
-        es.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
-      }, { rootMargin:'0px 0px -10% 0px', threshold:0.12 });
-      items.forEach(function(el){ io.observe(el); });
-      // Revela de inmediato lo que ya está en pantalla al cargar (evita el 1er
-      // fade "pegado"): IO puede tardar un frame en disparar la primera tarjeta.
-      requestAnimationFrame(function(){
-        items.forEach(function(el){
-          if(el.getBoundingClientRect().top < window.innerHeight*0.92) el.classList.add('in');
+    // ---- Cierre VERTICAL: figuras (ROW) una debajo de otra + "¿Y tú?" ----
+    var FY0=ST0+(STATIONS.length-1)*SGAP+SGAP, FGAP=132;
+    ROW.forEach(function(r,i){
+      var fy=FY0+i*FGAP;
+      var f=el('div','fig'+(r.me?' me':'')+' reveal','<img src="'+IMG_BASE+r.img+'" alt="'+r.lbl+'">');
+      f.style.left=(SW/2)+'px'; f.style.top=fy+'px'; f.style.transform='translateX(-50%)'; stage.appendChild(f);
+      if(!r.me){
+        var num=el('div','fig-num reveal', String(i+1));
+        num.style.left=(SW/2+52)+'px'; num.style.top=(fy+34)+'px'; stage.appendChild(num);
+        var lb=el('div','fig-lbl reveal', r.lbl);
+        lb.style.left=(SW/2)+'px'; lb.style.top=(fy+78)+'px'; stage.appendChild(lb);
+      }
+    });
+    var lastFy=FY0+(ROW.length-1)*FGAP;
+    var yq=el('div','stm-final reveal','¿Y si la siguiente historia fuera la tuya?');
+    yq.style.left=(SW/2)+'px'; yq.style.top=(lastFy+140)+'px'; stage.appendChild(yq);
+    var STAGE_H=lastFy+280;
+
+    // ---- Línea punteada por los círculos de estación + bajada al cierre ----
+    var pts=STATIONS.map(function(s){ return [s._sx,s._sy]; });
+    pts.push([SW/2, FY0]); pts.push([SW/2, lastFy]);
+    var pth=document.createElementNS(NS,'path');
+    pth.setAttribute('d','M '+pts.map(function(p){return p.join(' ');}).join(' L '));
+    pth.setAttribute('class','dotted'); svg.appendChild(pth);
+
+    // ---- Popup del botón "›" (dato extra: popE/popT/popB) ----
+    var pop=el('div'); pop.id='stmPop'; pop.hidden=true;
+    pop.innerHTML='<div class="stm-pop-card"><button class="stm-pop-x" aria-label="Cerrar">×</button>'+
+      '<div class="stm-pop-e"></div><div class="stm-pop-t"></div><div class="stm-pop-b"></div></div>';
+    document.body.appendChild(pop);
+    function openPop(s){
+      pop.querySelector('.stm-pop-e').textContent=s.popE||'';
+      pop.querySelector('.stm-pop-t').textContent=s.popT||'';
+      pop.querySelector('.stm-pop-b').textContent=s.popB||'';
+      pop.hidden=false; requestAnimationFrame(function(){ pop.classList.add('on'); });
+    }
+    function closePop(){ pop.classList.remove('on'); setTimeout(function(){ pop.hidden=true; }, 220); }
+    pop.addEventListener('click', function(e){ if(e.target===pop || e.target.closest('.stm-pop-x')) closePop(); });
+    stage.addEventListener('click', function(e){ var b=e.target.closest('.infobtn'); if(!b) return; openPop(STATIONS[+b.dataset.idx]); });
+
+    // ---- fit(): escala el lienzo al ancho del viewport ----
+    var scaleM=1;
+    function fitM(){
+      var avail=Math.min(window.innerWidth-8, SW*1.18);
+      scaleM=avail/SW;
+      stage.style.transform='translateX(-50%) scale('+scaleM+')';
+      wrap.style.height=(STAGE_H*scaleM)+'px';
+      svg.setAttribute('viewBox','0 0 '+SW+' '+STAGE_H);
+      svg.setAttribute('width',SW); svg.setAttribute('height',STAGE_H);
+      if(window.ScrollTrigger) ScrollTrigger.refresh();
+    }
+    window.addEventListener('resize', fitM); fitM();
+
+    // ---- Animación: vuelo (FLIP) + apariciones por scroll ----
+    function showAll(){ stage.querySelectorAll('.reveal').forEach(function(n){ n.style.opacity=1; }); }
+    if(window.gsap && window.ScrollTrigger){
+      gsap.registerPlugin(ScrollTrigger);
+      STATIONS.forEach(function(s){
+        gsap.fromTo(s._circle, { left:s._gx, top:s._gy },
+          { left:s._sx, top:s._sy, ease:'power2.out',
+            scrollTrigger:{ trigger:s._ib, start:'top 92%', end:'top 52%', scrub:0.6 } });
+        [s._nw,s._ib,s._btn,s._ob].forEach(function(n,k){
+          gsap.set(n,{opacity:0});
+          gsap.to(n,{opacity:1,duration:.5,ease:'power2.out',
+            scrollTrigger:{ trigger:s._ib, start:(k>=2?'top 58%':'top 72%'), toggleActions:'play none none reverse' }});
         });
       });
-    } else {
-      items.forEach(function(el){ el.classList.add('in'); });
-    }
+      // Intro se desvanece al empezar a bajar
+      gsap.to(introEls,{opacity:0,ease:'none',
+        scrollTrigger:{ trigger:wrap, start:'top top', end:'+=380', scrub:true }});
+      // Cierre vertical
+      stage.querySelectorAll('.fig, .fig-num, .fig-lbl, .stm-final').forEach(function(n){
+        gsap.set(n,{opacity:0});
+        gsap.to(n,{opacity:1,duration:.5,ease:'power2.out',
+          scrollTrigger:{ trigger:n, start:'top 90%', toggleActions:'play none none reverse' }});
+      });
+      ScrollTrigger.refresh();
+    } else { showAll(); }
   })();
 
 
-
+  
 // ============================================================
 // 3) Comportamiento: ocultar topbar + gate pre-scroll del stage
 // ============================================================
