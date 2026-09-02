@@ -106,6 +106,8 @@
 // ============================================================
 // 2) Portada + FLIP de personajes + zig-zag + fila inferior (GSAP/ScrollTrigger)
 // ============================================================
+  // ¿Usar el reflow vertical móvil? Se decide al cargar (recargar tras rotar).
+  const IS_MOBILE_STAGE = window.matchMedia('(max-width:820px)').matches;
   /* ============================================================
      DATOS DE CADA PERSONAJE
      - cx, cy: centro del círculo (sistema de 793 x 2720)
@@ -237,7 +239,7 @@
 
   /* Fila intro "Todo está conectado": los círculos arrancan aquí y vuelan
      hasta su estación del zig-zag conforme se hace scroll (FLIP). */
-  const ROW_Y_INTRO = 320;                 // y del centro de los círculos en la fila intro
+  const ROW_Y_INTRO = 450;                 // y del centro de los círculos (bajado para la bajada+CTA de la portada)
   const INTRO_GAP   = 380;                 // aire entre la fila intro y la 1ª estación
   const ROW_L = 24, ROW_R = STAGE_W - 60;  // extensión horizontal de la fila intro (más aire entre personas)
   STATIONS.forEach((s,i)=>{ s._rowX = Math.round(ROW_L + (ROW_R-ROW_L)*i/(STATIONS.length-1)); });
@@ -368,6 +370,23 @@
   stageTitle.style.left = Math.round(STAGE_W/2)+'px';
   stageTitle.style.top  = '92px';
   stage.appendChild(stageTitle);
+
+  // Bajada de la portada (bajo el título)
+  const stageBajada = el('div','stage-bajada',
+    'Nueve personas. Historias que representan situaciones en distintos departamentos del país. Diez señales aparentemente desconectadas.');
+  stageBajada.style.left = Math.round(STAGE_W/2)+'px';
+  stageBajada.style.top  = '196px';
+  stage.appendChild(stageBajada);
+
+  // CTA de la portada (baja al empezar el recorrido al hacer clic)
+  const stageCta = el('div','stage-cta',
+    'Descubre qué tienen en común <span class="cta-chev">⌄</span>');
+  stageCta.style.left = Math.round(STAGE_W/2)+'px';
+  stageCta.style.top  = '290px';
+  stageCta.addEventListener('click', function(){
+    window.scrollTo({ top: Math.round(window.innerHeight*0.92), behavior:'smooth' });
+  });
+  stage.appendChild(stageCta);
 
   // Flechas blancas entre los personajes de la fila intro
   for(let i=0;i<STATIONS.length-1;i++){
@@ -574,7 +593,7 @@
 
   function revealAll(){ document.querySelectorAll('.reveal').forEach(n=> n.style.opacity=1); }
 
-  if(window.gsap && window.ScrollTrigger){
+  if(window.gsap && window.ScrollTrigger && !IS_MOBILE_STAGE){
     gsap.registerPlugin(ScrollTrigger);
 
     // La línea punteada se dibuja de arriba hacia abajo siguiendo el scroll.
@@ -622,7 +641,7 @@
     });
 
     // Portada: título, etiquetas y flechas se desvanecen al empezar a bajar
-    gsap.to('.stage-title', { opacity:0, y:-18, ease:'none',
+    gsap.to('.stage-title, .stage-bajada, .stage-cta', { opacity:0, y:-18, ease:'none',
       scrollTrigger:{ trigger:wrap, start:'top top', end:'+=340', scrub:true } });
     gsap.to('.intro-lbl', { opacity:0, ease:'none',
       scrollTrigger:{ trigger:wrap, start:'top top', end:'+=300', scrub:true } });
@@ -666,6 +685,86 @@
     revealAll();
   }
   
+
+
+// ============================================================
+// 2b) STAGE MÓVIL — reflow vertical (<=820px). Reusa STATIONS + YO_STATION
+//     en tarjetas apiladas con aparición por scroll. El zig-zag desktop
+//     (#stageWrap) se oculta por CSS en ese ancho.
+// ============================================================
+  (function(){
+    var host = document.getElementById('stageWrap');
+    if(!host || document.getElementById('stageMobile')) return;
+
+    function card(o, opts){
+      opts = opts || {};
+      var age  = o.age ? ' <span>('+o.age+')</span>' : '';
+      var role = o.role && o.role!=='Yo' ? '<div class="sm-role">'+o.role+'</div>' : '';
+      var pop  = (o.popT||o.popB) ?
+        '<button class="sm-more" type="button" aria-expanded="false"><span>'+(o.popE||'Ver más')+'</span><span class="chev">›</span></button>'+
+        '<div class="sm-pop" hidden><strong>'+(o.popT||'')+'</strong><span>'+(o.popB||'')+'</span></div>' : '';
+      return '<article class="sm-card'+(opts.cls?(' '+opts.cls):'')+'">'+
+        '<div class="sm-top">'+
+          '<div class="sm-circle'+(opts.yo?' sm-circle-yo':'')+'"><img src="'+opts.img+'" alt="'+(o.role||o.name||'')+'"></div>'+
+          '<div class="sm-id">'+
+            '<div class="sm-name">'+(o.name||'Yo')+age+'</div>'+
+            role+
+            '<div class="sm-region">'+o.region+'</div>'+
+          '</div>'+
+        '</div>'+
+        '<p class="sm-info">'+o.info+'</p>'+
+        pop+
+        '<div class="sm-q'+(opts.finalQ?' sm-q-final':'')+'">'+o.q+'</div>'+
+      '</article>';
+    }
+
+    var html = '<h2 class="sm-title">Todo está conectado</h2>'+
+      '<p class="sm-lead">Nueve personas. Historias que representan situaciones en distintos departamentos del país. Diez señales aparentemente desconectadas.</p>'+
+      '<button class="sm-cta" type="button">Descubre qué tienen en común <span class="cta-chev">⌄</span></button>';
+    STATIONS.forEach(function(s,i){ html += card(s, { img: IMG_BASE+'personaje-'+(i+1)+'.png' }); });
+    html += card(YO_STATION, { img: IMG_BASE+'personaje-yo.png', yo:true, cls:'sm-yo', finalQ:true });
+    html += '<p class="sm-final">¿Y si la siguiente historia fuera la tuya?</p>';
+
+    var m = document.createElement('section');
+    m.id = 'stageMobile';
+    m.setAttribute('aria-label','Todo está conectado — historias de El Niño');
+    m.innerHTML = html;
+    host.parentNode.insertBefore(m, host);
+
+    // Expandir / colapsar el dato extra
+    m.addEventListener('click', function(e){
+      var cta = e.target.closest('.sm-cta');
+      if(cta){ var f = m.querySelector('.sm-card'); if(f) f.scrollIntoView({behavior:'smooth', block:'start'}); return; }
+      var b = e.target.closest('.sm-more'); if(!b) return;
+      var open = b.getAttribute('aria-expanded')==='true';
+      b.setAttribute('aria-expanded', String(!open));
+      b.classList.toggle('open', !open);
+      var pop = b.nextElementSibling;
+      if(pop && pop.classList.contains('sm-pop')) pop.hidden = open;
+    });
+
+    // Aparición por scroll (fade + slide)
+    var items = m.querySelectorAll('.sm-card, .sm-final');
+    // La 1ª tarjeta se revela SÍNCRONAMENTE (siempre visible al cargar, sin
+    // depender de rAF/IO, que se suspenden si la pestaña está oculta).
+    if(items[0]) items[0].classList.add('in');
+    if('IntersectionObserver' in window){
+      var io = new IntersectionObserver(function(es){
+        es.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
+      }, { rootMargin:'0px 0px -10% 0px', threshold:0.12 });
+      items.forEach(function(el){ io.observe(el); });
+      // Revela de inmediato lo que ya está en pantalla al cargar (evita el 1er
+      // fade "pegado"): IO puede tardar un frame en disparar la primera tarjeta.
+      requestAnimationFrame(function(){
+        items.forEach(function(el){
+          if(el.getBoundingClientRect().top < window.innerHeight*0.92) el.classList.add('in');
+        });
+      });
+    } else {
+      items.forEach(function(el){ el.classList.add('in'); });
+    }
+  })();
+
 
 
 // ============================================================

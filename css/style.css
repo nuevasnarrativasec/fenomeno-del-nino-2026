@@ -173,7 +173,7 @@
     p.bajada{
         color: #fff;
         font: 1.1rem/1.4 'Monoglyphic Light';
-        max-width: 510px;
+        max-width: 560px;
     }
   .hero .lead{
     font-family:system-ui,-apple-system,sans-serif;
@@ -507,7 +507,7 @@
       .mapa-intro strong{ color:#1f7a70; font-family:'Monoglyphic Bold', system-ui, sans-serif; }
       .mapa-layout{
         display:flex; gap:32px; align-items:stretch;
-        margin-top:24px; justify-content:center;
+        margin-top:54px; justify-content:center;
       }
       .mapa-map{ flex:0 0 auto; width:min(44vw,420px); position:relative; }
       .mapa-svg-holder{ width:100%; }
@@ -739,3 +739,14 @@ span.separador-logo {
         .met-inner{ padding:30px 22px; }
         .met-title{ font-size:1.7rem; }
       }
+
+p.previo-nlp{
+    font-family: 'Monoglyphic Light', system-ui, sans-serif;
+    font-size: 1.05rem;
+    line-height: 1.5;
+    color: #3a3a3a;
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 80px 0 20px;
+}

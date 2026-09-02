@@ -19,6 +19,78 @@
   </style>
   <div class="grid-overlay" aria-hidden="true"></div>
 
+  <!-- ============================================================
+       Stage MÓVIL (reflow vertical <=820px). #stageMobile lo crea js/main.js;
+       aquí solo su estilo y el ocultamiento del zig-zag desktop en ese ancho.
+       ============================================================ -->
+  <style>
+    #stageMobile{ display:none; }
+    @media (max-width:820px){
+      .topbar{ display:none; }
+      #stageWrap{ display:none !important; }
+      #stageMobile{ display:block; background:#050505; padding:30px 16px 44px; position:relative; z-index:1; }
+      .sm-title{ font-family:'Monoglyphic Thin',system-ui,sans-serif; text-transform:uppercase;
+        letter-spacing:.11em; font-size:1.55rem; color:#e9e2d7; text-align:center; margin:6px 0 10px; }
+      .sm-lead{ font-family:'Monoglyphic Light',system-ui,-apple-system,sans-serif; color:#b5aea2;
+        text-align:center; font-size:.95rem; line-height:1.5; max-width:38ch; margin:0 auto 14px; }
+      .sm-card{ max-width:520px; margin:0 auto 26px; opacity:0; transform:translateY(22px);
+        transition:opacity .55s ease, transform .55s ease; }
+      .sm-card.in{ opacity:1; transform:none; }
+      .sm-top{ display:flex; align-items:center; gap:14px; margin-bottom:12px; }
+      .sm-circle{ flex:0 0 auto; width:82px; height:82px; border-radius:50%; border:2px solid #fff;
+        overflow:hidden; display:flex; align-items:flex-end; justify-content:center; background:#0c0c0c; }
+      .sm-circle img{ width:80%; height:auto; display:block; }
+      .sm-id{ min-width:0; }
+      .sm-name{ font-family:'Monoglyphic Bold',system-ui,sans-serif; color:#fff; font-size:1.28rem; line-height:1.06; }
+      .sm-name span{ font-weight:400; color:#e9e2d7; }
+      .sm-role{ font-family:'Monoglyphic Bold',system-ui,sans-serif; color:#e0552a; font-size:.95rem; margin-top:3px; }
+      .sm-region{ display:inline-block; margin-top:7px; background:#ee0c0c; color:#000;
+        font:700 .72rem/1 'Monoglyphic Bold',system-ui,sans-serif; letter-spacing:.03em; padding:4px 9px; }
+      .sm-info{ background:#fff; color:#141414; border-radius:6px; padding:15px 16px; margin:0;
+        font-family:system-ui,-apple-system,sans-serif; font-size:1rem; line-height:1.5; }
+      .sm-more{ margin-top:10px; width:100%; display:flex; align-items:center; justify-content:space-between;
+        gap:10px; background:#141414; color:#f0ede6; border:1px solid #2a2a2a; border-radius:6px;
+        padding:11px 14px; font:700 .9rem/1.2 'Monoglyphic Bold',system-ui,sans-serif; cursor:pointer; text-align:left; }
+      .sm-more .chev{ color:#e0552a; font-size:1.15rem; transition:transform .25s ease; }
+      .sm-more.open .chev{ transform:rotate(90deg); }
+      .sm-pop{ background:#101010; border:1px solid #242424; border-top:0; border-radius:0 0 6px 6px;
+        margin-top:-6px; padding:14px 16px 16px; }
+      .sm-pop strong{ display:block; color:#fff; font-family:'Monoglyphic Bold',system-ui,sans-serif;
+        font-size:1rem; line-height:1.2; margin-bottom:6px; }
+      .sm-pop span{ display:block; color:#cbc6bc; font-family:system-ui,-apple-system,sans-serif;
+        font-size:.92rem; line-height:1.5; }
+      .sm-q{ margin-top:14px; background:#e0552a; color:#fff; border-radius:8px; padding:14px 16px;
+        font:700 1.02rem/1.32 'Monoglyphic Bold',system-ui,sans-serif; }
+      .sm-q-final{ background:#ee0c0c; }
+      .sm-final{ max-width:520px; margin:36px auto 6px; text-align:center; color:#fff;
+        font:700 1.5rem/1.22 'Monoglyphic Bold',system-ui,sans-serif; opacity:0; transform:translateY(18px);
+        transition:opacity .65s ease, transform .65s ease; }
+      .sm-final.in{ opacity:1; transform:none; }
+    }
+    @media (prefers-reduced-motion:reduce){
+      .sm-card,.sm-final{ transition:none; opacity:1; transform:none; }
+    }
+  </style>
+
+  <!-- Bajada + CTA bajo el titular de la portada (desktop en el lienzo escalado;
+       móvil en #stageMobile). Los elementos los crea js/main.js. -->
+  <style>
+    .stage-bajada{ position:absolute; z-index:6; transform:translateX(-50%); text-align:center;
+      width:640px; font-family:'Monoglyphic Light',system-ui,-apple-system,sans-serif;
+      font-size:1.18rem; line-height:1.5; color:#c9c0b4; }
+    .stage-cta{ position:absolute; z-index:6; transform:translateX(-50%); white-space:nowrap;
+      display:inline-flex; align-items:center; gap:8px; cursor:pointer; color:#e0552a;
+      font-family:'Monoglyphic Bold',system-ui,-apple-system,sans-serif; font-size:1.12rem; letter-spacing:.02em; }
+    .cta-chev{ font-size:1.35rem; line-height:1; display:inline-block; animation:ctaBob 1.8s ease-in-out infinite; }
+    @keyframes ctaBob{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(5px); } }
+    @media (prefers-reduced-motion:reduce){ .cta-chev{ animation:none; } }
+    @media (max-width:820px){
+      .sm-cta{ display:flex; align-items:center; gap:8px; margin:0 auto 32px; padding:0;
+        background:none; border:0; cursor:pointer; color:#e0552a;
+        font:700 1.06rem/1.2 'Monoglyphic Bold',system-ui,-apple-system,sans-serif; }
+    }
+  </style>
+
   <div class="topbar">Para ver más información presiona el botón <span class="chev">›</span> sobre cada persona</div>
 
   <!-- (la portada "Todo está conectado" ahora vive dentro del #stage) -->
@@ -40,7 +112,10 @@
         </h1>
         
         <p class="bajada">
-          En 2017 y 2023, cambios en el mar coincidieron con impactos en la salud, la agricultura, la pesca y la infraestructura. Seguimos esas huellas en distintas regiones del Perú para entender cómo un mismo fenómeno puede sentirse de maneras muy diferentes
+          Diez señales que pueden formar parte de una misma cadena. El Niño altera el océano y la atmósfera, pero sus efectos no se sienten igual en todas partes: cambian y pueden intensificarse según el territorio, la infraestructura y las vulnerabilidades existentes.
+        </p>
+        <p class="bajada">
+          En 2017 y 2023, los cambios en el mar coincidieron con impactos en la salud, la agricultura, la pesca y la infraestructura. Seguimos esas huellas en distintas regiones del Perú para entender cómo un mismo fenómeno puede sentirse de maneras muy diferentes.
         </p>
         <img src="./img/flecha-bajar.png" alt="flecha bajar" class="flecha-bajar">
         <p class="lead">Nueve personas de todo el país, un mismo fenómeno. Desliza para recorrer sus historias… y descubrir dónde encajas tú.</p>
@@ -55,7 +130,7 @@
 
         </h3>
         <p class="bajada-mapa-3d">
-          Para seguir El Niño, el Pacífico ecuatorial se divide en cuatro regiones de monitoreo. En esta herramienta puedes explorarlas junto con 20 casos internacionales y ver cómo un mismo fenómeno puede sentirse de formas distintas según el lugar.
+          Para seguir El Niño, el Pacífico ecuatorial se divide en cuatro regiones de monitoreo. En este globo puedes explorarlas junto con 20 casos internacionales y observar cómo las condiciones del océano se relacionan con impactos diferentes según el lugar.
         </p>        
           <ul class="bajada-mapa-3d-ul">
             <li>
@@ -65,14 +140,14 @@
               <span>Niño 3:</span> Pacífico ecuatorial oriental.
             </li>
             <li>
-              <span>Niño 3.4:</span> zona intermedia entre Niño 3 y Niño 4, en el Pacífico central.
+              <span>Niño 3.4:</span> Pacífico central, entre las regiones Niño 3 y Niño 4.
             </li>
             <li>
               <span>Niño 4:</span> Pacífico ecuatorial occidental.
             </li>
           </ul>
         <p class="bajada-mapa-3d">
-          <span>Para Perú, dos son especialmente importantes:</span> Niño 1+2 se monitorea con el <span>ICEN</span> y permite seguir El Niño Costero; Niño 3.4 se monitorea con el <span>ONI</span> y sigue El Niño de escala global. Son fenómenos independientes, no siempre alcanzan la misma intensidad.
+          <span>Para Perú, presta atención a dos zonas:</span> Niño 1+2 es clave para seguir El Niño Costero, mediante el ICEN; Niño 3.4 permite seguir El Niño de escala global, mediante indicadores como el ONI. Ambos fenómenos pueden ocurrir de manera independiente y no necesariamente alcanzan la misma intensidad.
         </p>
         <p class="bajada-mapa-3d">
           <span>Línea de temperatura</span>
@@ -130,7 +205,9 @@
       <div class="mapa-inner">
         <h3>¿Dónde puede golpear más fuerte El Niño?</h3>
         <p class="mapa-intro">
-          Cruzamos 10 indicadores en 26 territorios: separamos Lima Metropolitana de Lima Provincias y contamos Callao de forma independiente para comparar mejor sus impactos y vulnerabilidades. Cada indicador muestra un impacto registrado o una condición que puede hacer más vulnerable a un territorio.
+          Construimos un modelo que reúne 10 señales asociadas a cómo El Niño puede impactar de manera distinta en cada departamento. Las señales combinan antecedentes históricos, condiciones sociales y económicas, exposición territorial y capacidad de respuesta.
+El resultado muestra cuántas de esas diez señales coinciden en cada departamento. No es un índice de riesgo ni predice lo que ocurrirá: sirve para identificar dónde se acumulan más factores que, en eventos anteriores, estuvieron relacionados con mayores impactos.
+
         </p>
 
         <div class="mapa-layout">
@@ -159,6 +236,26 @@
         <p class="mapa-source">FUENTE: IMARPE, INDECI, IPE, PRODUCE-BCRP, MINSA y MIMP.</p>
       </div>
     </section>
+
+    <!-- Gráfico: triangulación de evidencia en Cajamarca (caso regional) -->
+    <div id="triBox" style="background:#fff;">
+      <iframe id="triFrame"
+              data-src="./grafico-triangulacion-cajamarca.html"
+              title="Cajamarca: triangulación de evidencia de El Niño en cuatro áreas"
+              loading="lazy"
+              scrolling="no"
+              style="width:100%; min-height:900px; border:0; display:block; overflow:hidden;"></iframe>
+    </div>
+
+    <!-- Gráfico: correlación dengue–inundaciones (grafico-dengue-inundacion.html incrustado) -->
+    <div id="graficoBox" style="background:#fff;">
+      <iframe id="graficoFrame"
+              data-src="./grafico-dengue-inundacion.html"
+              title="Correlación entre dengue e inundaciones del FEN, 2023"
+              loading="lazy"
+              scrolling="no"
+              style="width:100%; min-height:900px; border:0; display:block; overflow:hidden;"></iframe>
+    </div>
 
     <!-- ============================================================
          Galería de fotos "Archivo histórico" — crossfade por scroll.
@@ -197,8 +294,8 @@
       <div class="gal-track">
         <div class="gal-sticky">
           <div class="gal-header">
-            <h2 class="gal-title">Archivo histórico</h2>
-            <p class="gal-sub">Así se vivió el Fenómeno del Niño en los últimos 40 años</p>
+            <h2 class="gal-title">40 años de El Niño en el archivo</h2>
+            <p class="gal-sub">Así se vivieron sus impactos en el Perú</p>
             <div class="gal-chev" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
             </div>
@@ -261,29 +358,14 @@
       </script>
     </section>
 
+   
 
-    <!-- Gráfico: triangulación de evidencia en Cajamarca (caso regional) -->
-    <div id="triBox" style="background:#fff;">
-      <iframe id="triFrame"
-              data-src="./grafico-triangulacion-cajamarca.html"
-              title="Cajamarca: triangulación de evidencia de El Niño en cuatro áreas"
-              loading="lazy"
-              scrolling="no"
-              style="width:100%; min-height:900px; border:0; display:block; overflow:hidden;"></iframe>
-    </div>
-
-    <!-- Gráfico: correlación dengue–inundaciones (grafico-dengue-inundacion.html incrustado) -->
-    <div id="graficoBox" style="background:#fff;">
-      <iframe id="graficoFrame"
-              data-src="./grafico-dengue-inundacion.html"
-              title="Correlación entre dengue e inundaciones del FEN, 2023"
-              loading="lazy"
-              scrolling="no"
-              style="width:100%; min-height:900px; border:0; display:block; overflow:hidden;"></iframe>
-    </div>
 
     <!-- Temas recurrentes FEN + Advertencias (hallazgos del archivo, agrupados con acordeón) -->
     <div id="taBox" style="background:#fff;">
+       <p class="previo-nlp">
+        Pero el archivo no solo guarda imágenes. También permite ver qué problemas se repiten una y otra vez.
+      </p>
       <iframe id="taFrame"
               data-src="./temas-advertencias.html"
               title="Temas recurrentes del FEN y advertencias del archivo"
