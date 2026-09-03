@@ -172,8 +172,8 @@
     }
     p.bajada{
         color: #fff;
-        font: 1.1rem/1.4 'Monoglyphic Light';
-        max-width: 560px;
+        font: 1.3rem/1.4 'Monoglyphic Light';
+        max-width: 660px;
     }
   .hero .lead{
     font-family:system-ui,-apple-system,sans-serif;
@@ -436,6 +436,7 @@
     }
     p.bajada-mapa-3d{
       font-family: 'Monoglyphic Light', system-ui, sans-serif;
+      font-size: 1.3rem;
       padding: 20px 0;
       line-height: 1.4;
       max-width: 600px;
@@ -449,7 +450,7 @@
       }
         ul.bajada-mapa-3d-ul li{
           font-family: 'Monoglyphic Light', system-ui, sans-serif;
-          font-size: 1rem;
+              font-size: 1.3rem;
           line-height: 1.4;
           color: #fff;
           margin-bottom: 8px;
@@ -501,7 +502,7 @@
       }
       .mapa-intro{
         font-family:'Monoglyphic Light', system-ui, sans-serif;
-        font-size:1.05rem; line-height:1.5; color:#3a3a3a;
+        font-size:1.3rem; line-height:1.5; color:#3a3a3a;
         max-width:700px; margin:16px auto 8px; text-align:center;
       }
       .mapa-intro strong{ color:#1f7a70; font-family:'Monoglyphic Bold', system-ui, sans-serif; }
@@ -576,7 +577,7 @@
       }
       .mp-explic{
             font-family: 'Monoglyphic Light', system-ui, sans-serif;
-        font-size:.98rem; line-height:1.55; color:#33302b; margin-top:14px;
+        font-size:1.2rem; line-height:1.55; color:#33302b; margin-top:14px;
       }
       .mapa-source{
         font-family:'Monoglyphic Light', system-ui, sans-serif;

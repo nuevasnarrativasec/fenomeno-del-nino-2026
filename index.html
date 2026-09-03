@@ -75,16 +75,16 @@
       #stmPop:not(.on){ pointer-events:none; }               /* mientras se desvanece, deja pasar los clics */
       #stmPop.on{ pointer-events:auto; }
       #stmPop.on{ opacity:1; }
-      #stmPop .stm-pop-card{ position:relative; width:100%; max-width:560px; background:#0f0f10;
+      #stmPop .stm-pop-card{ position:relative; width:90%; max-width:560px; background:#0f0f10;
         border:1px solid #262626; border-radius:16px 16px 0 0; padding:22px 20px 30px; transform:translateY(16px);
-        transition:transform .22s ease; }
+        transition:transform .22s ease; top: -50%;}
       #stmPop.on .stm-pop-card{ transform:none; }
       #stmPop .stm-pop-x{ position:absolute; top:12px; right:14px; background:none; border:0; color:#8a8a8a;
         font-size:1.5rem; line-height:1; cursor:pointer; }
-      #stmPop .stm-pop-e{ color:#e0552a; font:700 .8rem/1.2 'Monoglyphic Bold',system-ui,sans-serif;
+      #stmPop .stm-pop-e{ color:#e0552a; font:700 1rem/1.2 'Monoglyphic Bold',system-ui,sans-serif;
         letter-spacing:.04em; text-transform:uppercase; margin-bottom:8px; }
-      #stmPop .stm-pop-t{ color:#fff; font:700 1.15rem/1.25 'Monoglyphic Bold',system-ui,sans-serif; margin-bottom:10px; }
-      #stmPop .stm-pop-b{ color:#cbc6bc; font:400 .98rem/1.5 system-ui,-apple-system,sans-serif; }
+      #stmPop .stm-pop-t{ color:#fff; font:700 1.2rem/1.25 'Monoglyphic Bold',system-ui,sans-serif; margin-bottom:10px; }
+      #stmPop .stm-pop-b{ color:#cbc6bc; font:400 1.2rem/1.5 system-ui,-apple-system,sans-serif; }
     }
     @media (prefers-reduced-motion:reduce){
       #stageM .reveal{ opacity:1 !important; }
@@ -236,7 +236,7 @@
       .mpi-grid{ display:grid; grid-template-columns:1fr 1fr; column-gap:16px; row-gap:1px; }
       .mpi-item{ position:relative; display:flex; align-items:center; gap:8px; padding:5px 0; border-bottom:1px solid #ececec; }
       .mpi-ico{ width:20px; height:20px; object-fit:contain; flex:0 0 auto; transition:opacity .18s ease, filter .18s ease; }
-      .mpi-lbl{ font-size:.8rem; color:#1a1a1a; transition:opacity .18s ease, color .18s ease; }
+      .mpi-lbl{ font-size:1rem; color:#1a1a1a; transition:opacity .18s ease, color .18s ease; }
       /* activo */
       .mpi-item.is-on .mpi-ico{ opacity:1; }
       .mpi-item.is-on .mpi-lbl{     font-family: 'Monoglyphic Light', system-ui, sans-serif;color:#111; opacity:1; }
@@ -355,32 +355,44 @@ El resultado muestra cuántas de esas diez señales coinciden en cada departamen
           max-height:calc(100% - 44px); object-fit:contain; box-shadow:0 10px 40px rgba(0,0,0,.5); }
         .gal-slide figcaption{ margin-top:14px; font-family:system-ui,-apple-system,Arial,sans-serif;
           font-size:.78rem; letter-spacing:.05em; color:#b8b8b8; text-align:center; }
+        /* Set MÓVIL (fotos img/galeria, fade simple). Oculto salvo en modo fade/static. */
+        .gal-slide-m{ position:absolute; inset:0; display:none; align-items:center; justify-content:center;
+          opacity:0; will-change:opacity; pointer-events:none; z-index:2; }
+        .gal-slide-m img{ display:block; width:100%; height:100%; object-fit:contain; }
+        .gal-slide-m figcaption{ position:absolute; left:0; right:0; bottom:16px; text-align:center;
+          font-family:system-ui,-apple-system,Arial,sans-serif; font-size:.74rem; letter-spacing:.04em;
+          color:#f2f2f2; padding:0 16px; text-shadow:0 1px 6px rgba(0,0,0,.9); }
+
         /* Modo glitch (desktop): el canvas pinta las fotos y la transición; las <img> se ocultan
            pero siguen cargando para alimentar el canvas. Los créditos quedan por encima. */
         .gal-stage.glitch-on .gal-canvas{ display:block; }
         .gal-stage.glitch-on .gal-slide img{ display:none; }
         .gal-stage.glitch-on .gal-slide{ justify-content:flex-end; padding:14px 24px 30px; }
+
+        /* Modo FADE (móvil): sin canvas ni glitch; se ve el set .gal-slide-m con crossfade. */
+        .galeria[data-gmode="fade"] .gal-canvas{ display:none; }
+        .galeria[data-gmode="fade"] .gal-slide{ display:none; }
+        .galeria[data-gmode="fade"] .gal-slide-m{ display:flex; }
+
+        /* Modo STATIC (prefers-reduced-motion): fotos apiladas sin pin, en cualquier ancho. */
+        .galeria[data-gmode="static"] .gal-track{ height:auto; }
+        .galeria[data-gmode="static"] .gal-sticky{ position:static; height:auto; display:block; overflow:visible; }
+        .galeria[data-gmode="static"] .gal-chev{ display:none; }
+        .galeria[data-gmode="static"] .gal-stage{ position:static; height:auto; }
+        .galeria[data-gmode="static"] .gal-canvas{ display:none !important; }
+        .galeria[data-gmode="static"] .gal-slide{ display:none !important; }
+        .galeria[data-gmode="static"] .gal-slide-m{ position:static; inset:auto; display:flex !important; opacity:1 !important;
+          padding:0 0 30px; pointer-events:auto; max-width:1000px; margin:0 auto; }
+        .galeria[data-gmode="static"] .gal-slide-m img{ width:100%; height:auto; object-fit:contain; box-shadow:0 8px 26px rgba(0,0,0,.5); }
+        .galeria[data-gmode="static"] .gal-slide-m figcaption{ position:static; margin-top:10px; text-shadow:none; color:#b8b8b8; }
+
         @media (max-width:720px){
-          /* Modo glitch en MÓVIL: mismo pin + canvas + transición que en desktop,
-             con cabecera compacta y algo menos de scroll por foto. */
-          .galeria.glitch-mode .gal-track{ height:520vh; }
           .gal-header{ padding:30px 16px 12px; }
           .gal-title{ font-size:1.5rem; }
           .gal-sub{ font-size:.95rem; }
-          .galeria.glitch-mode .gal-slide figcaption{ font-size:.72rem; }
-          /* Fallback (prefers-reduced-motion / sin glitch): fotos apiladas estáticas. */
-          .galeria:not(.glitch-mode) .gal-track{ height:auto; }
-          .galeria:not(.glitch-mode) .gal-sticky{ position:static; height:auto; display:block; overflow:visible; }
-          .galeria:not(.glitch-mode) .gal-chev{ display:none; }
-          .galeria:not(.glitch-mode) .gal-stage{ position:static; height:auto; }
-          .galeria:not(.glitch-mode) .gal-canvas{ display:none !important; }
-          .galeria:not(.glitch-mode) .gal-slide{ position:static; inset:auto; opacity:1 !important; transform:none !important;
-            padding:0 12px 30px; pointer-events:auto; justify-content:flex-start; }
-          .galeria:not(.glitch-mode) .gal-slide img{ display:block !important; width:100%; height:auto; max-width:100%; max-height:none;
-            box-shadow:0 8px 26px rgba(0,0,0,.5); }
-          .galeria:not(.glitch-mode) .gal-slide figcaption{ margin-top:11px; }
+          .galeria[data-gmode="fade"] .gal-track{ height:520vh; }   /* 7 fotos, fade */
         }
-        @media (prefers-reduced-motion:reduce){ .gal-slide{ transition:none; } }
+        @media (prefers-reduced-motion:reduce){ .gal-slide,.gal-slide-m{ transition:none; } }
       </style>
       <div class="gal-track">
         <div class="gal-sticky">
@@ -424,6 +436,36 @@ El resultado muestra cuántas de esas diez señales coinciden en cada departamen
             <img src="img/galeria-2/bg-galeria-8.jpg" alt="Archivo histórico del Fenómeno del Niño — foto 8" loading="lazy" />
             <figcaption>2017. Foto: Nancy Chappell</figcaption>
           </figure>
+
+          <!-- Set MÓVIL: fotos de img/galeria (sin editar) con fade simple, sin glitch -->
+          <figure class="gal-slide-m">
+            <img src="img/galeria/bg-galeria-1.jpg" alt="Archivo histórico del Fenómeno del Niño — foto 1" loading="lazy" />
+            <figcaption>17 de abril de 1983. Foto: Archivo El Comercio</figcaption>
+          </figure>
+          <figure class="gal-slide-m">
+            <img src="img/galeria/bg-galeria-2.jpg" alt="Archivo histórico del Fenómeno del Niño — foto 2" loading="lazy" />
+            <figcaption>Carretera Central 1998. Foto: Verónica Salem</figcaption>
+          </figure>
+          <figure class="gal-slide-m">
+            <img src="img/galeria/bg-galeria-3.jpg" alt="Archivo histórico del Fenómeno del Niño — foto 3" loading="lazy" />
+            <figcaption>1998. Foto: Yayo López</figcaption>
+          </figure>
+          <figure class="gal-slide-m">
+            <img src="img/galeria/bg-galeria-4.jpg" alt="Archivo histórico del Fenómeno del Niño — foto 4" loading="lazy" />
+            <figcaption>2017 Evangelina Chamorro. Foto: Christian Hidalgo</figcaption>
+          </figure>
+          <figure class="gal-slide-m">
+            <img src="img/galeria/bg-galeria-5.jpg" alt="Archivo histórico del Fenómeno del Niño — foto 5" loading="lazy" />
+            <figcaption>2017. Foto: Rolly Reyna</figcaption>
+          </figure>
+          <figure class="gal-slide-m">
+            <img src="img/galeria/bg-galeria-6.jpg" alt="Archivo histórico del Fenómeno del Niño — foto 6" loading="lazy" />
+            <figcaption>Pedregal, 2017. Foto: Lino Chipana</figcaption>
+          </figure>
+          <figure class="gal-slide-m">
+            <img src="img/galeria/bg-galeria-7.jpg" alt="Archivo histórico del Fenómeno del Niño — foto 7" loading="lazy" />
+            <figcaption>Yaku, 2023. Foto: ANDINA</figcaption>
+          </figure>
           </div>
         </div>
       </div>
@@ -436,6 +478,9 @@ El resultado muestra cuántas de esas diez señales coinciden en cada departamen
         var domImgs=slides.map(function(s){ return s.querySelector('img'); });
         // Imágenes dedicadas y precargadas para el canvas (no dependen de loading=lazy)
         var imgs=domImgs.map(function(im){ var x=new Image(); if(im){ x.src=im.getAttribute('src'); } return x; });
+        // Set MÓVIL (fade simple con fotos de img/galeria)
+        var slidesM=[].slice.call(sec.querySelectorAll('.gal-slide-m'));
+        var mode='';
 
         var canvas=document.createElement('canvas'); canvas.className='gal-canvas';
         stage.appendChild(canvas);
@@ -453,10 +498,15 @@ El resultado muestra cuántas de esas diez señales coinciden en cada departamen
           canvas.style.width=W+'px'; canvas.style.height=H+'px';
           ctx.setTransform(DPR,0,0,DPR,0,0);
         }
+        function computeMode(){
+          if(mqReduce.matches) return 'static';       // reduced-motion: fotos apiladas
+          return mqDesktop.matches ? 'glitch' : 'fade'; // desktop=glitch, móvil=fade simple
+        }
         function updateMode(){
-          glitch = !mqReduce.matches;                 // glitch en todos los anchos (desktop y móvil)
+          mode = computeMode();
+          glitch = (mode==='glitch');
           stage.classList.toggle('glitch-on', glitch);
-          sec.classList.toggle('glitch-mode', glitch);
+          sec.setAttribute('data-gmode', mode);
           if(glitch) resize();
           loop();
         }
@@ -536,6 +586,16 @@ El resultado muestra cuántas de esas diez señales coinciden en cada departamen
         var raf=null;
         function draw(t){
           raf=null;
+          // MÓVIL: fade simple (crossfade continuo por scroll del set .gal-slide-m). Sin rAF continuo.
+          if(mode==='fade'){
+            var NM=slidesM.length;
+            if(NM){
+              var pm=progress()*(NM-1);
+              for(var j=0;j<NM;j++){ slidesM[j].style.opacity=(1-Math.min(1,Math.abs(pm-j))).toFixed(3); }
+            }
+            return;
+          }
+          if(mode!=='glitch') return;         // static: lo resuelve el CSS
           var prog=progress(), pos=prog*(N-1);
           var i=Math.min(N-1, Math.floor(pos)), f=pos-i;
           // La transición (crossfade + glitch) ocurre SOLO en el tramo final de cada segmento,
@@ -547,7 +607,6 @@ El resultado muestra cuántas de esas diez señales coinciden en cada departamen
           for(var k=0;k<N;k++) slides[k].style.opacity='0';
           if(tf<0.5 || i+1>=N) slides[i].style.opacity='1';   // cambio seco en mitad del glitch
           else slides[i+1].style.opacity='1';                  // (queda enmascarado por el efecto)
-          if(!glitch) return;                 // reduced-motion: CSS muestra las <img>
           var cur=imgs[i];
           if(!cur || !cur.naturalWidth){ raf=requestAnimationFrame(draw); return; } // aún cargando: conserva el frame previo
           ctx.clearRect(0,0,W,H);
@@ -598,9 +657,9 @@ El resultado muestra cuántas de esas diez señales coinciden en cada departamen
 
     <!-- Herramienta "Manda tu carta" (widget externo El Comercio) -->
     <div id="cartaBox" style="background:#fff;">
-      <div style="max-width:660px; margin:0 auto; padding:56px 24px 8px; text-align:center;">
+      <div style="max-width:760px; margin:0 auto; padding:56px 24px 8px; text-align:center;">
         <h3 style="font-family:'Monoglyphic Bold', system-ui, sans-serif; font-weight:400; font-size:1.8rem; line-height:1.15; color:#000; margin:0 0 14px;">¿Qué puedes hacer?</h3>
-        <p style="font-family:'Monoglyphic Light', system-ui, sans-serif; font-weight:400; font-size:1.05rem; line-height:1.5; color:#3a3a3a; margin:0;"><b style="font-family:'Monoglyphic Bold', system-ui, sans-serif; color:#000;">Pide una respuesta concreta a tu autoridad regional.</b><br>Completa el formulario y generaremos una solicitud para pedir información sobre su plan de prevención ante El Niño, las medidas previstas y su estado de avance. La solicitud llegará lista para que la envíes desde tu correo.</p><p style="font-family:'Monoglyphic Light', system-ui, sans-serif; font-weight:400; font-size:0.92rem; line-height:1.45; color:#6a6a6a; margin:12px 0 0;">La autoridad deberá responder dentro del plazo legal aplicable.</p>
+        <p style="font-family:'Monoglyphic Light', system-ui, sans-serif; font-weight:400; font-size:1.3rem; line-height:1.5; color:#3a3a3a; margin:0;"><b style="font-family:'Monoglyphic Bold', system-ui, sans-serif; color:#000;">Pide una respuesta concreta a tu autoridad regional.</b><br>Completa el formulario y generaremos una solicitud para pedir información sobre su plan de prevención ante El Niño, las medidas previstas y su estado de avance. La solicitud llegará lista para que la envíes desde tu correo.</p><p style="font-family:'Monoglyphic Light', system-ui, sans-serif; font-weight:400; font-size:1.2rem; line-height:1.45; color:#6a6a6a; margin:12px 0 0;">La autoridad deberá responder dentro del plazo legal aplicable.</p>
       </div>
       <iframe id="cartaFrame"
               data-src="./manda-tu-carta/index.html"

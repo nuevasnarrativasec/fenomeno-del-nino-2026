@@ -7,6 +7,9 @@
         var domImgs=slides.map(function(s){ return s.querySelector('img'); });
         // Imágenes dedicadas y precargadas para el canvas (no dependen de loading=lazy)
         var imgs=domImgs.map(function(im){ var x=new Image(); if(im){ x.src=im.getAttribute('src'); } return x; });
+        // Set MÓVIL (fade simple con fotos de img/galeria)
+        var slidesM=[].slice.call(sec.querySelectorAll('.gal-slide-m'));
+        var mode='';
 
         var canvas=document.createElement('canvas'); canvas.className='gal-canvas';
         stage.appendChild(canvas);
@@ -24,10 +27,15 @@
           canvas.style.width=W+'px'; canvas.style.height=H+'px';
           ctx.setTransform(DPR,0,0,DPR,0,0);
         }
+        function computeMode(){
+          if(mqReduce.matches) return 'static';       // reduced-motion: fotos apiladas
+          return mqDesktop.matches ? 'glitch' : 'fade'; // desktop=glitch, móvil=fade simple
+        }
         function updateMode(){
-          glitch = !mqReduce.matches;                 // glitch en todos los anchos (desktop y móvil)
+          mode = computeMode();
+          glitch = (mode==='glitch');
           stage.classList.toggle('glitch-on', glitch);
-          sec.classList.toggle('glitch-mode', glitch);
+          sec.setAttribute('data-gmode', mode);
           if(glitch) resize();
           loop();
         }
@@ -107,6 +115,16 @@
         var raf=null;
         function draw(t){
           raf=null;
+          // MÓVIL: fade simple (crossfade continuo por scroll del set .gal-slide-m). Sin rAF continuo.
+          if(mode==='fade'){
+            var NM=slidesM.length;
+            if(NM){
+              var pm=progress()*(NM-1);
+              for(var j=0;j<NM;j++){ slidesM[j].style.opacity=(1-Math.min(1,Math.abs(pm-j))).toFixed(3); }
+            }
+            return;
+          }
+          if(mode!=='glitch') return;         // static: lo resuelve el CSS
           var prog=progress(), pos=prog*(N-1);
           var i=Math.min(N-1, Math.floor(pos)), f=pos-i;
           // La transición (crossfade + glitch) ocurre SOLO en el tramo final de cada segmento,
@@ -118,7 +136,6 @@
           for(var k=0;k<N;k++) slides[k].style.opacity='0';
           if(tf<0.5 || i+1>=N) slides[i].style.opacity='1';   // cambio seco en mitad del glitch
           else slides[i+1].style.opacity='1';                  // (queda enmascarado por el efecto)
-          if(!glitch) return;                 // reduced-motion: CSS muestra las <img>
           var cur=imgs[i];
           if(!cur || !cur.naturalWidth){ raf=requestAnimationFrame(draw); return; } // aún cargando: conserva el frame previo
           ctx.clearRect(0,0,W,H);
