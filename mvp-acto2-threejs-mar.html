@@ -2659,11 +2659,11 @@ slider.addEventListener('input', () => { enableOceanLayer(); ensurePeruVisible()
 // ── Picos de temperatura: los meses con los valores ICEN más altos de la serie
 // (eventos cálidos fuertes/extraordinarios). Se resaltan como rombos naranjas
 // sobre el riel para que el usuario los ubique al instante; al hacer clic, el
-// slider salta a ese mes. Índices: jun 1983, dic 1997, ene 2016, mar 2017, jul 2023.
-const PEAK_IDX = [41, 215, 432, 446, 522];   // jun 1983 · dic 1997 · ene 2016 · mar 2017 · jul 2023
+// slider salta a ese mes. Picos = mes de máxima anomalía de cada evento (ICEN, spreadsheet ENFEN).
+const PEAK_IDX = [41, 214, 429, 522];   // jun 1983 (+4,32) · nov 1997 (+4,08) · oct 2015 (+2,23) · jul 2023 (+2,92)
 const peaksEl  = document.getElementById('sliderPeaks');
 const peakPos  = PEAK_IDX.map(i => i / (ICEN.length - 1));   // 0..1 sobre el riel
-const NUDGE = 16;   // px para separar etiquetas de años muy juntos (2016/2017)
+const NUDGE = 16;   // px para separar etiquetas de años muy juntos (por si dos picos quedan cerca)
 PEAK_IDX.forEach((i, k) => {
   const pos = peakPos[k];
   const d = document.createElement('div');
