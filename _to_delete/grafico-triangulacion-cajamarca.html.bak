@@ -71,30 +71,9 @@
   .readme p{ font-family:system-ui,sans-serif; font-size:.95rem; line-height:1.55; color:#3a3a3a; }
   .foot{ font-family:system-ui,sans-serif; font-size:.76rem; line-height:1.55; color:#9a9a9a; margin-top:18px; text-align:center; max-width:820px; margin-left:auto; margin-right:auto; }
 
-  /* Conmutador de áreas (botones + paneles) */
-  .tabs{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-top:30px; }
-  .tab{ display:flex; align-items:center; gap:11px; text-align:left; background:#fff; border:1px solid #dcdcdc; border-radius:10px; padding:16px 18px; cursor:pointer; font-family:inherit; transition:border-color .15s, background .15s, box-shadow .15s; }
-  .tab .t-num{ flex:0 0 auto; width:26px; height:26px; border-radius:50%; color:#fff; font-family:'Monoglyphic Bold',system-ui,sans-serif; font-size:.9rem; display:flex; align-items:center; justify-content:center; }
-  .tab.p1 .t-num{ background:var(--a1);} .tab.p2 .t-num{ background:var(--a2);} .tab.p3 .t-num{ background:var(--a3);} .tab.p4 .t-num{ background:var(--a4);}
-  .tab .t-lbl{ font-family:'Monoglyphic Bold',system-ui,sans-serif; font-size:.98rem; line-height:1.16; color:#1a1a1a; }
-  .tab:hover{ border-color:#bcbcbc; }
-  .tab.p1.is-active{ border-color:var(--a1); background:#fdf1ec; }
-  .tab.p2.is-active{ border-color:var(--a2); background:#faf4e7; }
-  .tab.p3.is-active{ border-color:var(--a3); background:#edf4fa; }
-  .tab.p4.is-active{ border-color:var(--a4); background:#f4eff8; }
-  .panes{ margin-top:22px; }
-  .panes .panel{ display:none; }
-  .panes .panel.is-active{ display:flex; }
-  .panes .p-num{ display:none; }
-  .panes .p-titles h3{ display:none; }
-  .panes .p-titles p{ margin-top:0; }
-
   @media (max-width:760px){
     body{ padding:30px 14px 34px; }
     .grid{ grid-template-columns:1fr; gap:14px; }
-    .tabs{ grid-template-columns:1fr 1fr; gap:11px; }
-    .tab{ padding:13px 14px; }
-    .tab .t-lbl{ font-size:.88rem; }
     .title{ font-size:1.6rem; }
     .kpis{ grid-template-columns:1fr 1fr; }
   }
@@ -106,16 +85,9 @@
     <p class="sub">Esta región reúne 9 de las 10 señales de nuestro modelo. Pero eso no significa que El Niño haya causado cada uno de los cambios que veremos. Lo que buscamos es observar si distintas señales, medidas con fuentes independientes, coinciden en un mismo territorio.  Para entender qué hay detrás, las agrupamos en cuatro áreas de análisis.</p>
     <p class="expo" style="display: none;">El FEN le llega por lluvias en cuenca alta, huaicos y pérdida de campaña — no por el mar. Series indexadas a 2022 = 100, el año previo al último evento (episodios de referencia: 2017 y 2023).</p>
 
-    <div class="tabs" role="tablist">
-      <button type="button" class="tab p1 is-active" data-pane="1"><span class="t-num">1</span><span class="t-lbl">¿Qué cambió alrededor del evento?</span></button>
-      <button type="button" class="tab p2" data-pane="2"><span class="t-num">2</span><span class="t-lbl">¿Qué tan vulnerable era antes?</span></button>
-      <button type="button" class="tab p3" data-pane="3"><span class="t-num">3</span><span class="t-lbl">¿Cómo responden?</span></button>
-      <button type="button" class="tab p4" data-pane="4"><span class="t-num">4</span><span class="t-lbl">¿Qué se paraliza?</span></button>
-    </div>
-
-    <div class="panes">
+    <div class="grid">
       <!-- ÁREA 1 -->
-      <div class="panel p1 is-active" data-pane="1">
+      <div class="panel p1">
         <div class="p-head">
           <div class="p-num">1</div>
           <div class="p-titles">
@@ -129,7 +101,7 @@
       </div>
 
       <!-- ÁREA 2 -->
-      <div class="panel p2 struct" data-pane="2">
+      <div class="panel p2 struct">
         <div class="p-head">
           <div class="p-num">2</div>
           <div class="p-titles"><h3>¿Qué tan vulnerable era antes?</h3><p>83 de cada 100 hectáreas cultivadas dependen solo de la lluvia y su infraestructura crítica está entre las más expuestas.</p></div>
@@ -150,7 +122,7 @@
       </div>
 
       <!-- ÁREA 3 -->
-      <div class="panel p3" data-pane="3">
+      <div class="panel p3">
         <div class="p-head">
           <div class="p-num">3</div>
           <div class="p-titles">
@@ -164,7 +136,7 @@
       </div>
 
       <!-- ÁREA 4 -->
-      <div class="panel p4" data-pane="4">
+      <div class="panel p4">
         <div class="p-head">
           <div class="p-num">4</div>
           <div class="p-titles">
@@ -263,18 +235,6 @@
     }]
   });
   charts.push(c3);
-
-  // ---------- Conmutador de áreas (tabs) ----------
-  var tabEls  = Array.prototype.slice.call(document.querySelectorAll('.tab'));
-  var paneEls = Array.prototype.slice.call(document.querySelectorAll('.panes .panel'));
-  function activatePane(n){
-    n = String(n);
-    tabEls.forEach(function(t){ t.classList.toggle('is-active', t.getAttribute('data-pane')===n); });
-    paneEls.forEach(function(p){ p.classList.toggle('is-active', p.getAttribute('data-pane')===n); });
-    resizeAll();
-    setTimeout(function(){ resizeAll(); postHeight(); }, 40);
-  }
-  tabEls.forEach(function(t){ t.addEventListener('click', function(){ activatePane(t.getAttribute('data-pane')); }); });
 
   function resizeAll(){ charts.forEach(function(c){ try{ c.resize(); }catch(e){} }); }
   function postHeight(){ try{ parent.postMessage({ type:'triHeight', h:Math.ceil(document.body.getBoundingClientRect().height) }, '*'); }catch(e){} }
