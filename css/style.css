@@ -433,6 +433,7 @@
       text-align: center;
       margin: 0 auto;
       max-width: 700px;
+      letter-spacing: 1.1px;
     }
     p.bajada-mapa-3d{
       font-family: 'Monoglyphic Light', system-ui, sans-serif;
@@ -454,11 +455,13 @@
           line-height: 1.4;
           color: #fff;
           margin-bottom: 8px;
+              letter-spacing: .9px;
         }
           p.bajada-mapa-3d span,
           ul.bajada-mapa-3d-ul li span{
             font-family: 'Monoglyphic Bold', system-ui, sans-serif;
             color: #cf5727;
+                letter-spacing: .9px;
           }
     .box-globo-3d{
             margin: 40px auto 10px;
