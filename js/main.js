@@ -118,7 +118,7 @@
   const FIGURE = (color)=>`<svg viewBox="0 0 40 48"><circle cx="20" cy="11" r="8" fill="${color}"/><path d="M4 48c0-9 7-16 16-16s16 7 16 16z" fill="${color}"/></svg>`;
 
   const STATIONS = [
-    { name:"María", age: '34 años', role:"Ciudadana", region:"PIURA",
+    { name:"María", age: '34 años', role:"Ama de casa", region:"PIURA",
       cx:150, cy:135, side:"right", infoTop:92,
       info:"Vivo en un asentamiento humano en las afueras de Piura. Mi hija Xiomara, de 9 años, lleva tres días internada con dengue. Creo que la culpa es de un mosquito que la picó en el patio de la casa.",
       q:"¿Y si no fue el mosquito, sino la misma lluvia que golpeaba más al sur?",
@@ -380,9 +380,9 @@
 
   // CTA de la portada (baja al empezar el recorrido al hacer clic)
   const stageCta = el('div','stage-cta',
-    'Descubre qué tienen en común <span class="cta-chev">⌄</span>');
+    'Haz scroll para interactuar<span class="cta-arrow">↓</span>');
   stageCta.style.left = Math.round(STAGE_W/2)+'px';
-  stageCta.style.top  = '290px';
+  stageCta.style.top  = '600px';
   stageCta.addEventListener('click', function(){
     window.scrollTo({ top: Math.round(window.innerHeight*0.92), behavior:'smooth' });
   });
@@ -712,8 +712,8 @@
     var title=el('div','stm-title','Todo está conectado'); title.style.top='46px'; stage.appendChild(title);
     var baja=el('div','stm-baja','Nueve personas. Historias que representan situaciones en distintos departamentos del país. Diez señales aparentemente desconectadas.');
     baja.style.top='104px'; stage.appendChild(baja);
-    var cta=el('div','stm-cta','Descubre qué tienen en común <span class="cta-chev">⌄</span>');
-    cta.style.top='210px';
+    var cta=el('div','stm-cta','Scroll para interactuar<span class="cta-arrow">↓</span>');
+    cta.style.top='205px';
     cta.addEventListener('click', function(){ window.scrollTo({ top: Math.round(window.innerHeight*0.9), behavior:'smooth' }); });
     stage.appendChild(cta);
 
