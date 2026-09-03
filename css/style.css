@@ -707,21 +707,34 @@ span.separador-logo {
       .met-card{     max-width: 700px;
     margin: 0 auto;
     padding: 16px;
-    border: 1px solid #000;}
-      .met-inner{ background:#fff; padding:48px 56px; }
+    background: #F0F7FF;
+    border-radius: 20px;
+    box-shadow: 0px 0px 15px #eaeaea;}
+      .met-inner{  padding:48px 56px; }
       .met-title{ font-family: 'Monoglyphic Bold', system-ui, sans-serif;  
                   font-size:1.5rem; line-height:1.15; text-align:center; color:#111; margin:0 0 30px; }
       .met-lede{ font-family: 'Monoglyphic Light', system-ui, sans-serif; font-size:1.06rem; line-height:1.72;
                  color:#222; margin:0 0 18px; }
       .met-lede:last-of-type{ margin-bottom:6px; }
       .met-details{ margin-top:14px; }
-      .met-toggle{ display:inline-flex; align-items:center; gap:9px; cursor:pointer; list-style:none;
-                   font-family:system-ui,-apple-system,sans-serif; font-weight:700; font-size:1.05rem;
-                   color:#b3271b; background:none; border:0; padding:2px 0; user-select:none; }
-      .met-toggle span{ text-decoration:underline; text-underline-offset:3px; text-decoration-thickness:2px; }
-      .met-toggle:hover span{ color:#8f1f15; }
+      .met-toggle{     display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    cursor: pointer;
+    list-style: none;
+    font-family: system-ui, -apple-system, sans-serif;
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: #b3271b;
+    user-select: none;
+    border: 1px solid #c2c2c2;
+    padding: 10px;
+    border-radius: 5px;
+    background: #000; }
+      .met-toggle span{ color:#fff; text-decoration:none; text-underline-offset:3px; text-decoration-thickness:2px; }
+      .met-toggle:hover span{ color:#fff; }
       .met-toggle::-webkit-details-marker{ display:none; }
-      .met-chev{ width:15px; height:15px; transition:transform .2s ease; flex:0 0 auto; }
+      .met-chev{ width:15px; height:15px; transition:transform .2s ease; flex:0 0 auto; color: #fff;}
       .met-details[open] .met-chev{ transform:rotate(180deg); }
       .met-body{ margin-top:30px; padding-top:26px; border-top:1px solid #ececec; }
       .met-sec{ margin:0 0 30px; }
@@ -730,8 +743,12 @@ span.separador-logo {
                    line-height:1.25; color:#111; margin:0 0 12px; }
       .met-sec p{ font-family:system-ui,-apple-system,sans-serif; font-size:1.02rem; line-height:1.68;
                   color:#242424; margin:0 0 14px; }
-      .met-src{ font-size:.92rem !important; color:#6a6a6a !important; line-height:1.55 !important;
-                border-left:3px solid #e7e2d3; padding-left:14px; margin-top:4px !important; }
+      .met-src{ font-size: .92rem !important;
+    color: #ee5522 !important;
+    line-height: 1.55 !important;
+    border-left: 3px solid #ee5522;
+    padding-left: 14px;
+    margin-top: 4px !important; }
       .met-src strong{ color:#444; }
       .met-hr{ border:0; border-top:1px solid #ececec; margin:34px 0; }
       @media (max-width:640px){
