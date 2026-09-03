@@ -211,7 +211,7 @@ anno('Ica', 32, -4, [{t:'Ica — casi sin riesgo (13),',b:1},{t:'pero 16,889 cas
 function tipXY(x,y){ const bb=svg.getBoundingClientRect(), wb=wrap.getBoundingClientRect();
   return { sx: bb.left + (x/W)*bb.width - wb.left, sy: bb.top + (y/H)*bb.height - wb.top }; }
 function tipHTML(o){ return '<div class="r">'+o.r+'</div>'+
-  '<div class="rw">Riesgo de inundación: <b>'+fmt(o.risk)+'</b></div>'+
+  '<div class="rw">Población en riesgo de inundación: <b>'+fmt(o.risk)+'</b></div>'+
   '<div class="rw">Casos de dengue 2023: <b>'+(o.d===0?'0':fmt(o.d))+'</b></div>'; }
 function showTip(node,o,x,y){ const {sx,sy}=tipXY(x,y); node.innerHTML=tipHTML(o);
   node.classList.toggle('below', sy<86); node.style.left=sx+'px'; node.style.top=sy+'px'; node.style.opacity=1; }
