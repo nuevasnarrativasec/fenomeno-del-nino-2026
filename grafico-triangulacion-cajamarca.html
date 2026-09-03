@@ -91,10 +91,11 @@
 
   @media (max-width:760px){
     body{ padding:30px 14px 34px; }
+    .chart{ height:290px; }
     .grid{ grid-template-columns:1fr; gap:14px; }
     .tabs{ grid-template-columns:1fr 1fr; gap:11px; }
     .tab{ padding:13px 14px; }
-    .tab .t-lbl{ font-size:.88rem; }
+    .tab .t-lbl{ font-size:1.1rem; }
     .title{ font-size:1.6rem; }
     .kpis{ grid-template-columns:1fr 1fr; }
   }
@@ -206,10 +207,17 @@
   var charts = [];
 
   // ---------- ÁREA 1: líneas indexadas ----------
+  // La leyenda tiene 5 series con nombres largos: en móvil envuelve a 2-3 líneas.
+  // Ajustamos grid.top según el ancho para que el área NO quede debajo de la leyenda.
+  function c1GridTop(){
+    var el = document.getElementById('chart1');
+    var w = (el && el.clientWidth) ? el.clientWidth : 600;
+    return w < 430 ? 86 : (w < 620 ? 60 : 34);   // ~3 líneas / ~2 líneas / 1 línea
+  }
   var c1 = echarts.init(document.getElementById('chart1'));
   c1.setOption({
     textStyle:{ fontFamily:FF },
-    grid:{ left:38, right:14, top:34, bottom:26 },
+    grid:{ left:38, right:14, top:c1GridTop(), bottom:26 },
     legend:{ top:0, left:'center', itemWidth:14, itemHeight:9, itemGap:12,
              textStyle:{ fontSize:11, color:'#6a6a6a', fontFamily:'system-ui,sans-serif' } },
     tooltip:{ trigger:'axis', valueFormatter:function(v){ return v==null?'—':(''+v).replace('.',','); } },
@@ -276,7 +284,10 @@
   }
   tabEls.forEach(function(t){ t.addEventListener('click', function(){ activatePane(t.getAttribute('data-pane')); }); });
 
-  function resizeAll(){ charts.forEach(function(c){ try{ c.resize(); }catch(e){} }); }
+  function resizeAll(){
+    charts.forEach(function(c){ try{ c.resize(); }catch(e){} });
+    try{ c1.setOption({ grid:{ left:38, right:14, top:c1GridTop(), bottom:26 } }); }catch(e){}
+  }
   function postHeight(){ try{ parent.postMessage({ type:'triHeight', h:Math.ceil(document.body.getBoundingClientRect().height) }, '*'); }catch(e){} }
 
   window.addEventListener('resize', function(){ resizeAll(); postHeight(); });
