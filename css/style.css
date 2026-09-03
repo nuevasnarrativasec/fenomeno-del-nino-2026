@@ -703,7 +703,7 @@ span.separador-logo {
 
 
 /* --- Metodología del especial (bloque local, no toca style.css) --- */
-      .main-metodologia{ padding:64px 20px; background:#fff; }
+      .main-metodologia{     padding: 90px 20px 60px; background:#fff; }
       .met-card{     max-width: 700px;
     margin: 0 auto;
     padding: 16px;
