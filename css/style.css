@@ -267,10 +267,18 @@
 
   /* Título "¿Y tú?" (blanco, fuera de la caja) */
   .final-q{
-    position:absolute; z-index:7; transform:translate(-50%,-50%);
-    font-family:system-ui,-apple-system,sans-serif;
-    color:#f7f2ea; font-weight:800; font-size:2rem; line-height:1;
-    letter-spacing:.01em; white-space:nowrap;
+        background: #000;
+    position: absolute;
+    z-index: 7;
+    transform: translate(-50%, -50%);
+    font-family: system-ui, -apple-system, sans-serif;
+    color: #f7f2ea;
+    font-weight: 800;
+    font-size: 2rem;
+    line-height: 1;
+    letter-spacing: .01em;
+    width: 350px;
+    text-align: center;
   }
   /* Texto inferior de la sección final */
   .final-caption{

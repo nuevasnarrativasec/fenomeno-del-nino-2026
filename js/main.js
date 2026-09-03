@@ -330,7 +330,7 @@
   const YT_X    = 580, YT_DY = 330;                          // "¿Y tú?" (centro X, desfase Y bajo la fila)
   const RBOX_CX = 580, RBOX_W = 300, RBOX_DY = YT_DY + 185;  // caja roja del dato, bajo "¿Y tú?"
   const CAP_DY  = RBOX_DY + 150;                             // texto Lorem, bajo la caja roja
-  const STAGE_H = YO.cy + CAP_DY + 130;                      // alto total del lienzo
+  const STAGE_H = YO.cy + 240;                               // alto total del lienzo (recortado: el contenido termina en la fila de figuras + el texto final sobre la línea)
 
   /* ============================================================
      CONSTRUCCIÓN DEL DOM
@@ -376,8 +376,8 @@
     pth.setAttribute('d', d); pth.setAttribute('class','dotted');
     pth.setAttribute('clip-path','url(#lineDraw)'); svg.appendChild(pth);
   }
-  const BEND_X = 870;  // codo de la diagonal "Yo" → "¿Y tú?" (menor = más inclinada)
-  dline([[YO_X, YO.cy + 12], [BEND_X, YO.cy + YT_DY], [YT_X + 80, YO.cy + YT_DY]]);  // "Yo" → "¿Y tú?" (diagonal + horizontal)
+  // (La diagonal separada "Yo → ¿Y tú?" se eliminó: el texto blanco final ahora va
+  //  sobre la línea zig-zag, en la posición del antiguo cuadro naranja de Cecilia.)
 
   // 2) Estaciones (círculo + botón + nombre + cuadro blanco + cuadro naranja)
   STATIONS.forEach((s, i)=>{
@@ -423,13 +423,17 @@
     ib.style.left = ibLeft+'px';
     node.appendChild(ib);
 
-    // cuadro naranja (sobre la línea)
-    const ob = el('div','orangebox reveal', `<span class="q" style="margin-top:0">${s.q}</span>`);
-    ob.style.left = s.orange.tox+'px';
-    ob.style.top  = s.orange.toy+'px';
-    ob.style.transform = 'translate(-50%,-50%)';
-    ob._baseTransform = 'translate(-50%,-50%)';
-    node.appendChild(ob);
+    // cuadro naranja (sobre la línea). La ÚLTIMA estación (Cecilia) ya NO lleva
+    // naranja: en su lugar, el texto blanco final va en esa misma posición.
+    let ob = null;
+    if (i < STATIONS.length - 1) {
+      ob = el('div','orangebox reveal', `<span class="q" style="margin-top:0">${s.q}</span>`);
+      ob.style.left = s.orange.tox+'px';
+      ob.style.top  = s.orange.toy+'px';
+      ob.style.transform = 'translate(-50%,-50%)';
+      ob._baseTransform = 'translate(-50%,-50%)';
+      node.appendChild(ob);
+    }
 
     // guarda referencias para la secuencia de aparición
     s._circle = circle; s._btn = btn; s._nw = nw; s._ib = ib; s._ob = ob;
@@ -542,15 +546,13 @@
 
   // "¿Y tú?"
   const yq = el('div','final-q reveal','¿Y si la siguiente historia fuera la tuya?');
-  yq.style.left = YT_X+'px';
-  yq.style.top  = (YO.cy + YT_DY)+'px';
+  // Va donde antes estaba el cuadro naranja de Cecilia (última estación), sobre la línea zig-zag.
+  const LAST = STATIONS[STATIONS.length-1];
+  yq.style.left = LAST.orange.tox+'px';
+  yq.style.top  = LAST.orange.toy+'px';
   yoNode.appendChild(yq);
 
-  // texto Lorem
-  const ycap = el('div','final-caption reveal','');
-  ycap.style.left = RBOX_CX+'px';
-  ycap.style.top  = (YO.cy + CAP_DY)+'px';
-  yoNode.appendChild(ycap);
+  // (El texto inferior 'Lorem' se eliminó junto con la reubicación del texto final.)
 
   stage.appendChild(yoNode);
 
@@ -709,7 +711,7 @@
       revealAt(s._nw,  s._ib, 0);                // nombre y cargo
       revealAt(s._ib,  s._ib, STEP);            // cuadro blanco
       revealAt(s._btn, s._ib, STEP);            // botón de info
-      revealAt(s._ob,  s._ib, STEP*2);          // cuadro naranja
+      if(s._ob) revealAt(s._ob,  s._ib, STEP*2);   // cuadro naranja (la última no tiene)
     });
 
     // Portada: título, etiquetas y flechas se desvanecen al empezar a bajar
@@ -731,7 +733,6 @@
     // 2) Fila inferior + estación "Yo" (sin botón de popup)
     document.querySelectorAll('.figrow .reveal').forEach(f=> revealAt(f, yoFigEl, 0));
     revealAt(yq,   yoFigEl, STEP);             // "¿Y tú?"
-    revealAt(ycap, yoFigEl, STEP*3);           // texto Lorem
 
     // ── Topbar: la ayuda "presiona el botón" aparece recién cuando la 1ª
     //    persona (María) llega a su posición, y se oculta al llegar el hero-main. ──
