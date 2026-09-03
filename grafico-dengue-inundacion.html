@@ -92,13 +92,50 @@
   .tip .r{ color:#fff; font-weight:700; font-size:.85rem; margin-bottom:4px; }
   .tip .rw{ color:#c9c9c9; font-size:.74rem; }
   .tip .rw b{ color:#ff8a4d; font-weight:700; }
+
+  ul.grafico-dengue{
+    max-width: 600px;
+    margin: 16px auto 0;
+    padding-left: 20px;
+    list-style-type: none;
+  }
+    ul.grafico-dengue li{
+      margin-bottom: 12px;
+    }
+      ul.grafico-dengue li p{
+        font-family: 'Monoglyphic Light', system-ui, sans-serif;
+        font-size: 1.3rem;
+        line-height: 1.5;
+        color: #3a3a3a;
+      }
+        ul.grafico-dengue li p span{
+          font-family: 'Monoglyphic Bold', system-ui, sans-serif;
+          font-size: 1.3rem;
+          color: #000;
+        }
 </style>
 </head>
 <body data-palette="#ee5522">
 
   <div class="viz">
-    <h2 class="viz-title">Más exposición a inundaciones, más dengue</h2>
-    <p class="viz-sub">El patrón aparece en 24 regiones y muestra una relación moderada y estadísticamente significativa. Es una asociación, no una prueba de causalidad.</p>
+    <h2 class="viz-title">A más riesgo de inundación, más dengue</h2>
+    <p class="viz-sub">
+      En la mayoría de regiones, el riesgo de inundación coincide con un aumento de casos de dengue: los desbordes dejan agua estancada que acelera la reproducción del mosquito transmisor. Sin embargo, no siempre van de la mano:
+    </p>
+    <ul class="grafico-dengue">
+      <li>
+        <p>
+          <span>Piura (la regla): </span>
+          Máximo riesgo de inundación y récord nacional de contagios (más de 79.000 casos).
+        </p>
+      </li>
+      <li>
+        <p>
+          <span>Ica (la excepción):  </span>
+          Tuvo casi 17.000 casos pese a un riesgo de inundación casi nulo; allí el brote no dependió de lluvias, sino de temperaturas extremas y del agua almacenada en recipientes domésticos por falta de servicio continuo.
+        </p>
+      </li>
+    </ul>
 
     <div class="viz-stat" style="display: none;">
       <b>Spearman <span class="sp">r = 0,559</span></b>
