@@ -231,12 +231,12 @@
 
     <section class="mapa-fen" id="mapaFen">
     <style>
-      .mp-indicators{ margin-top:34px; }
-      .mpi-title{     font-family: 'Monoglyphic Bold', system-ui, sans-serif;font-weight:800; font-size:1.3rem; color:#141414; margin-bottom:18px; letter-spacing:.01em; }
-      .mpi-grid{ display:grid; grid-template-columns:1fr 1fr; column-gap:30px; row-gap:6px; }
-      .mpi-item{ position:relative; display:flex; align-items:center; gap:13px; padding:9px 2px; border-bottom:1px solid #ececec; }
-      .mpi-ico{ width:30px; height:30px; object-fit:contain; flex:0 0 auto; transition:opacity .18s ease, filter .18s ease; }
-      .mpi-lbl{ font-size:1.04rem; color:#1a1a1a; transition:opacity .18s ease, color .18s ease; }
+      .mp-indicators{ margin-top:16px; padding-top:14px; border-top:1px solid #ece7de; }
+      .mpi-title{     font-family: 'Monoglyphic Bold', system-ui, sans-serif;font-weight:800; font-size:.72rem; text-transform:uppercase; letter-spacing:.09em; color:#8a7f70; margin-bottom:8px; }
+      .mpi-grid{ display:grid; grid-template-columns:1fr 1fr; column-gap:16px; row-gap:1px; }
+      .mpi-item{ position:relative; display:flex; align-items:center; gap:8px; padding:5px 0; border-bottom:1px solid #ececec; }
+      .mpi-ico{ width:20px; height:20px; object-fit:contain; flex:0 0 auto; transition:opacity .18s ease, filter .18s ease; }
+      .mpi-lbl{ font-size:.8rem; color:#1a1a1a; transition:opacity .18s ease, color .18s ease; }
       /* activo */
       .mpi-item.is-on .mpi-ico{ opacity:1; }
       .mpi-item.is-on .mpi-lbl{     font-family: 'Monoglyphic Light', system-ui, sans-serif;color:#111; opacity:1; }
@@ -261,8 +261,8 @@
         border:6px solid transparent; border-top-color:#161616; }
       .mpi-item:hover .mpi-tip{ opacity:1; transform:translateX(-50%) translateY(0); }
       @media (max-width:820px){
-        .mpi-grid{ column-gap:18px; }
-        .mpi-lbl{ font-size:.95rem; }
+        .mpi-grid{ column-gap:12px; }
+        .mpi-lbl{ font-size:.76rem; }
       }
     </style>
       <div class="mapa-inner">
@@ -292,11 +292,11 @@ El resultado muestra cuántas de esas diez señales coinciden en cada departamen
               </div>
               <div class="mp-pop" id="mpPop"></div>
               <p class="mp-explic" id="mpExplic"></p>
-            </div>
 
-            <div class="mp-indicators">
-              <div class="mpi-title">Indicadores</div>
-              <div class="mpi-grid" id="mpIndicators"></div>
+              <div class="mp-indicators">
+                <div class="mpi-title">Indicadores</div>
+                <div class="mpi-grid" id="mpIndicators"></div>
+              </div>
             </div>
           </aside>
         </div>
