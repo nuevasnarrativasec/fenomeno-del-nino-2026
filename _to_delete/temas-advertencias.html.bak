@@ -382,25 +382,6 @@
   .acc-opt:hover{ background:rgba(255,255,255,.10); }
   .acc-opt.sel{ display:none; }
 
-  /* Botones de tema (reemplazan el acordeón) */
-  .ta-tabs{ display:flex; flex-wrap:wrap; justify-content:center; gap:16px; max-width:1080px; margin:16px auto 0; padding:0 24px; }
-  .ta-tab{ flex:1 1 210px; min-width:200px; text-align:center; cursor:pointer; background:#fff; color:#141414;
-    border:2px solid #141414; border-radius:12px; padding:20px 20px;
-    font-family:'Monoglyphic Regular','Helvetica Neue',Arial,sans-serif; font-weight:700;
-    font-size:clamp(1rem,1.6vw,1rem); line-height:1.26; transition:background .15s, color .15s, border-color .15s; }
-  .ta-blue .ta-tab:hover:not(.is-active){ border-color: #3fb1ea; background-color: #3fb1ea; color: #fff;}
-  .ta-red  .ta-tab:hover:not(.is-active){ border-color:#e5301f; background-color: #e5301f; color: #fff;}
-  .ta-blue .ta-tab.is-active{ background:#3fb1ea; border-color:#3fb1ea; color:#fff; }
-  .ta-red  .ta-tab.is-active{ background:#e5301f; border-color:#e5301f; color:#fff; }
-  .ta-red .ta-head{ border-top:1px solid #e6e6e6; padding-top:46px; }
-  .ta-blue .ta-tabs{
-      max-width: 850px;
-  }
-  @media (max-width:720px){
-    .ta-tabs{ gap:11px; }
-    .ta-tab{ flex:1 1 100%; min-width:0; padding:15px 16px; font-size:1rem; }
-  }
-
 </style>
 </head>
 <body>
@@ -1213,24 +1194,32 @@ window.addEventListener('resize',()=>charts.forEach(c=>c.resize()));
     var gEl=document.createElement("div"); gEl.className="ta-group "+g.cls;
     var head='<div class="wrap ta-head">'+(g.icon==="warn"?WARN:"")+'<div class="ta-title">'+g.title+'</div>'+(g.desc?'<p class="ta-desc">'+g.desc+'</p>':"")+'</div>';
     head+='<div class="ta-hint">'+TAP+'<span>Selecciona un tema</span></div>';
-    var tabs=document.createElement("div"); tabs.className="ta-tabs";
-    g.items.forEach(function(it,i){ var b=document.createElement("button"); b.type="button"; b.className="ta-tab"; b.textContent=it.q; b.dataset.i=i; tabs.appendChild(b); });
+    var accWrap=document.createElement("div"); accWrap.className="wrap"; accWrap.style.marginTop="6px";
+    var acc=document.createElement("div"); acc.className="acc";
+    var aHead=document.createElement("button"); aHead.className="acc-head";
+    aHead.innerHTML='<span class="acc-sel"></span><span class="acc-chev">&#9662;</span>';
+    var aList=document.createElement("div"); aList.className="acc-list";
+    g.items.forEach(function(it,i){ var b=document.createElement("button"); b.className="acc-opt"; b.textContent=it.q; b.dataset.i=i; aList.appendChild(b); });
+    acc.appendChild(aHead); acc.appendChild(aList); accWrap.appendChild(acc);
     var area=document.createElement("div"); area.className="ta-area";
     g.items.forEach(function(it){ if(it.sec) area.appendChild(it.sec); });
 
-    gEl.innerHTML=head; gEl.appendChild(tabs); gEl.appendChild(area);
+    gEl.innerHTML=head; gEl.appendChild(accWrap); gEl.appendChild(area);
     root.appendChild(gEl);
 
+    var open=false;
+    function setOpen(o){ open=o; acc.classList.toggle("open",o); }
     function select(i){
       g.items.forEach(function(it,j){ if(it.sec) it.sec.classList.toggle("on", j===i); });
-      Array.prototype.forEach.call(tabs.children,function(b,j){ b.classList.toggle("is-active", j===i); });
+      aHead.querySelector(".acc-sel").textContent=g.items[i].q;
+      Array.prototype.forEach.call(aList.children,function(b,j){ b.classList.toggle("sel", j===i); });
       var sec=g.items[i].sec;
       if(sec){ resizeIn(sec); requestAnimationFrame(function(){ resizeIn(sec); postHeight(); }); }
       postHeight();
     }
-    tabs.addEventListener("click",function(e){ var b=e.target.closest(".ta-tab"); if(!b) return; select(+b.dataset.i); });
-    // sin selección por defecto: no se muestra ningún gráfico hasta que el usuario elija un tema
-    postHeight();
+    aHead.addEventListener("click",function(){ setOpen(!open); postHeight(); });
+    aList.addEventListener("click",function(e){ var b=e.target.closest(".acc-opt"); if(!b) return; select(+b.dataset.i); setOpen(false); postHeight(); });
+    select(0);
   });
 
   (function(){
