@@ -32,76 +32,6 @@
         return STOPS[STOPS.length-1][1];
       }
       function textOn(color){ const [r,g,b]=hx(color); return (0.299*r+0.587*g+0.114*b) > 150 ? '#141414' : '#ffffff'; }
-      // ── Indicadores (10 señales) — panel lateral ──
-      const INDICATORS = [
-        {k:'rec',label:'Recurrencia',    file:'icon-recurrencia.png',    desc:'Dónde el impacto se repite.'},
-        {k:'lei',label:'Leishmaniasis',  file:'icon-leishmaniasis.png',  desc:'Dónde crecen los casos.'},
-        {k:'eme',label:'Emergencias',    file:'icon-emergencias.png',    desc:'Dónde aumentan durante El Niño.'},
-        {k:'viv',label:'Viviendas',      file:'icon-viviendas.png',      desc:'Dónde aumentan las casas destruidas.'},
-        {k:'agr',label:'Agricultura',    file:'icon-agricultura.png',    desc:'Cuánto depende solo de la lluvia.'},
-        {k:'fal',label:'Fallecidos',     file:'icon-fallecidos.png',     desc:'Dónde aumentan las muertes por desastres.'},
-        {k:'pre',label:'Prevención',     file:'icon-prevencion.png',     desc:'Dónde hay proyectos paralizados o abandonados.'},
-        {k:'glp',label:'GLP',            file:'icon-glp.png',            desc:'Dónde el abastecimiento es más vulnerable.'},
-        {k:'den',label:'Dengue',         file:'icon-dengue.png',         desc:'Dónde aumentan los casos alrededor de los eventos.'},
-        {k:'inf',label:'Infraestructura',file:'icon-infraestructura.png',desc:'Dónde se dañan más carreteras y puentes.'},
-      ];
-      // Señales activas por región (matriz maestra, columnas A–J). p = parcial (media señal).
-      const SIGNALS = {
-        'PE-CAJ':{a:['rec','eme','agr','pre','den','lei','viv','glp','inf']},
-        'PE-PIU':{a:['rec','eme','pre','den','viv','fal','glp','inf']},
-        'PE-LAL':{a:['eme','pre','den','lei','viv','fal','glp','inf']},
-        'PE-LIM':{a:['rec','eme','pre','den','lei','viv','fal','inf']},
-        'PE-LAM':{a:['eme','pre','den','viv','fal','glp','inf']},
-        'PE-ANC':{a:['rec','eme','den','lei','viv','fal','inf']},
-        'PE-TUM':{a:['rec','eme','pre','den','viv','glp']},
-        'PE-AYA':{a:['pre','lei','glp','inf']},
-        'PE-AMA':{a:['rec','agr','pre','glp']},
-        'PE-PUN':{a:['agr','pre','den','glp']},
-        'PE-ICA':{a:['eme','pre','den','inf']},
-        'PE-LMA':{a:['pre','den','lei','viv']},
-        'PE-HUV':{a:['agr','pre','inf'],p:['lei']},
-        'PE-MDD':{a:['agr','pre','den']},
-        'PE-PAS':{a:['agr','pre','den']},
-        'PE-SAM':{a:['agr','pre','den']},
-        'PE-ARE':{a:['pre','fal','glp']},
-        'PE-HUC':{a:['agr','pre']},
-        'PE-MOQ':{a:['glp','inf']},
-        'PE-CUS':{a:['pre','glp']},
-        'PE-LOR':{a:['agr','pre']},
-        'PE-UCA':{a:['agr','pre']},
-        'PE-APU':{a:['pre','glp']},
-        'PE-JUN':{a:['agr','pre']},
-        'PE-TAC':{a:['fal','glp']},
-        'PE-CAL':{a:['den']},
-      };
-      const _mpiEls = {};
-      function buildIndicators(){
-        const host = document.getElementById('mpIndicators');
-        if(!host) return;
-        host.innerHTML = '';
-        INDICATORS.forEach(function(ind){
-          const item = document.createElement('div');
-          item.className = 'mpi-item is-off';
-          item.innerHTML =
-            '<img class="mpi-ico" src="./img/iconos-senales/'+ind.file+'" alt="" />' +
-            '<span class="mpi-lbl">'+ind.label+'</span>' +
-            '<span class="mpi-tip" role="tooltip">'+ind.desc+'</span>';
-          host.appendChild(item);
-          _mpiEls[ind.k] = item;
-        });
-      }
-      function updateIndicators(id){
-        const sig = SIGNALS[id] || {a:[]};
-        const act = sig.a || [], par = sig.p || [];
-        INDICATORS.forEach(function(ind){
-          const el = _mpiEls[ind.k]; if(!el) return;
-          el.classList.remove('is-on','is-partial','is-off');
-          if(act.indexOf(ind.k) >= 0) el.classList.add('is-on');
-          else if(par.indexOf(ind.k) >= 0) el.classList.add('is-partial');
-          else el.classList.add('is-off');
-        });
-      }
-
       const fmtScore = s => (s%1 ? s.toFixed(1) : String(s)) + '/10';
       const fmtPop = n => n ? n.toLocaleString('es-PE') : '—';
 
@@ -122,7 +52,6 @@
         elBadge.style.color = textOn(col);
         elPop.textContent = 'Población: ' + fmtPop(d.pop);
         elExplic.textContent = d.explic || '';
-        updateIndicators(id);
         if(elNoData) elNoData.hidden = (id !== 'PE-PUN'); // "Sin datos / lago" solo con Puno (lago Titicaca)
         if(!svg) return;
         if(current){ const pc=svg.getElementById(current); if(pc) pc.classList.remove('is-active'); }
@@ -131,7 +60,6 @@
         current = id;
       }
 
-      buildIndicators();
       fetch('./img/peru.svg')
         .then(r => { if(!r.ok) throw new Error('HTTP '+r.status); return r.text(); })
         .then(txt => {
