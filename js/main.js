@@ -34,16 +34,16 @@
       function textOn(color){ const [r,g,b]=hx(color); return (0.299*r+0.587*g+0.114*b) > 150 ? '#141414' : '#ffffff'; }
       // ── Indicadores (10 señales) — panel lateral ──
       const INDICATORS = [
-        {k:'rec',label:'Recurrencia',    file:'icon-recurrencia.png',    desc:'Dónde el impacto se repite.'},
-        {k:'lei',label:'Leishmaniasis',  file:'icon-leishmaniasis.png',  desc:'Dónde crecen los casos.'},
-        {k:'eme',label:'Emergencias',    file:'icon-emergencias.png',    desc:'Dónde aumentan durante El Niño.'},
-        {k:'viv',label:'Viviendas',      file:'icon-viviendas.png',      desc:'Dónde aumentan las casas destruidas.'},
-        {k:'agr',label:'Agricultura',    file:'icon-agricultura.png',    desc:'Cuánto depende solo de la lluvia.'},
-        {k:'fal',label:'Fallecidos',     file:'icon-fallecidos.png',     desc:'Dónde aumentan las muertes por desastres.'},
-        {k:'pre',label:'Prevención',     file:'icon-prevencion.png',     desc:'Dónde hay proyectos paralizados o abandonados.'},
-        {k:'glp',label:'GLP',            file:'icon-glp.png',            desc:'Dónde el abastecimiento es más vulnerable.'},
-        {k:'den',label:'Dengue',         file:'icon-dengue.png',         desc:'Dónde aumentan los casos alrededor de los eventos.'},
-        {k:'inf',label:'Infraestructura',file:'icon-infraestructura.png',desc:'Dónde se dañan más carreteras y puentes.'},
+        {k:'rec',label:'Recurrencia',    file:'icon-recurrencia.png',    desc:'Regiones que sufrieron los mayores impactos tanto en 2017 como en 2023.'},
+        {k:'lei',label:'Leishmaniasis',  file:'icon-leishmaniasis.png',  desc:'Si los casos de uta aumentaron con fuerza tras el cambio de clima.'},
+        {k:'eme',label:'Emergencias',    file:'icon-emergencias.png',    desc:'Si los desastres se disparan a niveles anormales durante años de El Niño.'},
+        {k:'viv',label:'Viviendas',      file:'icon-viviendas.png',      desc:'Si la destrucción de casas se multiplica frente a un año común.'},
+        {k:'agr',label:'Agricultura',    file:'icon-agricultura.png',    desc:'Porcentaje de cultivos desprotegidos al depender solo de la lluvia (sin canales de riego).'},
+        {k:'fal',label:'Fallecidos',     file:'icon-fallecidos.png',     desc:'Si las pérdidas de vidas aumentaron de forma crítica durante eventos pasados de El Niño.'},
+        {k:'pre',label:'Prevención',     file:'icon-prevencion.png',     desc:'Porcentaje de obras de protección y defensas ribereñas que están abandonadas o paralizadas.'},
+        {k:'glp',label:'GLP',            file:'icon-glp.png',            desc:'Regiones con alto riesgo de quedarse sin gas doméstico si las carreteras se bloquean.'},
+        {k:'den',label:'Dengue',         file:'icon-dengue.png',         desc:'Si los contagios de dengue se dispararon de forma crítica tras las lluvias.'},
+        {k:'inf',label:'Infraestructura',file:'icon-infraestructura.png',desc:'Nivel de destrucción en puentes, caminos, colegios y postas médicas.'},
       ];
       // Señales activas por región (matriz maestra, columnas A–J). p = parcial (media señal).
       const SIGNALS = {
