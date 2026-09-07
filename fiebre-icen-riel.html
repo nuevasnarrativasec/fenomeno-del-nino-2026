@@ -69,7 +69,8 @@ const yr = i => 1980 + Math.floor(i/12);
   const MIN = Math.min.apply(null, ICEN);     // mes más frío (~ -1.66)
   const MAX = Math.max.apply(null, ICEN);     // mes más cálido (~ 4.32)
   const scale = 9;               // px(viewBox) por unidad de anomalía (riel delgado)
-  const cx = v => (v - MIN) * scale;          // x anclada al borde izquierdo
+  const BASEW = 6;                            // ancho base mínimo del celeste (nunca desaparece)
+  const cx = v => (v - MIN) * scale + BASEW;  // x anclada al borde izquierdo (+ base celeste)
   const maxC = cx(MAX);          // extensión máxima hacia la derecha
   const zeroX = cx(0);           // línea neutra (ICEN = 0)
 
@@ -78,35 +79,32 @@ const yr = i => 1980 + Math.floor(i/12);
   const NS='http://www.w3.org/2000/svg';
   function el(t,a){ const e=document.createElementNS(NS,t); for(const k in a) e.setAttribute(k,a[k]); return e; }
 
-  // corridas de meses fríos (ICEN < 0) -> rects de recorte para el azul
-  let coldRects = '', runStart = null;
-  for (let i=0;i<=N;i++){
-    const cold = (i<N) && (ICEN[i] < 0);
-    if (cold && runStart===null) runStart = i;
-    if (!cold && runStart!==null){
-      coldRects += '<rect x="-2" y="'+(runStart-0.5)+'" width="'+(VW+4)+'" height="'+((i-1)-runStart+1)+'"/>';
-      runStart = null;
-    }
-  }
-
   const defs = el('defs',{});
   defs.innerHTML =
-    '<linearGradient id="gW" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="'+maxC+'" y2="0">'+
-      '<stop offset="0" stop-color="#f6bdb4"/><stop offset="0.5" stop-color="#ee5a48"/><stop offset="1" stop-color="#d31d12"/></linearGradient>'+
+    // rojo: arranca ya saturado en el neutro y se intensifica hacia el pico
+    '<linearGradient id="gW" gradientUnits="userSpaceOnUse" x1="'+zeroX+'" y1="0" x2="'+maxC+'" y2="0">'+
+      '<stop offset="0" stop-color="#f2705c"/><stop offset="0.5" stop-color="#e83c28"/><stop offset="1" stop-color="#cf1206"/></linearGradient>'+
+    // celeste: base siempre visible
     '<linearGradient id="gC" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="'+maxC+'" y2="0">'+
-      '<stop offset="0" stop-color="#1f8ecb"/><stop offset="0.4" stop-color="#37a8e0"/><stop offset="1" stop-color="#bfe3f5"/></linearGradient>'+
-    '<clipPath id="cCold">'+coldRects+'</clipPath>';
+      '<stop offset="0" stop-color="#2a97d4"/><stop offset="0.5" stop-color="#4bb3ea"/><stop offset="1" stop-color="#bfe3f5"/></linearGradient>';
   svg.appendChild(defs);
 
-  // área anclada al borde izquierdo (x=0) hasta la curva (a la derecha)
+  // Silueta completa (ancho = valor - MIN + base), anclada al borde izquierdo (x=0)
   let d = 'M 0 0 L '+cx(ICEN[0]).toFixed(2)+' 0';
   for(let i=1;i<N;i++){ d += ' L '+cx(ICEN[i]).toFixed(2)+' '+i; }
   d += ' L 0 '+(N-1)+' Z';
 
-  svg.appendChild(el('path',{ d:d, fill:'url(#gW)' }));                                  // cálido (base)
-  svg.appendChild(el('path',{ d:d, fill:'url(#gC)', 'clip-path':'url(#cCold)' }));       // frío encima
-  // línea neutra (ICEN = 0), sutil
-  svg.appendChild(el('line',{ x1:zeroX, y1:0, x2:zeroX, y2:VH, stroke:'rgba(255,255,255,.55)', 'stroke-width':0.6, 'stroke-dasharray':'2 3', 'vector-effect':'non-scaling-stroke' }));
+  // Resalte CÁLIDO (rojo): sólo el exceso por encima del neutro (ICEN=0), anclado en zeroX.
+  // Donde el mar está frío el borde se pega a zeroX => ancho 0 => no hay rojo.
+  const rx = v => Math.max(cx(v), zeroX);
+  let dw = 'M '+zeroX.toFixed(2)+' 0 L '+rx(ICEN[0]).toFixed(2)+' 0';
+  for(let i=1;i<N;i++){ dw += ' L '+rx(ICEN[i]).toFixed(2)+' '+i; }
+  dw += ' L '+zeroX.toFixed(2)+' '+(N-1)+' Z';
+
+  svg.appendChild(el('path',{ d:d,  fill:'url(#gC)' }));   // AZUL celeste: base, siempre visible (silueta completa)
+  svg.appendChild(el('path',{ d:dw, fill:'url(#gW)' }));   // ROJO: resalte del exceso cálido, por encima del azul
+  // línea neutra (ICEN = 0): límite sutil entre la base celeste y el resalte rojo
+  svg.appendChild(el('line',{ x1:zeroX, y1:0, x2:zeroX, y2:VH, stroke:'rgba(255,255,255,.5)', 'stroke-width':0.6, 'stroke-dasharray':'2 3', 'vector-effect':'non-scaling-stroke' }));
 
   const stage = document.getElementById('stage');
   // Año de inicio (arriba, completo, sin cortarse)
