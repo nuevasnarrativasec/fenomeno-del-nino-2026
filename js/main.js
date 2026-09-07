@@ -311,8 +311,8 @@
 
   /* Fila intro "Todo está conectado": los círculos arrancan aquí y vuelan
      hasta su estación del zig-zag conforme se hace scroll (FLIP). */
-  const ROW_Y_INTRO = 450;                 // y del centro de los círculos (bajado para la bajada+CTA de la portada)
-  const INTRO_GAP   = 380;                 // aire entre la fila intro y la 1ª estación
+  const ROW_Y_INTRO = 230;                 // y del centro de los círculos (más cerca del título; bajada+CTA debajo)
+  const INTRO_GAP   = 680;                 // aire entre la fila intro y la 1ª estación (evita que María 'vuele' encima de la bajada/CTA al cargar)
   const ROW_L = 24, ROW_R = STAGE_W - 60;  // extensión horizontal de la fila intro (más aire entre personas)
   STATIONS.forEach((s,i)=>{ s._rowX = Math.round(ROW_L + (ROW_R-ROW_L)*i/(STATIONS.length-1)); });
   STATIONS.forEach((s,i)=>{ s.cy = ROW_Y_INTRO + INTRO_GAP + i*GAP; });
@@ -391,7 +391,7 @@
 
     // etiqueta de la fila intro: nombre + región (caja roja), ambos ARRIBA del personaje
     const introLbl = el('div','intro-lbl',
-      `<div style="position:absolute;left:0;bottom:64px;transform:translateX(-50%);text-align:center;white-space:nowrap;">`+
+      `<div style="position:absolute;left:0;top:66px;transform:translateX(-50%);text-align:center;white-space:nowrap;">`+
         `<div style="color:#f4efe7;font:800 1.02rem/1 'Monoglyphic Bold';">${s.name}</div>`+
         `<div style="margin-top:7px;background:#ee0c0c;color:#000;font:700 .74rem/1.05 'Monoglyphic Bold';letter-spacing:.03em;padding:4px 11px;display:inline-block;">${s.region}</div>`+
       `</div>`);
@@ -444,14 +444,14 @@
   /* ── Portada "Todo está conectado" + elementos decorativos ───── */
   const stageTitle = el('div','stage-title','Todo está conectado');
   stageTitle.style.left = Math.round(STAGE_W/2)+'px';
-  stageTitle.style.top  = '92px';
+  stageTitle.style.top  = '40px';
   stage.appendChild(stageTitle);
 
   // Bajada de la portada (bajo el título)
   const stageBajada = el('div','stage-bajada',
     'Nueve historias, distintos departamentos y diez señales de alerta que, aunque parecen aisladas, se entrelazan en la realidad peruana.');
   stageBajada.style.left = Math.round(STAGE_W/2)+'px';
-  stageBajada.style.top  = '196px';
+  stageBajada.style.top  = '450px';
   stage.appendChild(stageBajada);
 
   // CTA de la portada (baja al empezar el recorrido al hacer clic)
@@ -719,7 +719,19 @@
       scrollTrigger:{ trigger:wrap, start:'top top', end:'+=340', scrub:true } });
     gsap.to('.intro-lbl', { opacity:0, ease:'none',
       scrollTrigger:{ trigger:wrap, start:'top top', end:'+=300', scrub:true } });
-    gsap.to('.intro-arrows', { opacity:0, ease:'none',
+    // Flechas blancas de la portada: entran con un fade escalonado (izq->der)
+    // al cargar, para dar sensacion de conexion encadenada entre personajes.
+    var introArrowEls = gsap.utils.toArray('.intro-arrows');
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+    if(reduceMotion){
+      gsap.set(introArrowEls, { opacity:1 });
+    } else {
+      gsap.set(introArrowEls, { opacity:0 });
+      gsap.to(introArrowEls, { opacity:1, duration:.5, ease:'power2.out', stagger:0.13, delay:0.35 });
+    }
+    // ...y se desvanecen al empezar a bajar (immediateRender:false para no
+    // pisar el fade escalonado de entrada al cargar la pagina).
+    gsap.fromTo('.intro-arrows', { opacity:1 }, { opacity:0, ease:'none', immediateRender:false,
       scrollTrigger:{ trigger:wrap, start:'top top', end:'+=200', scrub:true } });
 
     // Decor: sol y nubes entran suave por los lados al acercarse su tramo
