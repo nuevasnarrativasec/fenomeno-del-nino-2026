@@ -316,11 +316,18 @@
   @media (max-width:620px){
     .hero-stats{gap:24px;}
     .hstat .n{font-size:2rem;}
-    .card{padding:16px 12px 10px;}
+    .card{padding:16px 0 10px;}
     .map-rank{flex:1 1 100%;}
     .yslider-ticks span{font-size:.6rem;}
     #agrupado .ta-area section .sub{
           max-width: 100%;
+    }
+    #agrupado .ta-area .wrap{
+      padding: 0;
+    }
+    .card-title,
+    .legend-note{
+          font-size: 1.2rem;
     }
   }
 
@@ -355,7 +362,7 @@
   .ta-area section .part-tag, .ta-area section h2.q{ display:none; }
   .ta-area section .sub{ color: #3a3a3a;
     font-family: Poppins, 'Helvetica Neue', Arial, sans-serif;
-    font-size: .98rem;
+    font-size: 1.2rem;
     line-height: 1.5;
     margin: 10px auto;
     max-width: 75%;
@@ -426,6 +433,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+  <style>@media(max-width:620px){#c_freq{height:560px!important}#c_threat{height:770px!important}#c_actor{height:520px!important}}</style>
 </head>
 <body>
 
@@ -1024,7 +1032,7 @@ function reg(el){charts.push(el);}
   function render(idx){
     const vals=cats.map(k=>valFor(k,idx));
     c.setOption({
-      grid:{left:24,right:24,top:16,bottom:30},
+      grid:{left:48,right:24,top:20,bottom:30},
       tooltip:{...tt,formatter:p=>`<b>${p.name}</b><br/>${p.value.toFixed(1)}%`+(idx<0?` · ${totals[p.name][0]} noticias`:' de las noticias del evento')},
       xAxis:{type:'category',data:cats,axisLabel:{color:CREAM,fontSize:14,fontFamily:'Monoglyphic Regular, Helvetica Neue, Arial, sans-serif'},axisLine:{lineStyle:{color:GRID}},axisTick:{show:false}},
       yAxis:{type:'value',max:100,axisLabel:{...baseText,formatter:'{value}%'},splitLine:{lineStyle:{color:GRID}}},
@@ -1181,7 +1189,8 @@ function reg(el){charts.push(el);}
     {n:'Presidencia',full:'Presidencia de la República',v:11,c:'#e8c24a',lc:'#3a2f0a',x:17.8,y:62.45},
     {n:'CENEPRED',v:8,c:'#b98cc9',lc:'#2a1836',x:-32.2,y:86.05}
   ];
-  const K=18; // diámetro ∝ sqrt(valor)
+  const _instEl=document.getElementById('c_inst');
+  const K=(_instEl&&_instEl.clientWidth&&_instEl.clientWidth<=520)?11:18; // diámetro ∝ sqrt(valor); menor en móvil
   const c=echarts.init(document.getElementById('c_inst'));reg(c);
   c.setOption({
     tooltip:{...tt,formatter:p=>`<b>${p.data.full||p.data.name}</b><br/>${p.value} advertencias`},
@@ -1214,6 +1223,77 @@ function reg(el){charts.push(el);}
 })();
 
 window.addEventListener('resize',()=>charts.forEach(c=>c.resize()));
+
+/* ---- Responsive móvil de los gráficos ECharts ----
+   En móvil (ancho del gráfico <=520px) se reducen las etiquetas, se ajustan
+   los márgenes para que no se corten las categorías largas y se OCULTA el eje X
+   (los valores ya van sobre cada barra). En desktop se restauran los valores base. */
+(function(){
+  if(!window.echarts) return;
+  const MOBW=520;
+  const FF='Monoglyphic Regular, Helvetica Neue, Arial, sans-serif';
+  // Móvil: el TEMA (+ valor) va ENCIMA de la barra -> la barra usa todo el ancho.
+  function topLabel(fmt){
+    return { show:true, position:[2,-5], align:'left', verticalAlign:'bottom', formatter:fmt,
+      rich:{ nm:{color:'#1f2a37',fontSize:11.5,fontWeight:600,fontFamily:FF},
+             vl:{color:'#5b6675',fontSize:11,fontFamily:FF} } };
+  }
+  // Desktop: valor al final de la barra (etiqueta clásica a la derecha).
+  function rightLabel(fmt,fs){
+    return { show:true, position:'right', align:'left', verticalAlign:'middle',
+      formatter:fmt, rich:{}, color:'#5b6675', fontSize:fs, fontFamily:FF };
+  }
+  const OV={
+    c_freq:{
+      m:{grid:{left:8,right:12,top:22,bottom:8}, yAxis:{axisLabel:{show:false}}, xAxis:{axisLabel:{show:false}},
+         series:[{barWidth:'50%', label:topLabel(function(p){return '{nm|'+p.name+'}  {vl|'+p.value.toFixed(1)+'%}';})}]},
+      d:{grid:{left:110,right:56,top:10,bottom:20}, yAxis:{axisLabel:{show:true,fontSize:13}}, xAxis:{axisLabel:{show:true}},
+         series:[{barWidth:'62%', label:rightLabel(function(p){return p.value.toFixed(1)+'%';},12)}]}
+    },
+    c_threat:{
+      m:{grid:{left:8,right:12,top:22,bottom:8}, yAxis:{axisLabel:{show:false}}, xAxis:{axisLabel:{show:false}}, graphic:[{style:{fontSize:9}}],
+         series:[{barWidth:'52%', label:topLabel(function(p){return '{nm|'+p.name+'}  {vl|'+p.value+'}';})}]},
+      d:{grid:{left:196,right:44,top:8,bottom:34}, yAxis:{axisLabel:{show:true,fontSize:11.5,width:null,overflow:'none'}}, xAxis:{axisLabel:{show:true}}, graphic:[{style:{fontSize:10}}],
+         series:[{barWidth:'62%', label:rightLabel(function(p){return p.value;},11)}]}
+    },
+    c_actor:{
+      m:{grid:{left:8,right:12,top:22,bottom:8}, yAxis:{axisLabel:{show:false}}, xAxis:{axisLabel:{show:false}},
+         series:[{barWidth:'52%', label:topLabel(function(p){return '{nm|'+p.name+'}  {vl|'+p.value.toFixed(1)+'%}';})}]},
+      d:{grid:{left:210,right:52,top:8,bottom:16}, yAxis:{axisLabel:{show:true,fontSize:11.5,width:null,overflow:'none'}}, xAxis:{axisLabel:{show:true}},
+         series:[{barWidth:'60%', label:rightLabel(function(p){return p.value.toFixed(1)+'%';},11)}]}
+    },
+    c_heat:{
+      m:{grid:{left:92,right:12,top:12,bottom:112}, yAxis:{axisLabel:{fontSize:10}}, xAxis:{axisLabel:{fontSize:9,rotate:32}},  series:[{label:{fontSize:9}}]},
+      d:{grid:{left:110,right:20,top:14,bottom:96},  yAxis:{axisLabel:{fontSize:12}}, xAxis:{axisLabel:{fontSize:11,rotate:24}}, series:[{label:{fontSize:10.5}}]}
+    },
+    c_memory:{
+      m:{grid:{left:40,right:14,top:58,bottom:44}, legend:{textStyle:{fontSize:10}}},
+      d:{grid:{left:44,right:24,top:40,bottom:60}, legend:{textStyle:{fontSize:12}}}
+    },
+    c_inst:{
+      m:{series:[{zoom:0.8}]},
+      d:{series:[{zoom:1}]}
+    }
+  };
+  function apply(){
+    Object.keys(OV).forEach(function(id){
+      var el=document.getElementById(id); if(!el) return;
+      var ins=echarts.getInstanceByDom(el); if(!ins) return;
+      var w=el.clientWidth;
+      if(!w) return;
+      ins.setOption(w<=MOBW?OV[id].m:OV[id].d);
+    });
+  }
+  window.addEventListener('resize', apply);
+  if(document.fonts&&document.fonts.ready){ document.fonts.ready.then(apply); }
+  // Re-aplicar cuando un gráfico cambia de tamaño (p.ej. al abrirse en el acordeón móvil)
+  if(window.ResizeObserver){
+    var ro=new ResizeObserver(function(){ apply(); });
+    Object.keys(OV).forEach(function(id){ var el=document.getElementById(id); if(el) ro.observe(el); });
+  }
+  window.__taResponsive=apply;   // por si el acordeón quiere forzarlo
+  setTimeout(apply,80); setTimeout(apply,500);
+})();
 </script>
 
 <script>
@@ -1247,6 +1327,7 @@ window.addEventListener('resize',()=>charts.forEach(c=>c.resize()));
   function resizeIn(sec){
     if(!window.echarts||!sec) return;
     sec.querySelectorAll(".chart").forEach(function(el){ var ins=echarts.getInstanceByDom(el); if(ins) ins.resize(); });
+    if(window.__taResponsive) window.__taResponsive();
   }
 
   GROUPS.forEach(function(g){

@@ -875,8 +875,10 @@ span.separador-logo {
         }
 
         table.tabla-zonas{
-          max-width: 100%;
+          max-width: 95%;
           font-size: 0.9rem;
+          padding: 0 20px;
+          width: 95%;
         }
           table.tabla-zonas th,
           table.tabla-zonas td{
@@ -885,6 +887,9 @@ span.separador-logo {
 
         .met-lede{
               font-size: 1.1rem;
+        }
+        .main-contenido h2{
+              font-size: 3.5rem;
         }
 
       }
