@@ -11,13 +11,29 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     @font-face {
-    font-family: 'Monoglyphic Semi Bold';
-    src: url('../fonts/Monoglyphic-SemiBold.woff2') format('woff2'),
-        url('../fonts/Monoglyphic-SemiBold.woff') format('woff');
-    font-weight: 600;
-    font-style: normal;
-    font-display: swap;
-}
+        font-family: 'Monoglyphic Regular';
+        src: url('https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/fonts/Monoglyphic-Regular.woff2') format('woff2'),
+            url('https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/fonts/Monoglyphic-Regular.woff') format('woff');
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
+    }
+    @font-face {
+        font-family: 'Monoglyphic Semi Bold';
+        src: url('https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/fonts/Monoglyphic-SemiBold.woff2') format('woff2'),
+            url('https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/fonts/Monoglyphic-SemiBold.woff') format('woff');
+        font-weight: 600;
+        font-style: normal;
+        font-display: swap;
+    }
+    @font-face {
+        font-family: 'Monoglyphic Bold';
+        src: url('https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/fonts/Monoglyphic-Bold.woff2') format('woff2'),
+            url('https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/fonts/Monoglyphic-Bold.woff') format('woff');
+        font-weight: bold;
+        font-style: normal;
+        font-display: swap;
+    }
     :root{
       --azul:#29ABE2;
       --azul-hi:#41bef0;
@@ -102,8 +118,8 @@
     }
 
     .calc-title{
-      font-family: 'Archivo Black', sans-serif;
-      font-size: clamp(1.7rem, 4.6vw, 2.55rem);
+      font-family: 'Monoglyphic Bold';
+      font-size: 2rem;
       letter-spacing: .012em;
       text-transform: uppercase;
       text-align: center;
@@ -114,17 +130,19 @@
 
     /* input nombre — caja outline redondeada */
     .calc-name{
-      width: 100%;
-      background: transparent;
-      border: 1.5px solid rgba(255,255,255,.72);
-      border-radius: 16px;
-      padding: 21px 24px;
-      text-align: center;
-      color: #ffffff;
-      font-family: 'Poppins', sans-serif;
-      font-size: 1rem;
-      outline: none;
-      transition: border-color .2s, box-shadow .2s;
+      width: 80%;
+    background: transparent;
+    border: 1.5px solid rgba(255, 255, 255, .72);
+    border-radius: 16px;
+    padding: 21px 24px;
+    text-align: center;
+    color: #ffffff;
+    font-family: 'Monoglyphic Semi Bold';
+    font-size: 1rem;
+    outline: none;
+    transition: border-color .2s, box-shadow .2s;
+    margin: 0 auto;
+    display: block;
     }
     .calc-name::placeholder{
       color: rgba(255,255,255,.9);
@@ -193,7 +211,7 @@
       background: var(--azul); color: #08131c;
       border: 0; border-radius: 12px;
       padding: 16px 42px;
-      font-family: 'Fredoka', sans-serif; font-weight: 600;
+      font-family: 'Monoglyphic Regular';
       font-size: 1.06rem; cursor: pointer;
       transition: background .18s, transform .12s, box-shadow .18s;
       box-shadow: 0 10px 30px rgba(0,0,0,.35);
@@ -216,7 +234,7 @@
       backdrop-filter: blur(6px);
     }
     .ip-result-greeting{
-      font-family: 'Fredoka', sans-serif; font-weight: 600;
+      font-family: 'Monoglyphic Bold'; 
       font-size: 1.42rem; color: #ffffff; margin-bottom: 16px;
     }
     .ip-result-context,
