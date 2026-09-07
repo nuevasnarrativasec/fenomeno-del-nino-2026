@@ -153,11 +153,11 @@
             p.setAttribute('tabindex','0');
             p.setAttribute('role','button');
             p.setAttribute('aria-label', d.name + ', ' + fmtScore(d.score) + ' señales');
-            const pick = () => select(id);
-            p.addEventListener('mouseenter', pick);
-            p.addEventListener('focus', pick);
-            p.addEventListener('click', pick);
-            p.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){ e.preventDefault(); pick(); } });
+            // La información SOLO se muestra al hacer clic (o Enter/Espacio con teclado).
+            // Sin hover: pasar el mouse por una región no cambia el panel.
+            const commit = () => { select(id); };
+            p.addEventListener('click', commit);
+            p.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){ e.preventDefault(); commit(); } });
           });
 
           // Resto de trazos (lago Titicaca, etc.): neutro y sin interacción
