@@ -8,20 +8,23 @@
   *{ box-sizing:border-box; margin:0; padding:0; }
   @font-face{ font-family:'Monoglyphic Bold'; src:url('fonts/Monoglyphic-Bold.woff2') format('woff2'); font-display:swap; }
   html,body{ height:100%; background:transparent; }
-  body{ position:relative; font-family:'Monoglyphic Bold', system-ui, sans-serif; overflow:visible; }
+  body{ position:relative; font-family:'Monoglyphic Bold', Poppins,system-ui, sans-serif; overflow:visible; }
   #stage{ position:absolute; inset:0; }
   #rib{ position:absolute; left:0; top:0; width:76px; height:100%; }
   /* años de inicio / fin de la medición */
-  .yr{ position:absolute; left:3px; font:700 11px 'Monoglyphic Bold', system-ui, sans-serif;
+  .yr{ position:absolute; left:3px; font:700 11px 'Monoglyphic Bold', Poppins,system-ui, sans-serif;
        letter-spacing:.03em; color:#fff; background:#111; padding:3px 8px; border-radius:4px; white-space:nowrap; }
   /* años-pico con desglose */
   .pk-block{ position:absolute; left:56px; width:128px; transform:translateY(-50%); }
-  .pk-yr{ display:inline-block; font:700 15px 'Monoglyphic Bold', system-ui, sans-serif;
+  .pk-yr{ display:inline-block; font:700 15px 'Monoglyphic Bold', Poppins,system-ui, sans-serif;
           color:#fff; background:#111; padding:3px 11px; border-radius:5px; letter-spacing:.02em; }
   .pk-desc{ margin-top:6px; }
-  .pk-desc .m{ display:block; font:700 10.5px 'Monoglyphic Bold', system-ui, sans-serif; color:#c0281b; }
-  .pk-desc .d{ display:block; margin-top:2px; font:400 10px system-ui, -apple-system, sans-serif; color:#565656; line-height:1.35; }
+  .pk-desc .m{ display:block; font:700 10.5px 'Monoglyphic Bold', Poppins,system-ui, sans-serif; color:#c0281b; }
+  .pk-desc .d{ display:block; margin-top:2px; font:400 10px Poppins,system-ui, -apple-system, sans-serif; color:#565656; line-height:1.35; }
 </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
 </head>
 <body>
   <div id="stage">

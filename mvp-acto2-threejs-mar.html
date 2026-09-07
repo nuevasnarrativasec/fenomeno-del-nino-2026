@@ -29,7 +29,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: 'Monoglyphic Light', Georgia, serif;
+      font-family: Poppins, system-ui, -apple-system, sans-serif;
       background: #04080f;
       color: #e8e0d5;
       height: 100vh;
@@ -48,32 +48,33 @@
     }
 
     .header-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      margin-bottom: 11px;
+          display: flex;
+    justify-content: flex-start;
+    align-items: baseline;
+    max-width: 600px;
+    margin: 0 auto 15px;
     }
 
     header h1 {
       font-family: 'Monoglyphic Bold', Georgia, serif;
-      font-size: 1.1rem;
+      font-size: 1.2rem;
       font-weight: normal;
       letter-spacing: 0.02em;
-      color: #f0e8df;
+      color: #fff;
     }
 
     .header-sub {
-      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
+      font-family: Poppins, system-ui, sans-serif;
       font-size: 1rem;
       line-height: 1.45;
-      color: #9aa2ae;
-      max-width: 760px;
-      margin: -2px 0 13px;
+      color: #fff;
+      max-width: 600px;
+      margin: 5px auto 30px;
     }
     .header-sub .hs-rojo { color: #e03a3a; }
 
     .intensity-badge {
-      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
+      font-family: Poppins, system-ui, sans-serif;
       font-size: 0.78rem;
       color: #e09070;
       background: #1a1020;
@@ -100,7 +101,7 @@
     }
 
     .slider-label {
-      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
+      font-family: Poppins, system-ui, sans-serif;
       font-size: 0.72rem;
       color: #5a5060;
       white-space: nowrap;
@@ -159,7 +160,7 @@
       position: absolute;
       top: 0;
       transform: translateX(-50%);
-      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
+      font-family: Poppins, system-ui, sans-serif;
       font-size: 0.65rem;
       color: #2a2535;
       white-space: nowrap;
@@ -178,7 +179,7 @@
       padding-top: 9px;
       border-top: 1px solid #141c2e;
       margin-top: 7px;
-      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
+      font-family: Poppins, system-ui, sans-serif;
       font-size: 0.70rem;
       line-height: 1.5;
       color: #4a5568;
@@ -221,7 +222,7 @@
       background: rgba(4, 8, 15, 0.9);
       border: 1px solid #24314a;
       color: #e8e0d5;
-      font-family: 'Monoglyphic Regular', system-ui, sans-serif; font-size: 1.35rem; line-height: 1;
+      font-family: Poppins, system-ui, sans-serif; font-size: 1.35rem; line-height: 1;
       cursor: pointer; border-radius: 8px;
       backdrop-filter: blur(6px);
       box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
@@ -244,15 +245,15 @@
       padding: 13px 16px;
       z-index: 23;
     }
-    #sstBox .sst-title {     font-family: 'Monoglyphic Bold', system-ui, sans-serif;
+    #sstBox .sst-title {     font-family: 'Monoglyphic Bold', Poppins,system-ui, sans-serif;
     font-size: 1rem;
     color: #f0e8df;
     line-height: 1.3;
     letter-spacing: .9px; }
-    #sstBox .sst-sub { font-family: 'Monoglyphic Regular', system-ui, sans-serif; font-size: 0.78rem;
-      color: #aab0c0; margin-top: 6px; }
-    #sstBox .sst-val { font-family: 'Monoglyphic Regular', system-ui, sans-serif; font-size: 1rem;
-      color: #aab0c0; line-height: 1.4; margin-top: 5px; }
+    #sstBox .sst-sub { font-family: Poppins, system-ui, sans-serif; font-size: 0.78rem;
+      color: #fff; margin-top: 6px; }
+    #sstBox .sst-val { font-family: Poppins, system-ui, sans-serif; font-size: 1rem;
+      color: #fff; line-height: 1.4; margin-top: 5px; }
     #sstBox .sst-val b { color: #e09070; font-weight: 700; }
 
     #tooltip {
@@ -274,9 +275,9 @@
     #tooltip.visible { opacity: 1; }
 
     #tooltip .t-name    { font-size: 0.9rem; color: #f0e8df; margin-bottom: 2px; }
-    #tooltip .t-country { font-family: 'Monoglyphic Regular', system-ui, sans-serif; font-size: 0.68rem; color: #4a5568; margin-bottom: 6px; }
-    #tooltip .t-anomaly { font-size: 1.6rem; font-family: 'Monoglyphic Regular', system-ui, sans-serif; font-weight: 700; }
-    #tooltip .t-note    { font-size: 0.72rem; font-family: 'Monoglyphic Regular', system-ui, sans-serif; color: #6a7080; margin-top: 4px; line-height: 1.4; }
+    #tooltip .t-country { font-family: Poppins, system-ui, sans-serif; font-size: 0.68rem; color: #4a5568; margin-bottom: 6px; }
+    #tooltip .t-anomaly { font-size: 1.6rem; font-family: Poppins, system-ui, sans-serif; font-weight: 700; }
+    #tooltip .t-note    { font-size: 0.72rem; font-family: Poppins, system-ui, sans-serif; color: #6a7080; margin-top: 4px; line-height: 1.4; }
 
     /* ── PANEL EXPLICATIVO DE REGIONES (esquina superior izquierda) ── */
     #regions-info {
@@ -292,18 +293,18 @@
       backdrop-filter: blur(6px);
     }
     #regions-info .ri-title {
-      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
+      font-family: Poppins, system-ui, sans-serif;
       font-size: 0.63rem;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: #5a6070;
+      color: #bd4319;
       margin-bottom: 8px;
     }
     #regions-info .ri-intro {
-          font-family: 'Monoglyphic Regular', system-ui, sans-serif;
+          font-family: Poppins, system-ui, sans-serif;
     font-size: 1rem;
     line-height: 1.5;
-    color: #9aa0b0;
+    color: #fff;
     margin-bottom: 11px;
     letter-spacing: .8px;
     }
@@ -312,7 +313,7 @@
       align-items: baseline;
       gap: 8px;
       margin-bottom: 6px;
-      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
+      font-family: Poppins, system-ui, sans-serif;
       font-size: 0.9rem;
       line-height: 1.35;
     }
@@ -330,7 +331,7 @@
     #regions-info .ri-more { margin-top: 11px; border-top: 1px solid #1e2a3e; padding-top: 9px; }
     #regions-info .ri-more summary {
       list-style: none; cursor: pointer;
-      font-family: 'Monoglyphic Regular', system-ui, sans-serif; font-size: 0.9rem; font-weight: 700;
+      font-family: Poppins, system-ui, sans-serif; font-size: 0.9rem; font-weight: 700;
       letter-spacing: 0.02em; color: #b0b6c4;
       display: flex; align-items: center; justify-content: space-between; gap: 8px;
       user-select: none;
@@ -340,7 +341,7 @@
     #regions-info .ri-chevron { transition: transform 0.2s ease; color: #5a6070; font-weight: 700; }
     #regions-info .ri-more[open] .ri-chevron { transform: rotate(90deg); }
     #regions-info .ri-note, #regions-info .ri-para {
-      font-family: 'Monoglyphic Regular', system-ui, sans-serif; font-size: 0.9rem; line-height: 1.5;
+      font-family: Poppins, system-ui, sans-serif; font-size: 0.9rem; line-height: 1.5;
       color: #9aa0b0; margin-top: 8px;
     }
     #regions-info .ri-note { color: #c8b090; }
@@ -382,7 +383,7 @@
     }
     .slider-peak .pk-year {
       margin-top: 7px;
-      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
+      font-family: Poppins, system-ui, sans-serif;
       font-size: 0.6rem;
       font-weight: 700;
       color: #d78a55;
@@ -412,7 +413,7 @@
     }
 
     #legend .leg-title {
-      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
+      font-family: Poppins, system-ui, sans-serif;
       font-size: 0.63rem;
       letter-spacing: 0.08em;
       text-transform: uppercase;
@@ -433,7 +434,7 @@
     .leg-labels {
       display: flex;
       justify-content: space-between;
-      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
+      font-family: Poppins, system-ui, sans-serif;
       font-size: 0.62rem;
       color: #5a6070;
     }
@@ -455,7 +456,7 @@
       min-width: 230px;
     }
     .curr-title {
-      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
+      font-family: Poppins, system-ui, sans-serif;
       font-size: 0.60rem;
       letter-spacing: 0.09em;
       text-transform: uppercase;
@@ -467,7 +468,7 @@
       align-items: center;
       gap: 9px;
       margin-bottom: 5px;
-      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
+      font-family: Poppins, system-ui, sans-serif;
       font-size: 0.68rem;
       color: #5a6070;
     }
@@ -478,7 +479,7 @@
       flex-shrink: 0;
     }
     .curr-hint {
-      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
+      font-family: Poppins, system-ui, sans-serif;
       font-size: 0.60rem;
       color: #2a3040;
       margin-top: 7px;
@@ -488,7 +489,7 @@
 
     /* ── ESTILOS COMPARTIDOS DE REGIÓN NIÑO (usados por el popup) ── */
     .reg-title {
-      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
+      font-family: Poppins, system-ui, sans-serif;
       font-size: 0.62rem;
       letter-spacing: 0.08em;
       text-transform: uppercase;
@@ -511,32 +512,32 @@
     }
     .reg-body { flex: 1; }
     .reg-name {
-      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
+      font-family: Poppins, system-ui, sans-serif;
       font-size: 0.78rem;
       color: #f0e8df;
       font-weight: 700;
     }
     .reg-tag {
-      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
+      font-family: Poppins, system-ui, sans-serif;
       font-size: 0.64rem;
       color: #6a7080;
       margin-top: 1px;
     }
     .reg-desc {
-      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
+      font-family: Poppins, system-ui, sans-serif;
       font-size: 0.68rem;
       color: #8a8878;
       line-height: 1.45;
       margin-top: 4px;
     }
     .reg-val {
-      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
+      font-family: Poppins, system-ui, sans-serif;
       font-size: 0.70rem;
       font-weight: 700;
       margin-top: 4px;
     }
     .reg-hint {
-      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
+      font-family: Poppins, system-ui, sans-serif;
       font-size: 0.64rem;
       color: #6a7080;
       line-height: 1.45;
@@ -545,7 +546,7 @@
       padding-top: 9px;
     }
     .reg-source {
-      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
+      font-family: Poppins, system-ui, sans-serif;
       font-size: 0.58rem;
       color: #3a4050;
       margin-top: 8px;
@@ -588,7 +589,7 @@
       gap: 10px;
     }
     .bar-section.center .dots-caption {
-      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
+      font-family: Poppins, system-ui, sans-serif;
       font-size: 0.6rem;
       letter-spacing: 0.08em;
       text-transform: uppercase;
@@ -605,9 +606,9 @@
       border: 1px solid #1e2a3e;
       border-radius: 6px;
       padding: 6px 13px;
-      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
+      font-family: Poppins, system-ui, sans-serif;
       font-size: 0.72rem;
-      color: #7a8090;
+      color: #fff;
       cursor: pointer;
       transition: all 0.2s;
     }
@@ -654,7 +655,7 @@
     }
 
     .bar-label {
-      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
+      font-family: Poppins, system-ui, sans-serif;
       font-size: 0.68rem;
       color: #3a4050;
       white-space: nowrap;
@@ -708,7 +709,7 @@
     }
 
     .popup-location {
-      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
+      font-family: Poppins, system-ui, sans-serif;
       font-size: 0.70rem;
       color: #5a6070;
       margin-top: 3px;
@@ -729,7 +730,7 @@
     .popup-close:hover { color: #f0e8df; }
 
     .popup-impact {
-      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
+      font-family: Poppins, system-ui, sans-serif;
       font-size: 0.76rem;
       font-weight: 700;
       margin-bottom: 10px;
@@ -755,7 +756,7 @@
       margin-bottom: 14px;
     }
     .popup-year {
-      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
+      font-family: Poppins, system-ui, sans-serif;
       font-size: 0.68rem;
       font-weight: 700;
       letter-spacing: 0.03em;
@@ -763,7 +764,7 @@
       margin-bottom: 5px;
     }
     .popup-source {
-      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
+      font-family: Poppins, system-ui, sans-serif;
       font-size: 0.64rem;
       line-height: 1.5;
       color: #5a6070;
@@ -783,7 +784,7 @@
       border: 1px solid #1e2a3e;
       border-radius: 4px;
       padding: 4px 10px;
-      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
+      font-family: Poppins, system-ui, sans-serif;
       font-size: 0.68rem;
       color: #5a6070;
       cursor: pointer;
@@ -793,7 +794,7 @@
     .popup-nav-btn:hover { color: #f0e8df; border-color: #3a4a6a; }
 
     .popup-counter {
-      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
+      font-family: Poppins, system-ui, sans-serif;
       font-size: 0.65rem;
       color: #2a3040;
     }
@@ -811,7 +812,7 @@
       cursor: pointer;
       pointer-events: auto;
       white-space: nowrap;
-      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
+      font-family: Poppins, system-ui, sans-serif;
       backdrop-filter: blur(4px);
       box-shadow: 0 2px 9px rgba(0,0,0,0.45);
       transition: border-color 0.2s, box-shadow 0.2s;
@@ -879,19 +880,19 @@
     }
     .rp-swatch { margin-top: 0; width: 15px; height: 15px; }
     .rp-name {
-      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
+      font-family: Poppins, system-ui, sans-serif;
       font-size: 0.94rem;
       font-weight: 700;
       color: #f0e8df;
     }
     .rp-code {
-      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
+      font-family: Poppins, system-ui, sans-serif;
       font-size: 0.68rem;
       color: #8a94a8;
       margin-bottom: 7px;
     }
     .rp-tag2 {
-      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
+      font-family: Poppins, system-ui, sans-serif;
       font-size: 0.66rem;
       color: #6a7080;
       margin-bottom: 2px;
@@ -990,14 +991,14 @@
     }
 
     .loading-text {
-      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
+      font-family: Poppins, system-ui, sans-serif;
       font-size: 0.82rem;
       color: #5a6070;
       letter-spacing: 0.05em;
     }
 
     .loading-step {
-      font-family: 'Monoglyphic Regular', system-ui, sans-serif;
+      font-family: Poppins, system-ui, sans-serif;
       font-size: 0.68rem;
       color: #3a4050;
       margin-top: -10px;
@@ -1026,16 +1027,16 @@
       background:#04080f url('img/bg-header.jpg') no-repeat center center/cover; }
     #glFallback::before{ content:''; position:absolute; inset:0; background:rgba(4,8,15,0.82); }
     #glFallback .glf-inner{ position:relative; max-width:440px; text-align:center; padding:28px 24px; }
-    #glFallback .glf-title{ font-family:'Monoglyphic Bold', system-ui, sans-serif; color:#f0e8df; font-size:1.35rem; line-height:1.2; margin-bottom:12px; }
-    #glFallback .glf-text{ font-family:system-ui,-apple-system,sans-serif; color:#b8b0a4; font-size:.95rem; line-height:1.55; margin:0 0 20px; }
-    #glFallback .glf-btn{ font-family:'Monoglyphic Bold', system-ui, sans-serif; background:#e05c2a; color:#fff; border:0;
+    #glFallback .glf-title{ font-family:'Monoglyphic Bold', Poppins,system-ui, sans-serif; color:#f0e8df; font-size:1.35rem; line-height:1.2; margin-bottom:12px; }
+    #glFallback .glf-text{ font-family:Poppins,system-ui,-apple-system,sans-serif; color:#b8b0a4; font-size:.95rem; line-height:1.55; margin:0 0 20px; }
+    #glFallback .glf-btn{ font-family:'Monoglyphic Bold', Poppins,system-ui, sans-serif; background:#e05c2a; color:#fff; border:0;
       border-radius:8px; padding:11px 24px; font-size:.95rem; cursor:pointer; }
     #glFallback .glf-btn:hover{ background:#c74d20; }
 
     /* Chip que colapsa el panel de instrucciones (visible solo en móvil) */
     #riToggle{ display:none; align-items:center; gap:7px; position:absolute; top:110px; left:8px; z-index:23;
       background:rgba(4,8,15,0.92); border:1px solid #1e2a3e; border-radius:8px; padding:8px 12px; cursor:pointer;
-      font-family:'Monoglyphic Regular', system-ui, sans-serif; font-size:0.74rem; color:#c8c0b4; backdrop-filter:blur(6px); }
+      font-family:Poppins, system-ui, sans-serif; font-size:0.74rem; color:#c8c0b4; backdrop-filter:blur(6px); }
     #riToggle .ri-tog-chev{ transition:transform .2s ease; color:#e05c2a; font-weight:700; }
     #riToggle.open .ri-tog-chev{ transform:rotate(180deg); }
 
@@ -1081,6 +1082,9 @@
       }
     }
   </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -2459,13 +2463,13 @@ function initGlobeInner(data) {
       'position:absolute;left:50%;bottom:64px;transform:translateX(-50%) translateY(6px);' +
       'z-index:25;pointer-events:none;opacity:0;transition:opacity .3s ease, transform .3s ease;' +
       'display:flex;align-items:center;gap:7px;white-space:nowrap;' +
-      "font-family:'Monoglyphic Regular',system-ui,sans-serif;font-size:.8rem;color:#e8e0d5;" +
+      "font-family:Poppins,system-ui,sans-serif;font-size:.8rem;color:#e8e0d5;" +
       'padding:8px 14px;border-radius:20px;background:rgba(4,8,15,.85);' +
       'border:1px solid #24314a;box-shadow:0 6px 20px rgba(0,0,0,.4);';
     cont.appendChild(hint);
     const kbd = hint.querySelector('.zh-key');
     if (kbd) kbd.style.cssText =
-      'font-family:system-ui,sans-serif;font-weight:700;font-size:.72rem;' +
+      'font-family:Poppins,system-ui,sans-serif;font-weight:700;font-size:.72rem;' +
       'padding:2px 7px;border-radius:5px;background:#1b2740;border:1px solid #33456a;color:#fff;';
 
     let hideT;
@@ -2843,7 +2847,7 @@ Promise.all([
 })
 .catch(err => {
   document.getElementById('loading').innerHTML = `
-    <div style="color:#e05c2a;text-align:center;padding:24px;font-family:sans-serif;">
+    <div style="color:#e05c2a;text-align:center;padding:24px;font-family:Poppins,system-ui,sans-serif;">
       Error al cargar datos.<br>
       <small style="color:#5a6070">${err.message}</small>
     </div>`;

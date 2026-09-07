@@ -298,7 +298,7 @@
      cuadros naranjas siguen cayendo exactamente sobre la línea punteada.
      ============================================================ */
   const START_Y = 150;   // centro vertical del primer círculo
-  const GAP = 420;       // ← distancia entre estaciones (da espacio a la secuencia por scroll)
+  const GAP = 580;       // ← distancia entre estaciones (subido para que el cuadro naranja no se solape con el cuadro blanco)
   const ORANGE_F = 0.58; // posición del cuadro naranja sobre el tramo a la sgte. estación
 
   // Lienzo más ancho: da aire a la fila inferior para alinear las etiquetas en
@@ -330,7 +330,7 @@
   const YT_X    = 580, YT_DY = 330;                          // "¿Y tú?" (centro X, desfase Y bajo la fila)
   const RBOX_CX = 580, RBOX_W = 300, RBOX_DY = YT_DY + 185;  // caja roja del dato, bajo "¿Y tú?"
   const CAP_DY  = RBOX_DY + 150;                             // texto Lorem, bajo la caja roja
-  const STAGE_H = YO.cy + 240;                               // alto total del lienzo (recortado: el contenido termina en la fila de figuras + el texto final sobre la línea)
+  const STAGE_H = YO.cy + 340;                               // alto total del lienzo (deja aire bajo la fila de figuras para el texto final movido hacia abajo)
 
   /* ============================================================
      CONSTRUCCIÓN DEL DOM
@@ -449,7 +449,7 @@
 
   // Bajada de la portada (bajo el título)
   const stageBajada = el('div','stage-bajada',
-    'Nueve historias, distintos departamentos y diez señales de alerta que, aunque parecen aisladas, se entrelazan en la realidad peruana.');
+    '<strong style="font-family:\'Poppins\',system-ui,sans-serif;font-weight:700;color:#f4efe7;">Nueve historias</strong>, distintos departamentos y diez señales de alerta que, aunque parecen aisladas, se entrelazan en la realidad peruana.');
   stageBajada.style.left = Math.round(STAGE_W/2)+'px';
   stageBajada.style.top  = '450px';
   stage.appendChild(stageBajada);
@@ -510,9 +510,9 @@
     if(r.me){ r._x = x; }
     if(!r.me){
       // número grande (1..9) + etiqueta, escalonados en dos niveles:
-      // pares ARRIBA de la figura, impares ABAJO (evita que se amontonen).
+      // impares (1,3,5,7,9) ARRIBA de la figura, pares (2,4,6,8) ABAJO.
       figNum++;
-      const above = (figNum % 2 === 0);
+      const above = (figNum % 2 !== 0);
       const num = el('div','fig-num reveal'+(above?' above':''), String(figNum));
       num.style.left = x+'px';
       num.style.top  = (above ? (ROW_Y - FIG_H - 10) : (ROW_Y + NUM_DY))+'px';
@@ -546,11 +546,14 @@
 
   // "¿Y tú?"
   const yq = el('div','final-q reveal','¿Y si la siguiente historia fuera la tuya?');
-  // Va donde antes estaba el cuadro naranja de Cecilia (última estación), sobre la línea zig-zag.
-  const LAST = STATIONS[STATIONS.length-1];
-  yq.style.left = LAST.orange.tox+'px';
-  yq.style.top  = LAST.orange.toy+'px';
+  // Movido hacia ABAJO, debajo de la fila de figuras, con una línea punteada
+  // que nace del personaje "Yo" (a la derecha) y baja hasta el texto.
+  const YQ_X = 600, YQ_Y = ROW_Y + 210;
+  yq.style.left = YQ_X+'px';
+  yq.style.top  = YQ_Y+'px';
   yoNode.appendChild(yq);
+  // línea punteada: "Yo" (sobre la línea de pies) → texto final
+  dline([[YO_X, ROW_Y - 6], [YQ_X + 150, YQ_Y - 42]]);
 
   // (El texto inferior 'Lorem' se eliminó junto con la reubicación del texto final.)
 
@@ -671,12 +674,16 @@
     gsap.registerPlugin(ScrollTrigger);
 
     // La línea punteada se dibuja de arriba hacia abajo siguiendo el scroll.
-    clipRect.setAttribute('height','0');
-    gsap.to(clipRect, {
-      attr:{ height: STAGE_H },
-      ease:'none',
-      scrollTrigger:{ trigger: wrap, start:'top top', end:'bottom 80%', scrub:0.5 }
-    });
+    // DRAW_LEAD: el trazo arranca ya "adelantado" ~una pantalla, para que la
+    // línea llegue al personaje justo ANTES de que aparezca (se ve conectado).
+    const DRAW_LEAD = 720;
+    clipRect.setAttribute('height', String(DRAW_LEAD));
+    gsap.fromTo(clipRect,
+      { attr:{ height: DRAW_LEAD } },
+      { attr:{ height: STAGE_H },
+        ease:'none',
+        scrollTrigger:{ trigger: wrap, start:'top top', end:'bottom 80%', scrub:0.5 }
+      });
 
     // Secuencia escalonada por scroll. Para cada personaje, todos los
     // elementos usan el MISMO ancla (su círculo) y aparecen con un desfase
