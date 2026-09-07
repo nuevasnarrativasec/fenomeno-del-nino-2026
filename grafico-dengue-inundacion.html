@@ -9,6 +9,14 @@
   @font-face{ font-family:'Monoglyphic Bold';    src:url('fonts/Monoglyphic-Bold.woff2') format('woff2'); font-display:swap; }
   @font-face{ font-family:'Monoglyphic Regular'; src:url('fonts/Monoglyphic-Regular.woff2') format('woff2'); font-display:swap; }
   @font-face{ font-family:'Monoglyphic Light';   src:url('fonts/Monoglyphic-Light.woff2') format('woff2'); font-display:swap; }
+  @font-face {
+    font-family: 'Monoglyphic Semi Bold';
+    src: url('../fonts/Monoglyphic-SemiBold.woff2') format('woff2'),
+        url('../fonts/Monoglyphic-SemiBold.woff') format('woff');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
 
   :root{
     --bg:#ffffff; --title:#0a0a0a; --ink:#242424; --muted:#8a8a8a; --faint:#e2e2e2;
@@ -19,19 +27,22 @@
 
   .viz{ max-width:1000px; margin:0 auto; position:relative; }
   .viz-eyebrow{ font-family:Poppins,system-ui,sans-serif; font-size:.66rem; letter-spacing:.16em; text-transform:uppercase; color:var(--accent); margin-bottom:10px; }
-  .viz-title{     font-family: 'Monoglyphic Bold', Poppins,system-ui, sans-serif;
+  .viz-title{     font-family: 'Monoglyphic Semi Bold';
         font-size: 2rem;
     color: #000;
     text-align: center;
     margin: 0 auto;
-    max-width: 500px; }
-  .viz-sub{ font-family: Poppins, system-ui, sans-serif;
+    max-width: 400px; }
+  .viz-sub{    
+    font-family: Poppins, system-ui, sans-serif;
     font-size: 1.3rem;
     line-height: 1.5;
     color: #3a3a3a;
-    max-width: 660px;
+    max-width: 600px;
     margin: 16px auto 8px;
-    text-align: center; }
+    text-align: left;
+    font-weight: 300; 
+  }
 
   .viz-stat{
     display:inline-flex; align-items:baseline; gap:12px; flex-wrap:wrap;
@@ -106,14 +117,16 @@
         font-size: 1.3rem;
         line-height: 1.5;
         color: #3a3a3a;
+        font-weight: 300;
       }
         ul.grafico-dengue li p span{
-          font-family: 'Monoglyphic Bold', Poppins,system-ui, sans-serif;
+          font-family: Poppins, system-ui, sans-serif;
           font-size: 1.3rem;
+          font-weight: 600;
           color: #000;
         }
   h3.sub-grafico-dengue{
-    font-family: 'Monoglyphic Bold', Poppins,system-ui, sans-serif;
+    font-family: 'Monoglyphic Semi Bold';
     font-size: 1.3rem;
     color: #000;
     text-align: left;

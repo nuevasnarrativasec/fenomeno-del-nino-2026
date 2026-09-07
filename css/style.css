@@ -65,6 +65,25 @@
     font-display: swap;
 }
 
+@font-face {
+    font-family: 'Monoglyphic Semi Bold';
+    src: url('../fonts/Monoglyphic-SemiBold.woff2') format('woff2'),
+        url('../fonts/Monoglyphic-SemiBold.woff') format('woff');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Monoglyphic Extra Bold';
+    src: url('../fonts/Monoglyphic-ExtraBold.woff2') format('woff2'),
+        url('../fonts/Monoglyphic-ExtraBold.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+
 
 
 
@@ -159,10 +178,11 @@
   }
     .hero h1{ 
         font-size:clamp(2rem,6vw,5.6rem); line-height:1.06; color:#f4efe7; max-width:16ch; 
-        font-family: 'Monoglyphic Bold';
+        font-family: 'Monoglyphic Extra Bold';
         color: #FF0000;
         max-width: 800px;
         text-shadow: 1px 1px 31px #000000;
+        text-transform: uppercase;
     }
         .hero h1 span{
             display: block;
@@ -183,6 +203,7 @@
         color: #fff;
         font: 1.3rem/1.4 Poppins, system-ui, sans-serif;
         max-width: 660px;
+            font-weight: 300;
     }
       p.bajada b{
         font-family: 'Monoglyphic Bold', Poppins,system-ui, sans-serif;
@@ -561,13 +582,14 @@
     .mapa-fen{ background:#ffffff; color:#141414; padding:12px 20px 64px; }
       .mapa-inner{ max-width:1040px; margin:0 auto; }
       .mapa-fen h3{
-        font-family:'Monoglyphic Bold', Poppins,system-ui, sans-serif;
+        font-family:'Monoglyphic Semi Bold';
         font-size:2rem; color:#000; text-align:center; margin:0 auto;
       }
       .mapa-intro{
         font-family:Poppins, system-ui, sans-serif;
         font-size:1.3rem; line-height:1.5; color:#3a3a3a;
-        max-width:700px; margin:16px auto 8px; text-align:center;
+        max-width:600px; margin:25px auto 8px; text-align:left;
+        font-weight: 300;
       }
       .mapa-intro strong{ color:#1f7a70; font-family:'Monoglyphic Bold', Poppins,system-ui, sans-serif; }
       .mapa-layout{
@@ -642,6 +664,7 @@
       .mp-explic{
             font-family: Poppins, system-ui, sans-serif;
         font-size:1.2rem; line-height:1.55; color:#33302b; margin-top:14px;
+        font-weight: 300;
       }
       .mapa-source{
         font-family: Poppins, system-ui, sans-serif;

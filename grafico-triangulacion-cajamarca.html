@@ -10,6 +10,14 @@
   @font-face{ font-family:'Monoglyphic Bold';    src:url('fonts/Monoglyphic-Bold.woff2') format('woff2'); font-display:swap; }
   @font-face{ font-family:'Monoglyphic Regular'; src:url('fonts/Monoglyphic-Regular.woff2') format('woff2'); font-display:swap; }
   @font-face{ font-family:'Monoglyphic Light';   src:url('fonts/Monoglyphic-Light.woff2') format('woff2'); font-display:swap; }
+  @font-face {
+    font-family: 'Monoglyphic Semi Bold';
+    src: url('../fonts/Monoglyphic-SemiBold.woff2') format('woff2'),
+        url('../fonts/Monoglyphic-SemiBold.woff') format('woff');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
 
   :root{
     --bg:#ffffff; --title:#0a0a0a; --ink:#242424; --muted:#8a8a8a; --faint:#e6e6e6;
@@ -22,8 +30,8 @@
 
   .wrap{ max-width:1040px; margin:0 auto; }
   .eyebrow{ font-family:Poppins,system-ui,sans-serif; font-size:.66rem; letter-spacing:.16em; text-transform:uppercase; color:var(--a1); text-align:center; margin-bottom:10px; }
-  .title{ font-family:'Monoglyphic Bold', Poppins,system-ui, sans-serif; font-size:2rem; line-height:1.12; color:#000; text-align:center; }
-  .sub{ font-family:Poppins, system-ui, sans-serif; font-size:1.3rem; line-height:1.5; color:#3a3a3a; max-width:650px; margin:15px auto 0; text-align:center; }
+  .title{ font-family:'Monoglyphic Semi Bold'; font-size:2rem; line-height:1.12; color:#000; text-align:center; }
+  .sub{ font-family:Poppins, system-ui, sans-serif; font-size:1.3rem; line-height:1.5; color:#3a3a3a; max-width:600px; margin:15px auto 0; text-align:left; font-weight: 300;}
   .expo{ font-family:Poppins,system-ui,sans-serif; font-size:.86rem; line-height:1.5; color:#6a6a6a; max-width:640px; margin:14px auto 0; text-align:center; font-style:italic; }
 
   .grid{ display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:34px; }
