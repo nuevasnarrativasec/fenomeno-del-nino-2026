@@ -819,9 +819,14 @@
       ib.style.width=INFO_W+'px'; ib.style.left=IBX+'px'; ib.style.top=(sy+CR+52)+'px'; stage.appendChild(ib); s._ib=ib;
       var btn=el('button','infobtn reveal','›'); btn.dataset.idx=i;
       btn.style.left=(IBX+INFO_W)+'px'; btn.style.top=(sy+CR+52)+'px'; stage.appendChild(btn); s._btn=btn;
-      var ob=el('div','orangebox reveal','<span class="q" style="margin-top:0">'+s.q+'</span>');
-      ob.style.width='300px'; ob.style.left=(SW/2)+'px'; ob.style.top=(sy+330)+'px'; ob.style.transform='translateX(-50%)';
-      stage.appendChild(ob); s._ob=ob;
+      // cuadro naranja (móvil): la ÚLTIMA estación (Cecilia) ya NO lleva naranja
+      var ob=null;
+      if(i < STATIONS.length-1){
+        ob=el('div','orangebox reveal','<span class="q" style="margin-top:0">'+s.q+'</span>');
+        ob.style.width='300px'; ob.style.left=(SW/2)+'px'; ob.style.top=(sy+330)+'px'; ob.style.transform='translateX(-50%)';
+        stage.appendChild(ob);
+      }
+      s._ob=ob;
     });
 
     // ---- Cierre VERTICAL: figuras (ROW) una debajo de otra + "¿Y tú?" ----
@@ -885,7 +890,7 @@
         gsap.fromTo(s._circle, { left:s._gx, top:s._gy },
           { left:s._sx, top:s._sy, ease:'power2.out',
             scrollTrigger:{ trigger:s._ib, start:'top 92%', end:'top 52%', scrub:0.6 } });
-        [s._nw,s._ib,s._btn,s._ob].forEach(function(n,k){
+        [s._nw,s._ib,s._btn,s._ob].filter(Boolean).forEach(function(n,k){
           gsap.set(n,{opacity:0});
           gsap.to(n,{opacity:1,duration:.5,ease:'power2.out',
             scrollTrigger:{ trigger:s._ib, start:(k>=2?'top 58%':'top 72%'), toggleActions:'play none none reverse' }});
