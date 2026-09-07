@@ -76,7 +76,11 @@
   .tab{ display:flex; align-items:center; gap:11px; text-align:left; background:#fff; border:1px solid #dcdcdc; border-radius:10px; padding:16px 18px; cursor:pointer; font-family:inherit; transition:border-color .15s, background .15s, box-shadow .15s; }
   .tab .t-num{ flex:0 0 auto; width:26px; height:26px; border-radius:50%; color:#fff; font-family:'Monoglyphic Bold',system-ui,sans-serif; font-size:.9rem; display:flex; align-items:center; justify-content:center; }
   .tab.p1 .t-num{ background:var(--a1);} .tab.p2 .t-num{ background:var(--a2);} .tab.p3 .t-num{ background:var(--a3);} .tab.p4 .t-num{ background:var(--a4);}
-  .tab .t-lbl{ font-family:'Monoglyphic Bold',system-ui,sans-serif; font-size:.98rem; line-height:1.16; color:#1a1a1a; }
+  .tab .t-lbl{     font-family: 'Monoglyphic Bold', system-ui, sans-serif;
+    font-size: 1rem;
+    line-height: 1.3;
+    color: #1a1a1a;
+    letter-spacing: 0.4px;}
   .tab:hover{ border-color:#bcbcbc; }
   .tab.p1.is-active{ border-color:var(--a1); background:#fdf1ec; }
   .tab.p2.is-active{ border-color:var(--a2); background:#faf4e7; }
@@ -100,6 +104,31 @@
     .kpis{ grid-template-columns:1fr 1fr; }
   }
 </style>
+<style id="src-tip-css">
+  /* Fuente como botón-tooltip (hover en escritorio, tap en móvil). Patrón consistente en todo el especial. */
+  .src-tip{ position:relative; display:inline-block; vertical-align:middle; }
+  .src-tip-btn{ font-family:system-ui,-apple-system,Arial,sans-serif; display:inline-flex; align-items:center; gap:5px;
+    cursor:pointer; border:1px solid rgba(120,120,120,.45); background:transparent; color:#8f8f8f;
+    border-radius:999px; padding:3px 11px 3px 8px; font-size:.68rem; letter-spacing:.07em; font-weight:400;
+    text-transform:uppercase; line-height:1; transition:color .15s,border-color .15s,background .15s; }
+  .src-tip-btn:hover, .src-tip-btn:focus-visible{ color:#3a3a3a; border-color:rgba(80,80,80,.7); background:rgba(0,0,0,.03); outline:none; }
+  .src-tip-btn svg{ width:13px; height:13px; flex:0 0 auto; }
+  .src-tip-pop{ position:absolute; left:50%; bottom:calc(100% + 9px); transform:translateX(-50%) translateY(4px);
+    width:max-content; max-width:min(320px,86vw); background:#111; color:#f1f1f1; border-radius:8px; padding:11px 13px;
+    font-family:system-ui,-apple-system,Arial,sans-serif; font-size:.76rem; font-weight:400; line-height:1.5;
+    letter-spacing:normal; text-transform:none; text-align:left; box-shadow:0 8px 26px rgba(0,0,0,.28);
+    opacity:0; visibility:hidden; transition:opacity .16s ease, transform .16s ease; z-index:95; }
+  .src-tip-pop::before{ content:""; position:absolute; top:100%; left:0; right:0; height:11px; } /* puente para el hover */
+  .src-tip-pop::after{ content:""; position:absolute; top:100%; left:50%; transform:translateX(-50%);
+    border:6px solid transparent; border-top-color:#111; }
+  .src-tip:hover .src-tip-pop, .src-tip:focus-within .src-tip-pop, .src-tip.open .src-tip-pop{
+    opacity:1; visibility:visible; transform:translateX(-50%) translateY(0); }
+  /* Variante alineada a la izquierda: el popover se ancla al borde izq. del botón (evita corte en botones pegados al margen) */
+  .src-tip--left .src-tip-pop{ left:0; transform:translateX(0) translateY(4px); }
+  .src-tip--left:hover .src-tip-pop, .src-tip--left:focus-within .src-tip-pop, .src-tip--left.open .src-tip-pop{ transform:translateX(0) translateY(0); }
+  .src-tip--left .src-tip-pop::after{ left:32px; }
+  @media (prefers-reduced-motion:reduce){ .src-tip-pop{ transition:none; } }
+</style>
 </head>
 <body>
   <div class="wrap">
@@ -121,19 +150,22 @@
           <div class="p-num">1</div>
           <div class="p-titles">
             <h3>¿Qué cambió alrededor del evento?</h3>
-            <p>Tres alertas —dengue, leishmaniasis y atenciones por violencia— cambiaron en una misma ventana de tiempo. Coincidir no significa tener la misma causa.</p>
+            <p>En 2023 se dispararon al mismo tiempo el dengue (se duplicó en 7.451), los casos de uta (Leishmaniasis) y las denuncias por violencia familiar.</p>
           </div>
         </div>
         <div id="chart1" class="chart"></div>
         <p class="p-note">Índice 2022 = 100. El dengue de Cajamarca dobló su nivel en 2023 (204,8). CEM y leishmaniasis se despegan de su comparador nacional en 2024–2025. El dengue va sin comparador nacional: el resto del país creció más rápido.</p>
-        <p class="p-src">Fuentes: MINSA/CDC (dengue, leishmaniasis) y MIMP/Programa Aurora (CEM, ventana enero–abril). 2026* es corte parcial.</p>
+        <p class="p-src"><span class="src-tip src-tip--left"><button type="button" class="src-tip-btn" aria-expanded="false" aria-controls="src-tip-2"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"></circle><line x1="12" y1="11.4" x2="12" y2="16.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></line><circle cx="12" cy="7.6" r="1.35" fill="currentColor"></circle></svg> Fuente</button><span class="src-tip-pop" role="tooltip" id="src-tip-2">MINSA/CDC (dengue, leishmaniasis) y MIMP/Programa Aurora (CEM, ventana enero–abril). 2026* es corte parcial.</span></span></p>
       </div>
 
       <!-- ÁREA 2 -->
       <div class="panel p2 struct" data-pane="2">
         <div class="p-head">
           <div class="p-num">2</div>
-          <div class="p-titles"><h3>¿Qué tan vulnerable era antes?</h3><p>83 de cada 100 hectáreas cultivadas dependen solo de la lluvia y su infraestructura crítica está entre las más expuestas.</p></div>
+          <div class="p-titles">
+            <h3>¿Qué tan vulnerable era antes?</h3>
+            <p>El 83% de sus tierras de cultivo depende exclusivamente del agua de lluvia. Además, es la cuarta región con infraestructura expuesta, como escuelas, postas y caminos.</p>
+          </div>
         </div>
         <div class="stk">
           <div>
@@ -147,7 +179,7 @@
           </div>
         </div>
         <p class="p-note">No son series anuales: explican cómo llega Cajamarca al evento, no qué pasó durante. La dependencia del secano vuelve a la agricultura muy sensible a la lluvia.</p>
-        <p class="p-src">Fuentes: IPE y CENEPRED.</p>
+        <p class="p-src"><span class="src-tip src-tip--left"><button type="button" class="src-tip-btn" aria-expanded="false" aria-controls="src-tip-3"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"></circle><line x1="12" y1="11.4" x2="12" y2="16.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></line><circle cx="12" cy="7.6" r="1.35" fill="currentColor"></circle></svg> Fuente</button><span class="src-tip-pop" role="tooltip" id="src-tip-3">IPE y CENEPRED.</span></span></p>
       </div>
 
       <!-- ÁREA 3 -->
@@ -156,12 +188,12 @@
           <div class="p-num">3</div>
           <div class="p-titles">
             <h3>¿Cómo responden?</h3>
-            <p>A agosto de 2026 se había ejecutado el 55,4% del presupuesto de prevención. El dato es parcial porque el año aún no había terminado.</p>
+            <p>La ejecución presupuestal para mitigar emergencias avanza lento. Al corte de agosto de 2026, la región solo había gastado el 55,4% de sus fondos públicos asignados para la prevención.</p>
           </div>
         </div>
         <div id="chart3" class="chart"></div>
         <p class="p-note">Ejecución del PP0068 (Reducción de vulnerabilidad y atención de emergencias), en porcentaje real. En 2025 la ejecución sube a 96 % — un dato que juega en contra del argumento y se incluye a propósito. 2026* es corte parcial a agosto, no comparable como año cerrado.</p>
-        <p class="p-src">Fuente: MEF / Consulta Amigable.</p>
+        <p class="p-src"><span class="src-tip src-tip--left"><button type="button" class="src-tip-btn" aria-expanded="false" aria-controls="src-tip-4"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"></circle><line x1="12" y1="11.4" x2="12" y2="16.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></line><circle cx="12" cy="7.6" r="1.35" fill="currentColor"></circle></svg> Fuente</button><span class="src-tip-pop" role="tooltip" id="src-tip-4">MEF / Consulta Amigable.</span></span></p>
       </div>
 
       <!-- ÁREA 4 -->
@@ -170,7 +202,7 @@
           <div class="p-num">4</div>
           <div class="p-titles">
             <h3>¿Qué se paraliza?</h3>
-            <p>A junio de 2024, Cajamarca tenía 143 obras públicas paralizadas y S/2.789 millones de inversión inmovilizada.</p>
+            <p>A junio de 2024, Cajamarca tenía 143 obras públicas paralizadas y S/2.789 millones de inversión inmovilizada. </p>
           </div>
         </div>
         <div class="kpis">
@@ -188,7 +220,7 @@
           <div class="cbar"><span class="name">Callao</span><div class="track"><i style="width:94.5%; background:#c3b3cf"></i></div><span class="val">893,7</span></div>
           <div class="cbar"><span class="name">Lima Metrop.</span><div class="track"><i style="width:48.1%; background:#c3b3cf"></i></div><span class="val">455,1</span></div>
         </div>
-        <p class="p-src">Fuentes: Contraloría / Infobras (obras) y MINCETUR (exportaciones). Comparaciones puntuales entre regiones, no un ranking nacional.</p>
+        <p class="p-src"><span class="src-tip src-tip--left"><button type="button" class="src-tip-btn" aria-expanded="false" aria-controls="src-tip-5"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"></circle><line x1="12" y1="11.4" x2="12" y2="16.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></line><circle cx="12" cy="7.6" r="1.35" fill="currentColor"></circle></svg> Fuente</button><span class="src-tip-pop" role="tooltip" id="src-tip-5">Contraloría / Infobras (obras) y MINCETUR (exportaciones). Comparaciones puntuales entre regiones, no un ranking nacional.</span></span></p>
       </div>
     </div>
 
@@ -196,7 +228,7 @@
       <h4>Cómo leer esto</h4>
       <p>No todas suben a la vez ni el FEN las causa por sí solo: lo que coincide son las cuatro áreas. La triangulación no significa que todas las variables aumenten al mismo tiempo ni que el FEN las cause directamente; muestra que en Cajamarca coinciden señales temporales, vulnerabilidades estructurales, capacidad de respuesta pública y exposición económica.</p>
     </div>
-    <p class="foot">Fuentes: MIMP/Aurora, MINSA/CDC, IPE, CENEPRED, MEF, Contraloría e Infobras, MINCETUR. CEM medido en la ventana enero–abril. 2026 es corte parcial. El otro clúster —la destrucción que sí se ve— lo encabezan Piura y La Libertad en viviendas destruidas; Cajamarca casi no aparece ahí.</p>
+    <!--<p class="foot"><span class="src-tip"><button type="button" class="src-tip-btn" aria-expanded="false" aria-controls="src-tip-6"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"></circle><line x1="12" y1="11.4" x2="12" y2="16.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></line><circle cx="12" cy="7.6" r="1.35" fill="currentColor"></circle></svg> Fuente</button><span class="src-tip-pop" role="tooltip" id="src-tip-6">MIMP/Aurora, MINSA/CDC, IPE, CENEPRED, MEF, Contraloría e Infobras, MINCETUR. CEM medido en la ventana enero–abril. 2026 es corte parcial. El otro clúster —la destrucción que sí se ve— lo encabezan Piura y La Libertad en viviendas destruidas; Cajamarca casi no aparece ahí.</span></span></p>-->
   </div>
 
 <script>
@@ -296,6 +328,24 @@
   setTimeout(function(){ resizeAll(); postHeight(); }, 60);
   setTimeout(postHeight, 400);
   postHeight();
+})();
+</script>
+<script id="src-tip-js">
+(function(){
+  function closeAll(except){
+    document.querySelectorAll('.src-tip.open').forEach(function(t){
+      if(t!==except){ t.classList.remove('open'); var b=t.querySelector('.src-tip-btn'); if(b) b.setAttribute('aria-expanded','false'); }
+    });
+  }
+  document.querySelectorAll('.src-tip-btn').forEach(function(btn){
+    btn.addEventListener('click', function(e){
+      e.stopPropagation();
+      var t=btn.closest('.src-tip'); var willOpen=!t.classList.contains('open');
+      closeAll(t); t.classList.toggle('open', willOpen); btn.setAttribute('aria-expanded', willOpen ? 'true':'false');
+    });
+  });
+  document.addEventListener('click', function(e){ if(!e.target.closest('.src-tip.open')) closeAll(null); });
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeAll(null); });
 })();
 </script>
 </body>

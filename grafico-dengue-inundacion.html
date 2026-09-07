@@ -24,7 +24,7 @@
     color: #000;
     text-align: center;
     margin: 0 auto;
-    max-width: 550px; }
+    max-width: 500px; }
   .viz-sub{ font-family: 'Monoglyphic Light', system-ui, sans-serif;
     font-size: 1.3rem;
     line-height: 1.5;
@@ -112,12 +112,47 @@
           font-size: 1.3rem;
           color: #000;
         }
+  h3.sub-grafico-dengue{
+    font-family: 'Monoglyphic Bold', system-ui, sans-serif;
+    font-size: 1.3rem;
+    color: #000;
+    text-align: left;
+    margin: 24px auto;
+    max-width: 600px;
+  }
 
        @media (max-width:640px){
         .viz-pick{
               flex-direction: column;
         }
+        .tip{ white-space:normal; max-width:min(280px,84vw); }
+        .tip .rw{ font-size:.8rem; }
        }
+</style>
+<style id="src-tip-css">
+  /* Fuente como botón-tooltip (hover en escritorio, tap en móvil). Patrón consistente en todo el especial. */
+  .src-tip{ position:relative; display:inline-block; vertical-align:middle; }
+  .src-tip-btn{ font-family:system-ui,-apple-system,Arial,sans-serif; display:inline-flex; align-items:center; gap:5px;
+    cursor:pointer; border:1px solid rgba(120,120,120,.45); background:transparent; color:#8f8f8f;
+    border-radius:999px; padding:3px 11px 3px 8px; font-size:.68rem; letter-spacing:.07em; font-weight:400;
+    text-transform:uppercase; line-height:1; transition:color .15s,border-color .15s,background .15s; }
+  .src-tip-btn:hover, .src-tip-btn:focus-visible{ color:#3a3a3a; border-color:rgba(80,80,80,.7); background:rgba(0,0,0,.03); outline:none; }
+  .src-tip-btn svg{ width:13px; height:13px; flex:0 0 auto; }
+  .src-tip-pop{ position:absolute; left:50%; bottom:calc(100% + 9px); transform:translateX(-50%) translateY(4px);
+    width:max-content; max-width:min(320px,86vw); background:#111; color:#f1f1f1; border-radius:8px; padding:11px 13px;
+    font-family:system-ui,-apple-system,Arial,sans-serif; font-size:.76rem; font-weight:400; line-height:1.5;
+    letter-spacing:normal; text-transform:none; text-align:left; box-shadow:0 8px 26px rgba(0,0,0,.28);
+    opacity:0; visibility:hidden; transition:opacity .16s ease, transform .16s ease; z-index:95; }
+  .src-tip-pop::before{ content:""; position:absolute; top:100%; left:0; right:0; height:11px; } /* puente para el hover */
+  .src-tip-pop::after{ content:""; position:absolute; top:100%; left:50%; transform:translateX(-50%);
+    border:6px solid transparent; border-top-color:#111; }
+  .src-tip:hover .src-tip-pop, .src-tip:focus-within .src-tip-pop, .src-tip.open .src-tip-pop{
+    opacity:1; visibility:visible; transform:translateX(-50%) translateY(0); }
+  /* Variante alineada a la izquierda: el popover se ancla al borde izq. del botón (evita corte en botones pegados al margen) */
+  .src-tip--left .src-tip-pop{ left:0; transform:translateX(0) translateY(4px); }
+  .src-tip--left:hover .src-tip-pop, .src-tip--left:focus-within .src-tip-pop, .src-tip--left.open .src-tip-pop{ transform:translateX(0) translateY(0); }
+  .src-tip--left .src-tip-pop::after{ left:32px; }
+  @media (prefers-reduced-motion:reduce){ .src-tip-pop{ transition:none; } }
 </style>
 </head>
 <body data-palette="#ee5522">
@@ -127,6 +162,30 @@
     <p class="viz-sub">
       En la mayoría de regiones, el riesgo de inundación coincide con un aumento de casos de dengue: los desbordes dejan agua estancada que acelera la reproducción del mosquito transmisor. Sin embargo, no siempre van de la mano:
     </p>
+    
+
+    <div class="viz-stat" style="display: none;">
+      <b>Spearman <span class="sp">r = 0,559</span></b>
+      <span>p = 0,004 · 24 regiones · asociación real y significativa — es una <b style="color:#3a3a3a">tendencia</b>, no una proporción estricta</span>
+    </div>
+
+    <div class="viz-pick">
+      <label for="regionSel">Resalta tu región:</label>
+      <select id="regionSel"><option value="">— elige una región —</option></select>
+      <button class="clear" id="clearSel">limpiar</button>
+    </div>
+
+    <div class="chart-wrap">
+      <svg id="chart" viewBox="0 0 980 590" role="img" aria-label="Dispersión: riesgo de inundación vs casos de dengue por región, 2023"></svg>
+      <div class="tip" id="tt"></div>
+      <div class="tip" id="sel"></div>
+    </div>
+
+    <p class="viz-foot"><span class="src-tip src-tip--left"><button type="button" class="src-tip-btn" aria-expanded="false" aria-controls="src-tip-1"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"></circle><line x1="12" y1="11.4" x2="12" y2="16.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></line><circle cx="12" cy="7.6" r="1.35" fill="currentColor"></circle></svg> Fuente</button><span class="src-tip-pop" role="tooltip" id="src-tip-1">CENEPRED (vía Plan Multisectorial FEN 2023–2024, D.S. Nº 101-2023-PCM) y MINSA/CDC. Prueba estadística: correlación de Spearman (rangos), robusta a valores extremos. También se probó Pearson bruto (r=0,836, inflado por Piura) y Pearson log-log (r=0,391, al límite): Spearman es la métrica más honesta.</span></span></p>
+    
+    <h3 class="sub-grafico-dengue">
+      Dos casos ayudan a leer el gráfico 
+    </h3>
     <ul class="grafico-dengue">
       <li>
         <p>
@@ -141,25 +200,7 @@
         </p>
       </li>
     </ul>
-
-    <div class="viz-stat" style="display: none;">
-      <b>Spearman <span class="sp">r = 0,559</span></b>
-      <span>p = 0,004 · 24 regiones · asociación real y significativa — es una <b style="color:#3a3a3a">tendencia</b>, no una proporción estricta</span>
-    </div>
-
-    <div class="viz-pick">
-      <label for="regionSel">Resalta tu región:</label>
-      <select id="regionSel"><option value="">— elige una región —</option></select>
-      <button class="clear" id="clearSel">limpiar</button>
-    </div>
-
-    <div class="chart-wrap">
-      <svg id="chart" viewBox="0 0 980 686" role="img" aria-label="Dispersión: riesgo de inundación vs casos de dengue por región, 2023"></svg>
-      <div class="tip" id="tt"></div>
-      <div class="tip" id="sel"></div>
-    </div>
-
-    <p class="viz-foot">Fuentes: CENEPRED (vía Plan Multisectorial FEN 2023–2024, D.S. Nº 101-2023-PCM) y MINSA/CDC. Prueba estadística: correlación de Spearman (rangos), robusta a valores extremos. También se probó Pearson bruto (r=0,836, inflado por Piura) y Pearson log-log (r=0,391, al límite): Spearman es la métrica más honesta.</p>
+ 
   </div>
 
 <script>
@@ -184,12 +225,17 @@ const tt=document.getElementById('tt');
 const sel=document.getElementById('sel');
 const wrap=document.querySelector('.chart-wrap');
 
-const L=78, R=44, T=54, B=176, W=980, H=686;
+// Layout responsivo: en móvil el gráfico va VERTICAL (viewBox más angosto y alto) -> texto y
+// puntos más grandes; menos marcas en X. Se evalúa al cargar (recargar tras rotar).
+const IS_M = Math.min(window.innerWidth, document.documentElement.clientWidth||window.innerWidth) <= 600;
+const L=IS_M?52:78, R=IS_M?16:44, T=IS_M?40:54, B=IS_M?92:80, W=IS_M?460:980, H=IS_M?648:590;
+const DOTR=IS_M?9:6.5, DOTR0=IS_M?7:5;   // radios mayores en móvil para poder tocar los puntos
 const pL=L, pR=W-R, pT=T, pB=H-B, pW=pR-pL, pH=pB-pT;
-const XMIN=10, XMAX=1e6, YMIN=100, YMAX=1e5;
-const lx=v=> pL + (Math.log10(v)-Math.log10(XMIN))/(Math.log10(XMAX)-Math.log10(XMIN))*pW;
-const ly=v=> pB - (Math.log10(v)-Math.log10(YMIN))/(Math.log10(YMAX)-Math.log10(YMIN))*pH;
-const ZY = pB + 74;
+svg.setAttribute('viewBox','0 0 '+W+' '+H);
+const XMIN=0, XMAX=422500, YMIN=0, YMAX=90000;
+const sq=v=> Math.sqrt(Math.max(0,v));
+const lx=v=> pL + (sq(v)-sq(XMIN))/(sq(XMAX)-sq(XMIN))*pW;
+const ly=v=> pB - (sq(v)-sq(YMIN))/(sq(YMAX)-sq(YMIN))*pH;
 const fmt=n=> n.toLocaleString('es-PE');
 
 function el(tag, attrs, txt){ const e=document.createElementNS(NS,tag); for(const k in attrs) e.setAttribute(k, attrs[k]); if(txt!=null) e.textContent=txt; return e; }
@@ -198,32 +244,36 @@ function add(parent, tag, attrs, txt){ const e=el(tag,attrs,txt); parent.appendC
 // Grid + ejes
 const gGrid=add(svg,'g',{class:'grid'});
 const gAxis=add(svg,'g',{class:'axis'});
-const xticks=[10,100,1000,10000,100000,1000000];
-const xlabels={10:'10',100:'100',1000:'1,000',10000:'10,000',100000:'100,000',1000000:'1,000,000'};
+const xticks=IS_M?[0,100000,400000]:[0,25000,100000,225000,400000];
+const xlabels=IS_M?{0:'0',100000:'100 mil',400000:'400 mil'}:{0:'0',25000:'25,000',100000:'100,000',225000:'225,000',400000:'400,000'};
 xticks.forEach(t=>{ const x=lx(t); add(gGrid,'line',{x1:x,y1:pT,x2:x,y2:pB}); const g=add(svg,'g',{class:'tick'}); add(g,'text',{x:x,y:pB+22,'text-anchor':'middle'}, xlabels[t]); });
-const yticks=[100,1000,10000,100000];
-const ylabels={100:'100',1000:'1,000',10000:'10,000',100000:'100,000'};
+const yticks=[0,10000,40000,90000];
+const ylabels=IS_M?{0:'0',10000:'10 mil',40000:'40 mil',90000:'90 mil'}:{0:'0',10000:'10,000',40000:'40,000',90000:'90,000'};
 yticks.forEach(t=>{ const y=ly(t); add(gGrid,'line',{x1:pL,y1:y,x2:pR,y2:y}); const g=add(svg,'g',{class:'tick'}); add(g,'text',{x:pL-10,y:y+4,'text-anchor':'end'}, ylabels[t]); });
 add(gAxis,'line',{x1:pL,y1:pT,x2:pL,y2:pB});
 add(gAxis,'line',{x1:pL,y1:pB,x2:pR,y2:pB});
-add(svg,'text',{class:'axis-title',x:pL+pW/2,y:H-24,'text-anchor':'middle'},'Población en riesgo de inundación (CENEPRED)  ·  escala logarítmica  →');
-add(svg,'text',{class:'axis-title',x:0,y:0,'text-anchor':'middle',transform:`translate(${pL-54} ${pT+pH/2}) rotate(-90)`},'←  Casos de dengue, 2023 (MINSA)');
+add(svg,'text',{class:'axis-title',x:pL+pW/2,y:pB+56,'text-anchor':'middle'},'Población en riesgo de inundación (CENEPRED)  →');
+if(IS_M){ add(svg,'text',{class:'axis-title',x:pL-6,y:pT-11,'text-anchor':'start'},'↑ Casos de dengue, 2023 (MINSA)'); }
+else { add(svg,'text',{class:'axis-title',x:0,y:0,'text-anchor':'middle',transform:`translate(${pL-54} ${pT+pH/2}) rotate(-90)`},'←  Casos de dengue, 2023 (MINSA)'); }
 
-// Franja 0 casos
-add(svg,'rect',{class:'zero-band',x:pL,y:ZY-16,width:pW,height:32,rx:5});
-add(svg,'line',{x1:pL,y1:ZY-16,x2:pR,y2:ZY-16,stroke:'#d5d5d5','stroke-dasharray':'2 5','stroke-width':1});
-add(svg,'text',{class:'tick',x:pL-10,y:ZY+4,'text-anchor':'end'},'0');
-add(svg,'text',{class:'zeronote',x:pR,y:ZY-22,'text-anchor':'end'},'0 casos — 5 regiones de sierra, pese al riesgo (el dengue casi no prospera en altura)');
+// Nota: en escala lineal, las 5 regiones con 0 casos caen sobre el eje X.
+add(svg,'text',{class:'zeronote',x:pR,y:pB-10,'text-anchor':'end'}, IS_M?'Sobre el eje: 5 regiones con 0 casos':'Sobre el eje: 5 regiones de sierra con 0 casos, pese al riesgo');
 
 // Tendencia
 (function(){
   const pts=DATA.filter(o=>o.d>0).map(o=>[Math.log10(o.risk),Math.log10(o.d)]);
   const n=pts.length, mx=pts.reduce((s,p)=>s+p[0],0)/n, my=pts.reduce((s,p)=>s+p[1],0)/n;
   let num=0,den=0; pts.forEach(p=>{num+=(p[0]-mx)*(p[1]-my); den+=(p[0]-mx)**2;});
-  const slope=num/den, intercept=my-slope*mx, x1=Math.log10(30), x2=Math.log10(600000);
-  const pred=x=>Math.pow(10, slope*x+intercept);
-  add(svg,'line',{class:'trend',x1:lx(Math.pow(10,x1)),y1:ly(pred(x1)),x2:lx(Math.pow(10,x2)),y2:ly(pred(x2))});
-  add(svg,'text',{class:'trend-lbl',x:lx(Math.pow(10,x2)),y:ly(pred(x2))-8,'text-anchor':'end'},'tendencia');
+  const slope=num/den, intercept=my-slope*mx;
+  const predD=risk=>Math.pow(10, slope*Math.log10(risk)+intercept);
+  const xa=30, xb=XMAX, steps=90, pts2=[]; let lastVis=null;
+  for(let i=0;i<=steps;i++){
+    const risk=Math.pow(10, Math.log10(xa)+(Math.log10(xb)-Math.log10(xa))*i/steps);
+    const d=predD(risk);
+    if(d>=YMIN && d<=YMAX){ pts2.push(lx(risk)+','+ly(d)); lastVis={risk,d}; }
+  }
+  add(svg,'polyline',{class:'trend',fill:'none',points:pts2.join(' ')});
+  if(lastVis) add(svg,'text',{class:'trend-lbl',x:lx(lastVis.risk)-6,y:ly(lastVis.d)-8,'text-anchor':'end'},'tendencia');
 })();
 
 // Grupos para halo/anillo (detrás de los puntos) y puntos
@@ -231,9 +281,9 @@ const gHalo=add(svg,'g',{});
 const gDots=add(svg,'g',{});
 const byRegion={};
 DATA.forEach(o=>{
-  const x=lx(o.risk), zero=o.d===0, y=zero?ZY:ly(o.d);
-  const c=add(gDots,'circle',{class:zero?'dot0':'dot', cx:x, cy:y, r:zero?5:6.5});
-  byRegion[o.r]={el:c, x, y, o, zero, r0:zero?5:6.5};
+  const x=lx(o.risk), zero=o.d===0, y=ly(o.d);
+  const c=add(gDots,'circle',{class:zero?'dot0':'dot', cx:x, cy:y, r:zero?DOTR0:DOTR});
+  byRegion[o.r]={el:c, x, y, o, zero, r0:zero?DOTR0:DOTR};
   c.addEventListener('mouseenter',()=>showTip(tt,o,x,y,false));
   c.addEventListener('mousemove',()=>showTip(tt,o,x,y,false));
   c.addEventListener('mouseleave',()=>{ tt.style.opacity=0; });
@@ -246,8 +296,13 @@ function anno(region, dx, dy, lines, anchor){
   add(g,'line',{class:'lead',x1:b.x,y1:b.y,x2:tx,y2:ty});
   lines.forEach((ln,i)=> add(g,'text',{x:tx+(anchor==='end'?-8:8),y:ty+i*16,'text-anchor':anchor, class:ln.b?'ttl':''}, ln.t));
 }
-anno('Piura', -14, 40, [{t:'Piura — el extremo',b:1},{t:'407,000 en riesgo · 79,304 casos'}], 'end');
-anno('Ica', 32, -4, [{t:'Ica — casi sin riesgo (13),',b:1},{t:'pero 16,889 casos: pesa el calor'}], 'start');
+if(IS_M){
+  anno('Piura', -10, 30, [{t:'Piura',b:1}], 'end');
+  anno('Ica', 14, 2, [{t:'Ica',b:1}], 'start');
+}else{
+  anno('Piura', -14, 40, [{t:'Piura — el extremo',b:1},{t:'407,000 en riesgo · 79,304 casos'}], 'end');
+  anno('Ica', 32, -4, [{t:'Ica — casi sin riesgo (13),',b:1},{t:'pero 16,889 casos: pesa el calor'}], 'start');
+}
 
 // Tooltip / callout de selección
 function tipXY(x,y){ const bb=svg.getBoundingClientRect(), wb=wrap.getBoundingClientRect();
@@ -256,7 +311,10 @@ function tipHTML(o){ return '<div class="r">'+o.r+'</div>'+
   '<div class="rw">Población en riesgo de inundación: <b>'+fmt(o.risk)+'</b></div>'+
   '<div class="rw">Casos de dengue 2023: <b>'+(o.d===0?'0':fmt(o.d))+'</b></div>'; }
 function showTip(node,o,x,y){ const {sx,sy}=tipXY(x,y); node.innerHTML=tipHTML(o);
-  node.classList.toggle('below', sy<86); node.style.left=sx+'px'; node.style.top=sy+'px'; node.style.opacity=1; }
+  node.classList.toggle('below', sy<86); node.style.top=sy+'px'; node.style.left=sx+'px'; node.style.opacity=1;
+  // Acota el centro horizontal para que el callout no se corte en pantallas angostas (el CSS lo hace envolver).
+  const wrapW=wrap.clientWidth, w=node.offsetWidth, pad=8, half=w/2;
+  node.style.left = ((w+pad*2>=wrapW) ? wrapW/2 : Math.max(half+pad, Math.min(sx, wrapW-half-pad))) + 'px'; }
 
 // Selector de región
 const selEl=document.getElementById('regionSel');
@@ -285,6 +343,24 @@ document.getElementById('clearSel').addEventListener('click', ()=>{ selEl.value=
 function postHeight(){ try{ parent.postMessage({type:'chartHeight', h:Math.ceil(document.body.getBoundingClientRect().height)}, '*'); }catch(e){} }
 window.addEventListener('load', ()=>setTimeout(postHeight,90));
 window.addEventListener('resize', ()=>{ if(current){ const b=byRegion[current]; showTip(sel,b.o,b.x,b.y); } postHeight(); });
+</script>
+<script id="src-tip-js">
+(function(){
+  function closeAll(except){
+    document.querySelectorAll('.src-tip.open').forEach(function(t){
+      if(t!==except){ t.classList.remove('open'); var b=t.querySelector('.src-tip-btn'); if(b) b.setAttribute('aria-expanded','false'); }
+    });
+  }
+  document.querySelectorAll('.src-tip-btn').forEach(function(btn){
+    btn.addEventListener('click', function(e){
+      e.stopPropagation();
+      var t=btn.closest('.src-tip'); var willOpen=!t.classList.contains('open');
+      closeAll(t); t.classList.toggle('open', willOpen); btn.setAttribute('aria-expanded', willOpen ? 'true':'false');
+    });
+  });
+  document.addEventListener('click', function(e){ if(!e.target.closest('.src-tip.open')) closeAll(null); });
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeAll(null); });
+})();
 </script>
 </body>
 </html>

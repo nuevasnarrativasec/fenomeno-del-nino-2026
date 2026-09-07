@@ -131,6 +131,10 @@
     flex-wrap:wrap;gap:10px;margin-bottom:6px;
   }
   .card-title{font-size:1.05rem;color:#1f2a37;font-family: 'Monoglyphic Regular';}
+  .title-center{
+    font-family: 'Monoglyphic Bold';
+    text-align: center;
+  }
   .chart{width:100%;background:#ffffff;border-radius:10px;}
   .legend-note{
     font-family:'Monoglyphic Regular','Helvetica Neue',Arial,sans-serif;
@@ -353,11 +357,11 @@
     font-weight: 700;
     font-size: clamp(2rem, 4.8vw, 2rem);
     line-height: 1.2;
-    max-width: 500px;
+    max-width: 520px;
     margin: 0 auto 20px; }
   .ta-blue .ta-title{ color:#3fb1ea; }
   .ta-red  .ta-title{ color:#e5301f; }
-  .ta-desc{ max-width:800px; margin:-6px auto 0; 
+  .ta-desc{ max-width:640px; margin:-6px auto 0; 
     /*font-family: 'Monoglyphic Light', system-ui, sans-serif;*/
     font-size:1.3rem; line-height:1.6; color:#3a3a3a; }
   .ta-hint{ display:flex; align-items:center; justify-content:center; gap:9px; margin:24px 0 12px;
@@ -424,13 +428,13 @@
   <div class="wrap">
     <div class="part-tag">I · Cuarenta años de una amenaza que se repite</div>
     <h2 class="q">¿Qué problemas <b>reaparecen</b> con El Niño?</h2>
-    <p class="sub">Frecuencia con que cada problema aparece mencionado en las 4.439 publicaciones de los cinco períodos analizados.</p>
+    <p class="sub">Emergencia, infraestructura y agricultura son los temas que más se repiten en los cinco periodos analizados.</p>
     <div class="card">
       <div class="card-head"><div class="card-title">Problemas más mencionados en el archivo</div>
-        <div class="sans" style="font-size:.74rem;color:var(--muted)">% de noticias · n.º de noticias</div></div>
+        <div class="sans" style="font-size:.74rem;color:var(--muted)">% de publicaciones · n.º de publicaciones</div></div>
       <div id="c_freq" class="chart" style="height:460px;"></div>
     </div>
-    <p class="legend-note"><b>Emergencia, infraestructura y agricultura</b> son los problemas más frecuentes que se mencionan en los cinco períodos analizados.</p>
+    <p class="legend-note">Porcentaje de publicaciones en las que aparece cada tema, entre las 4.439 analizadas. Una publicación puede incluir varias categorías; por eso, al sumarlas, los porcentajes superan el 100%.</p>
   </div>
 </section>
 
@@ -444,10 +448,13 @@
         <div class="sans" style="font-size:.74rem;color:var(--muted)">% de noticias del evento</div></div>
       <div id="c_heat" class="chart" style="height:520px;"></div>
     </div>
-
-    <div class="card">
-      <div class="card-head"><div class="card-title">El FEN, sus periodos y temas</div>
-        <div class="sans" style="font-size:.74rem;color:var(--muted)">tamaño ∝ % de noticias · color por problema</div></div>
+    <p class="sub">
+          Emergencia se mantiene entre los temas más presentes, pero otros cambian de protagonismo según el periodo: la agricultura tuvo mayor peso en 1997–98, mientras la prevención gana espacio en los años más recientes.
+    </p>
+    <div class="card">      
+      <div class="card-head">        
+        <div class="sans" style="font-size:.74rem;color:var(--muted)">Tamaño = % de publicaciones</div>
+      </div>
       <div id="c_bubbles"></div>
       <div class="nb-hint">Haz clic en un <b>periodo</b> para ampliar · clic al centro para volver</div>
       <div id="nbFilter"></div>
@@ -455,7 +462,7 @@
       <div class="map-tooltip" id="nbTip"></div>
     </div>
 
-    <p class="legend-note">Los problemas persisten, pero <b>cambia el peso</b> que adquieren en cada episodio: la agricultura pesaba un cuarto de la cobertura en 1997-98 y la prevención escala hasta el primer plano hacia 2023-2026.</p>
+    <p class="legend-note">El tamaño de cada burbuja indica el porcentaje de publicaciones de ese periodo en las que aparece cada tema. Una publicación puede incluir varias categorías.</p>
   </div>
 </section>
 
@@ -463,10 +470,10 @@
   <div class="wrap">
     <div class="part-tag">I · Cuarenta años de una amenaza que se repite</div>
     <h2 class="q">¿Dónde <b>reaparece</b> El Niño?</h2>
-    <p class="sub">Menciones territoriales en el archivo. La costa norte concentra la huella del fenómeno; mueve el deslizador de años para ver cómo se reparte por macrorregión en cada evento.</p>
+    <p class="sub">La costa norte concentra buena parte de las menciones territoriales en la cobertura analizada, con Piura a la cabeza.</p>
 
     <div class="card">
-      <div class="card-head"><div class="card-title">La huella territorial de El Niño</div>
+      <div class="card-head"><div class="card-title">La huella territorial en el archivo</div>
         <div class="sans" style="font-size:.74rem;color:var(--muted)">% del total de menciones territoriales</div></div>
       <div class="map-wrap">
         <div class="map-figure">
@@ -581,6 +588,7 @@
      d="m 495.494,649.265 3.348,2.739 0.913,3.652 3.044,0 2.435,0.609 1.522,3.044 4.262,0.304 1.826,1.522 1.544,0.662 -3.512,7.476 3.478,9.294 3.439,9.186 1.537,0.8 3.352,2.234 2.986,2.19 -2.171,1.336 -1.826,3.348 -3.957,1.522 -3.349,-0.609 -2.131,-3.348 -2.13,0 -3.957,1.826 -2.435,-2.435 1.218,-3.348 2.131,-2.435 -0.61,-1.826 -4.565,-0.913 -1.767,-0.936 -0.059,0.326 -3.653,0 -1.218,-2.434 -0.913,-2.436 -1.217,0.61 -1.217,2.434 -1.523,-0.608 -2.131,-1.826 -1.826,0 -2.434,0.303 -0.913,-2.739 -0.61,-3.348 -0.913,-3.348 3.044,-1.218 2.131,-0.913 0.913,-2.739 1.826,-0.305 0,-3.957 -2.131,-1.217 -0.608,-3.044 1.521,-1.522 2.436,-1.522 -0.609,-4.261 -1.827,-0.914 -3.652,0.305 -2.739,-0.305 -2.739,0 -0.61,-1.826 0.61,-1.826 3.347,-0.305 3.349,0 3.044,0.914 3.652,0.914 z" />
 </svg>
           <div class="map-legend"><span>menos</span><div class="map-legend-bar"></div><span>más menciones</span></div>
+          <p class="legend-note">El mapa muestra qué proporción de las menciones territoriales corresponde a cada departamento.</p>
         </div>
         <div class="map-rank" id="mapRank"></div>
       </div>
@@ -588,8 +596,13 @@
     </div>
 
     <div class="card">
+      <div class="card-title title-center">La cobertura se expande más allá de la costa</div>
+      <p class="sub">
+          En 1982–83, la cobertura estuvo fuertemente concentrada en la costa. Desde 1997–98, la sierra y la Amazonía aparecen con mayor frecuencia en las publicaciones analizadas.
+        </p>
       <div class="card-head">
-        <div class="card-title">Cómo cambia el mapa según los eventos FEN analizados</div>
+        
+        
         <div class="sans" style="font-size:.74rem;color:var(--muted)">% de noticias del evento</div>
       </div>
       <div class="yslider">
@@ -599,8 +612,8 @@
       </div>
       <div id="c_macro" class="chart" style="height:360px;"></div>
     </div>
-    <p class="legend-note"><b>Piura, Tumbes, Lambayeque y La Libertad</b> concentran buena parte de las menciones. Pero desde 1997 la cobertura incorpora con mayor frecuencia departamentos de la <b>sierra y la Amazonía</b>.</p>
-    <p class="foot-note">Nota. La presencia de cada territorio refleja el corpus periodístico analizado y puede estar influida por las condiciones de cobertura de cada época. Los porcentajes por macrorregión no suman 100% porque una misma noticia puede mencionar más de una región.</p>
+    <p class="legend-note">El porcentaje indica en cuántas publicaciones de cada periodo aparece al menos un departamento de cada macrorregión. Una misma publicación puede mencionar más de una región; por eso los porcentajes no suman 100%.</p>
+    
   </div>
 </section>
 
@@ -609,13 +622,13 @@
   <div class="wrap">
     <div class="part-tag">II · Cuatro décadas de advertencias</div>
     <h2 class="q">¿Cuánto de lo que vino después ya había sido <b>advertido antes</b>?</h2>
-    <p class="sub">Una cosa es registrar los daños; otra, haberlos advertido. Cada episodio suma categorías de riesgo hasta saturar la memoria del archivo: 16 de 16 para 1998.</p>
+    <p class="sub">Para 1998, las 16 categorías de riesgo identificadas en el análisis ya habían aparecido en advertencias del archivo. Desde 2017, no se suma ninguna categoría nueva.</p>
     <div class="card">
       <div class="card-head"><div class="card-title">Memoria acumulada de categorías de riesgo</div>
         <div class="sans" style="font-size:.74rem;color:var(--muted)">categorías distintas ya advertidas · máx. 16</div></div>
       <div id="c_memory" class="chart" style="height:400px;"></div>
     </div>
-    <p class="legend-note"><b>16 de 16.</b> Para 1998 el archivo ya había registrado las 16 categorías de riesgo identificadas en más de 40 años. Desde 2017, ningún episodio aporta una categoría nueva: todo lo que llega, ya había sido advertido.</p>
+    <p class="legend-note"><b>16 de 16.</b> Para 1998, el archivo ya reunía advertencias sobre todas las categorías de riesgo identificadas en más de cuatro décadas de análisis.</p>
   </div>
 </section>
 
@@ -623,18 +636,21 @@
   <div class="wrap">
     <div class="part-tag">II · Cuatro décadas de advertencias</div>
     <h2 class="q">¿Qué riesgos vuelven <b>una y otra vez</b>?</h2>
-    <p class="sub">Amenazas ordenadas por total de advertencias. La barra mide el volumen; el color, en cuántos de los 5 episodios estuvo presente.</p>
+    <p class="sub">Las lluvias intensas, las inundaciones y los efectos sobre la agricultura concentran el mayor número de advertencias. Pero solo las lluvias intensas aparecen en los cinco periodos analizados.</p>
     <div class="card">
-      <div class="card-head"><div class="card-title">Advertencias por tipo de amenaza</div>
+      <div class="card-head"><div class="card-title">Advertencias por tipo de riesgo</div>
         <div class="sans" style="font-size:.74rem;color:var(--muted)">total de advertencias · presencia en episodios</div></div>
       <div id="c_threat" class="chart" style="height:520px;"></div>
     </div>
+    <p class="legend-note">Número de advertencias identificadas para cada riesgo. El color indica en cuántos de los cinco periodos aparece.</p>
 
     <div class="card">
+      <div class="card-title title-center">Pero una advertencia frecuente no necesariamente aparece en todos los episodios.</div>
+      <p class="sub">Las lluvias intensas son la única categoría de advertencia presente en los cinco periodos analizados.</p>
       <div class="card-head"><div class="card-title">Matriz de recurrencia — presencia por episodio</div></div>
       <div id="matrixMount"></div>
     </div>
-    <p class="legend-note">Las <b>lluvias intensas</b> son la única categoría de advertencia presente en los cinco períodos analizados.</p>
+    <p class="legend-note">Cada punto muestra la presencia de una categoría de riesgo en cada uno de los cinco periodos analizados.</p>
   </div>
 </section>
 
@@ -642,13 +658,13 @@
   <div class="wrap">
     <div class="part-tag">II · Cuatro décadas de advertencias</div>
     <h2 class="q">¿Qué tan <b>pronto</b> aparecieron las advertencias?</h2>
-    <p class="sub">Días transcurridos desde el inicio del corpus de cada episodio hasta la primera advertencia y hasta acumular el 25% de ellas.</p>
+    <p class="sub">Las primeras advertencias surgieron muy temprano en varios periodos, pero no siempre se acumularon con la misma rapidez. En 1997–98 apareció una desde el inicio del periodo analizado, aunque tomó 107 días alcanzar el 25% de las advertencias; en 2023–24, ese umbral se alcanzó en 19 días.</p>
     <div class="card">
-      <div class="card-head"><div class="card-title">Primera advertencia y 25% de advertencias alcanzado</div>
+      <div class="card-head"><div class="card-title"> Cuánto tardaron en aparecer las primeras advertencias</div>
         <div class="sans" style="font-size:.74rem;color:var(--muted)">días desde el inicio del corpus</div></div>
       <div id="c_timing" class="chart" style="height:420px;"></div>
     </div>
-    <p class="legend-note">Las primeras advertencias aparecen desde las primeras semanas: el <b>mismo día en 1997-98</b>, cuatro días después en 2023-24 y siete en 1982-83. Pero acumular el 25% tomó hasta <b>107 días</b> en 1997-98.</p>
+    <p class="legend-note">Los días se cuentan desde el inicio del periodo analizado hasta la primera advertencia y hasta alcanzar el 25% de las advertencias de ese episodio.</p>
   </div>
 </section>
 
@@ -656,18 +672,22 @@
   <div class="wrap">
     <div class="part-tag">II · Cuatro décadas de advertencias</div>
     <h2 class="q">¿<b>Quiénes</b> advirtieron?</h2>
-    <p class="sub">Advertencias atribuidas por tipo de actor y las instituciones con más avisos identificados en el archivo.</p>
+    <p class="sub">Más de un tercio de las 566 advertencias no pudo atribuirse a un emisor específico. Entre las que sí pudieron identificarse, los organismos técnicos y científicos fueron la fuente más frecuente.</p>
     <div class="card">
-      <div class="card-head"><div class="card-title">Advertencias por tipo de actor</div>
+      <div class="card-head"><div class="card-title">Quiénes aparecen detrás de las advertencias</div>
         <div class="sans" style="font-size:.74rem;color:var(--muted)">% de las 566 advertencias</div></div>
       <div id="c_actor" class="chart" style="height:420px;"></div>
+      <p class="legend-note">Distribución de las 566 advertencias según el tipo de actor al que pudieron atribuirse. En 205 casos, el texto no permitió identificar un emisor.</p>
     </div>
+
+    <p class="sub">Entre las instituciones identificadas, SENAMHI y ENFEN concentran el mayor número de advertencias.</p>
+
     <div class="card">
-      <div class="card-head"><div class="card-title">Instituciones con más advertencias identificadas</div>
-        <div class="sans" style="font-size:.74rem;color:var(--muted)">el tamaño ∝ n.º de advertencias atribuidas</div></div>
+      <div class="card-head"><div class="card-title">Las instituciones que más advirtieron</div>
+        <!--<div class="sans" style="font-size:.74rem;color:var(--muted)">el tamaño ∝ n.º de advertencias atribuidas</div></div>-->
       <div id="c_inst" class="chart" style="height:400px;"></div>
     </div>
-    <p class="legend-note">En <b>205 de las 566 advertencias (36,2%)</b> el texto no permitió atribuir el aviso a un emisor. Entre las atribuibles, los <b>organismos técnicos y científicos</b> son el grupo más frecuente, encabezados por SENAMHI y ENFEN.</p>
+    <p class="legend-note">El tamaño de cada círculo representa el número de advertencias atribuidas a cada institución.</p>
   </div>
 </section>
 
@@ -876,7 +896,7 @@ function reg(el){charts.push(el);}
   const MAXV=41;
   const nf=document.getElementById('nbFilter');
   nf.innerHTML=`<div class="nb-filter">
-    <div class="nb-filter-head"><span>Filtrar temas por peso (% de noticias)</span>
+    <div class="nb-filter-head"><span>Filtrar por presencia en las publicaciones</span>
       <span id="nbRangeLbl"><b>0%</b> – <b>${MAXV}%</b></span></div>
     <div class="dual">
       <div class="dual-track"></div>
@@ -1188,14 +1208,14 @@ window.addEventListener('resize',()=>charts.forEach(c=>c.resize()));
 
   function secOf(id){ var e=document.getElementById(id); return e && e.closest("section"); }
   var GROUPS=[
-    { cls:"ta-blue", title:"El niño vuelve. Los mismos problemas también", icon:"", desc:"Durante más de 40 años, inundaciones, enfermedades, pérdidas agrícolas, daños en infraestructura y falta de prevención se repiten en distintas regiones del país. Analizamos miles de publicaciones y datos actuales para entender qué hemos aprendido —y qué seguimos sin resolver. Para 1998, las 16 categorías de riesgo que identificamos en más de cuatro décadas de cobertura ya habían aparecido en el archivo.", items:[
-      {q:"¿Qué problemas reaparecen con El Niño?", sec:secOf("c_freq")},
-      {q:"¿Cómo cambió el peso de cada problema?", sec:secOf("c_heat")},
+    { cls:"ta-blue", title:"El niño vuelve. Las advertencias también", icon:"", desc:"Durante más de cuatro décadas, las páginas de El Comercio han registrado lluvias, inundaciones, pérdidas agrícolas, daños en infraestructura y problemas de prevención que reaparecen de un episodio a otro. Para 1998, las 16 categorías de riesgo que identificamos en este recorrido ya habían aparecido en el archivo. <br><br> Revisamos 4.439 publicaciones de cinco períodos vinculados con El Niño, entre 1982 y 2026, para reconstruir esa memoria. El análisis también permitió recuperar 566 advertencias y observar qué se anticipó, cuándo y quién lo señaló.", items:[
+      {q:"¿Qué se repite cuando El Niño vuelve?", sec:secOf("c_freq")},
+      {q:" ¿Cómo cambia el peso de cada tema?", sec:secOf("c_heat")},
       {q:"¿Dónde reaparece El Niño?", sec:secOf("peruMap")}
     ]},
-    { cls:"ta-red", title:"Advertencias", icon:"warn", items:[
-      {q:"¿Cuánto de lo que vino después ya había sido advertido antes?", sec:secOf("c_memory")},
-      {q:"¿Qué riesgos vuelven una y otra vez?", sec:secOf("c_threat")},
+    { cls:"ta-red", title:"Una cosa es registrar los daños. Otra, haberlos advertido antes.", icon:"warn", desc:"Revisamos más de cuatro décadas del archivo para identificar las alertas y anticipaciones publicadas antes y durante cada episodio. Encontramos 566 advertencias en 532 publicaciones.", items:[
+      {q:"¿Cuánto de lo que vino después ya había sido advertido?", sec:secOf("c_memory")},
+      {q:"¿Sobre qué riesgos se advierte una y otra vez?", sec:secOf("c_threat")},
       {q:"¿Qué tan pronto aparecieron las advertencias?", sec:secOf("c_timing")},
       {q:"¿Quiénes advirtieron?", sec:secOf("c_actor")}
     ]}

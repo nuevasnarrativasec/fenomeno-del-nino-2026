@@ -6,6 +6,31 @@
 <title>Fenómeno del Niño 2026 — ¿Y tú?</title>
 <link rel="stylesheet" href="./css/style.css">
 
+<style id="src-tip-css">
+  /* Fuente como botón-tooltip (hover en escritorio, tap en móvil). Patrón consistente en todo el especial. */
+  .src-tip{ position:relative; display:inline-block; vertical-align:middle; }
+  .src-tip-btn{ font-family:system-ui,-apple-system,Arial,sans-serif; display:inline-flex; align-items:center; gap:5px;
+    cursor:pointer; border:1px solid rgba(120,120,120,.45); background:transparent; color:#8f8f8f;
+    border-radius:999px; padding:3px 11px 3px 8px; font-size:.68rem; letter-spacing:.07em; font-weight:400;
+    text-transform:uppercase; line-height:1; transition:color .15s,border-color .15s,background .15s; }
+  .src-tip-btn:hover, .src-tip-btn:focus-visible{ color:#3a3a3a; border-color:rgba(80,80,80,.7); background:rgba(0,0,0,.03); outline:none; }
+  .src-tip-btn svg{ width:13px; height:13px; flex:0 0 auto; }
+  .src-tip-pop{ position:absolute; left:50%; bottom:calc(100% + 9px); transform:translateX(-50%) translateY(4px);
+    width:max-content; max-width:min(320px,86vw); background:#111; color:#f1f1f1; border-radius:8px; padding:11px 13px;
+    font-family:system-ui,-apple-system,Arial,sans-serif; font-size:.76rem; font-weight:400; line-height:1.5;
+    letter-spacing:normal; text-transform:none; text-align:left; box-shadow:0 8px 26px rgba(0,0,0,.28);
+    opacity:0; visibility:hidden; transition:opacity .16s ease, transform .16s ease; z-index:95; }
+  .src-tip-pop::before{ content:""; position:absolute; top:100%; left:0; right:0; height:11px; } /* puente para el hover */
+  .src-tip-pop::after{ content:""; position:absolute; top:100%; left:50%; transform:translateX(-50%);
+    border:6px solid transparent; border-top-color:#111; }
+  .src-tip:hover .src-tip-pop, .src-tip:focus-within .src-tip-pop, .src-tip.open .src-tip-pop{
+    opacity:1; visibility:visible; transform:translateX(-50%) translateY(0); }
+  /* Variante alineada a la izquierda: el popover se ancla al borde izq. del botón (evita corte en botones pegados al margen) */
+  .src-tip--left .src-tip-pop{ left:0; transform:translateX(0) translateY(4px); }
+  .src-tip--left:hover .src-tip-pop, .src-tip--left:focus-within .src-tip-pop, .src-tip--left.open .src-tip-pop{ transform:translateX(0) translateY(0); }
+  .src-tip--left .src-tip-pop::after{ left:32px; }
+  @media (prefers-reduced-motion:reduce){ .src-tip-pop{ transition:none; } }
+</style>
 </head>
 <body>
 
@@ -136,14 +161,14 @@
         <img src="./img/logo-comercio.png" alt="" width="100%" class="logo-comercio" style="opacity: 0;">
         <h1>
             El Niño:
-            <span>todo está conectado</span>
+            <span>Todo está conectado</span>
         </h1>
         
         <p class="bajada">
-          Diez señales que pueden formar parte de una misma cadena. El Niño altera el océano y la atmósfera, pero sus efectos no se sienten igual en todas partes: cambian y pueden intensificarse según el territorio, la infraestructura y las vulnerabilidades existentes.
+          Diez señales que pueden formar parte de una misma cadena. El Niño altera el océano y la atmósfera, pero sus consecuencias también dependen de las condiciones de cada territorio: su infraestructura, su economía y sus vulnerabilidades. 
         </p>
         <p class="bajada">
-          En 2017 y 2023, los cambios en el mar coincidieron con impactos en la salud, la agricultura, la pesca y la infraestructura. Seguimos esas huellas en distintas regiones del Perú para entender cómo un mismo fenómeno puede sentirse de maneras muy diferentes.
+          Seguimos las huellas del fenómeno en distintas regiones del Perú para  entender cómo un mismo evento puede sentirse de maneras muy diferentes.
         </p>
         <img src="./img/flecha-bajar.png" alt="flecha bajar" class="flecha-bajar">
         <p class="lead">Nueve personas de todo el país, un mismo fenómeno. Desliza para recorrer sus historias… y descubrir dónde encajas tú.</p>
@@ -154,28 +179,33 @@
 
     <div class="main-contenido">
         <h3>
-            Un mismo océano, cuatro zonas de vigilancia
-
+          Un océano, cuatro zonas de vigilancia
         </h3>
         <p class="bajada-mapa-3d">
-          Para seguir El Niño, el Pacífico ecuatorial se divide en cuatro regiones de monitoreo. En este globo puedes explorarlas junto con 20 casos internacionales y observar cómo las condiciones del océano se relacionan con impactos diferentes según el lugar.
+          Para seguir El Niño, el Pacífico ecuatorial se divide en cuatro regiones de monitoreo. En esta herramienta puedes explorarlas junto con 20 casos y ver cómo un mismo fenómeno puede sentirse de formas distintas según el lugar.
         </p>        
-          <ul class="bajada-mapa-3d-ul">
-            <li>
-              <span>Niño 1+2:</span> frente a las costas de Perú y Ecuador.
-            </li>
-            <li>
-              <span>Niño 3:</span> Pacífico ecuatorial oriental.
-            </li>
-            <li>
-              <span>Niño 3.4:</span> Pacífico central, entre las regiones Niño 3 y Niño 4.
-            </li>
-            <li>
-              <span>Niño 4:</span> Pacífico ecuatorial occidental.
-            </li>
-          </ul>
+          <table class="tabla-zonas">
+            <tbody>
+              <tr>
+                <th scope="row">Niño 1+2</th>
+                <td>Frente a las costas de Perú y Ecuador.</td>
+              </tr>
+              <tr>
+                <th scope="row">Niño 3</th>
+                <td>Pacífico ecuatorial oriental.</td>
+              </tr>
+              <tr>
+                <th scope="row">Niño 3.4</th>
+                <td>Pacífico central, entre las regiones Niño 3 y Niño 4.</td>
+              </tr>
+              <tr>
+                <th scope="row">Niño 4</th>
+                <td>Pacífico ecuatorial occidental.</td>
+              </tr>
+            </tbody>
+          </table>
         <p class="bajada-mapa-3d">
-          <span>Para Perú, presta atención a dos zonas:</span> Niño 1+2 es clave para seguir El Niño Costero, mediante el ICEN; Niño 3.4 permite seguir El Niño de escala global, mediante indicadores como el ONI. Ambos fenómenos pueden ocurrir de manera independiente y no necesariamente alcanzan la misma intensidad.
+          <span>Para Perú, presta atención a dos zonas:</span> Niño 1+2 se monitorea con el ICEN (Índice Costero El Niño) y  el Niño 3.4 se monitorea con el ONI (Índice Oceánico de El Niño) en escala global. Son fenómenos independientes, no siempre alcanzan la misma intensidad.
         </p>
         
         <div class="box-globo-3d" id="globeBox">
@@ -275,7 +305,6 @@ El resultado muestra cuántas de esas diez señales coinciden en cada departamen
               <div class="ml-title">Señales / 10</div>
               <div class="ml-bar"></div>
               <div class="ml-scale"><span>1</span><span>9</span></div>
-              <div class="ml-nodata" id="mlNoData" hidden><span class="ml-sw"></span> Sin datos / lago</div>
             </div>
           </div>
 
@@ -296,7 +325,7 @@ El resultado muestra cuántas de esas diez señales coinciden en cada departamen
           </aside>
         </div>
 
-        <p class="mapa-source">FUENTE: IMARPE, INDECI, IPE, PRODUCE-BCRP, MINSA y MIMP.</p>
+        <p class="mapa-source"><span class="src-tip"><button type="button" class="src-tip-btn" aria-expanded="false" aria-controls="src-tip-7"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"></circle><line x1="12" y1="11.4" x2="12" y2="16.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></line><circle cx="12" cy="7.6" r="1.35" fill="currentColor"></circle></svg> Fuente</button><span class="src-tip-pop" role="tooltip" id="src-tip-7">IMARPE, INDECI, IPE, PRODUCE-BCRP, MINSA y MIMP.</span></span></p>
       </div>
     </section>
 
@@ -354,9 +383,9 @@ El resultado muestra cuántas de esas diez señales coinciden en cada departamen
         .gal-slide-m{ position:absolute; inset:0; display:none; align-items:center; justify-content:center;
           opacity:0; will-change:opacity; pointer-events:none; z-index:2; }
         .gal-slide-m img{ display:block; width:100%; height:100%; object-fit:contain; }
-        .gal-slide-m figcaption{ position:absolute; left:0; right:0; bottom:16px; text-align:center;
+        .gal-slide-m figcaption{ position:absolute; left:0; right:0; bottom:0; text-align:center;
           font-family:system-ui,-apple-system,Arial,sans-serif; font-size:.74rem; letter-spacing:.04em;
-          color:#f2f2f2; padding:0 16px; text-shadow:0 1px 6px rgba(0,0,0,.9); }
+          color:#f2f2f2; padding:0 16px; background-color: #000; padding: 10px;}
 
         /* Modo glitch (desktop): el canvas pinta las fotos y la transición; las <img> se ocultan
            pero siguen cargando para alimentar el canvas. Los créditos quedan por encima. */
@@ -364,10 +393,11 @@ El resultado muestra cuántas de esas diez señales coinciden en cada departamen
         .gal-stage.glitch-on .gal-slide img{ display:none; }
         .gal-stage.glitch-on .gal-slide{ justify-content:flex-end; padding:14px 24px 30px; }
 
-        /* Modo FADE (móvil): sin canvas ni glitch; se ve el set .gal-slide-m con crossfade. */
+        /* Modo FADE (todos los anchos): sin canvas ni glitch; se ve el set .gal-slide-m con crossfade. */
         .galeria[data-gmode="fade"] .gal-canvas{ display:none; }
         .galeria[data-gmode="fade"] .gal-slide{ display:none; }
         .galeria[data-gmode="fade"] .gal-slide-m{ display:flex; }
+        .galeria[data-gmode="fade"] .gal-track{ height:520vh; }   /* 7 fotos con fade */
 
         /* Modo STATIC (prefers-reduced-motion): fotos apiladas sin pin, en cualquier ancho. */
         .galeria[data-gmode="static"] .gal-track{ height:auto; }
@@ -472,7 +502,9 @@ El resultado muestra cuántas de esas diez señales coinciden en cada departamen
         var N=slides.length; if(!N) return;
         var domImgs=slides.map(function(s){ return s.querySelector('img'); });
         // Imágenes dedicadas y precargadas para el canvas (no dependen de loading=lazy)
-        var imgs=domImgs.map(function(im){ var x=new Image(); if(im){ x.src=im.getAttribute('src'); } return x; });
+        // Glitch retirado: la galería usa el set MÓVIL (.gal-slide-m, img/galeria) con fade en todos
+        // los anchos, así que no precargamos el set de escritorio (img/galeria-2) en vano.
+        var imgs=[];
         // Set MÓVIL (fade simple con fotos de img/galeria)
         var slidesM=[].slice.call(sec.querySelectorAll('.gal-slide-m'));
         var mode='';
@@ -495,7 +527,7 @@ El resultado muestra cuántas de esas diez señales coinciden en cada departamen
         }
         function computeMode(){
           if(mqReduce.matches) return 'static';       // reduced-motion: fotos apiladas
-          return mqDesktop.matches ? 'glitch' : 'fade'; // desktop=glitch, móvil=fade simple
+          return 'fade';                                // fade en todos los anchos (glitch retirado a pedido)
         }
         function updateMode(){
           mode = computeMode();
@@ -822,5 +854,23 @@ El resultado muestra cuántas de esas diez señales coinciden en cada departamen
        ============================================================ -->
 
   <script src="./js/main.js"></script>
+<script id="src-tip-js">
+(function(){
+  function closeAll(except){
+    document.querySelectorAll('.src-tip.open').forEach(function(t){
+      if(t!==except){ t.classList.remove('open'); var b=t.querySelector('.src-tip-btn'); if(b) b.setAttribute('aria-expanded','false'); }
+    });
+  }
+  document.querySelectorAll('.src-tip-btn').forEach(function(btn){
+    btn.addEventListener('click', function(e){
+      e.stopPropagation();
+      var t=btn.closest('.src-tip'); var willOpen=!t.classList.contains('open');
+      closeAll(t); t.classList.toggle('open', willOpen); btn.setAttribute('aria-expanded', willOpen ? 'true':'false');
+    });
+  });
+  document.addEventListener('click', function(e){ if(!e.target.closest('.src-tip.open')) closeAll(null); });
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeAll(null); });
+})();
+</script>
 </body>
 </html>
