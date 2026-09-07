@@ -580,7 +580,7 @@
          ============================================================ */
 
     .mapa-fen{ background:#ffffff; color:#141414; padding:12px 20px 64px; }
-      .mapa-inner{ max-width:1040px; margin:0 auto; }
+      .mapa-inner{ max-width:1040px; margin:0 auto;     padding-top: 80px;}
       .mapa-fen h3{
         font-family:'Monoglyphic Semi Bold';
         font-size:2.2rem; color:#000; text-align:center; margin:0 auto;
