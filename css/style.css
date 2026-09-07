@@ -772,22 +772,23 @@ span.separador-logo {
     list-style-type: none;
     margin: 0 30px 0;
     padding: 0;
-    text-align: left;
+    text-align: center;
     vertical-align: top;
 }
 
 .footer-content ul li {
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 }
 
 .footer-content ul li h4 {
-    font: 1.2rem/1.3 'Roboto', sans-serif;
+  color: #00BAFF;
+    font: 1rem/1.3 'Roboto', sans-serif;
     font-weight: 800;
     margin-bottom: 0;
 }
 
 .footer-content ul li p {
-    font: 1.1rem/1.6 'Roboto', sans-serif;
+    font: 1rem/1.6 Poppins, system-ui, sans-serif;
     font-weight: 300;
     margin: 0;
 }
