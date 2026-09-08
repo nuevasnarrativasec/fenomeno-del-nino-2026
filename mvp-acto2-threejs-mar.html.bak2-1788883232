@@ -1866,14 +1866,9 @@ function attachSSTTexture() {
 //   Corriente Ecuatorial del Sur: fuerte en Normal → débil en El Niño
 // ─────────────────────────────────────────────
 function getOceanArcs(mult) {
-  // Piso de visibilidad: si las corrientes están activas deben verse SIEMPRE,
-  // en cualquier año del slider. El slider aún modula la intensidad por encima
-  // del piso, pero ninguna corriente cae a opacidad ~0 (antes 0.02/0.03 → se
-  // volvían invisibles, p. ej. Humboldt y SEC en El Niño fuerte / 2026).
-  const AMIN = 0.55;
-  const hA = Math.min(1, Math.max(AMIN, 1 - mult * 1.35)).toFixed(2);   // Humboldt — se debilita
-  const nA = Math.min(1, Math.max(AMIN, mult * 2.0 - 0.1)).toFixed(2);  // El Niño — crece
-  const sA = Math.min(1, Math.max(AMIN, 0.80 - mult * 1.1)).toFixed(2); // SEC — se debilita
+  const hA = Math.max(0.03, 1 - mult * 1.35).toFixed(2);   // Humboldt — se debilita
+  const nA = Math.max(0.02, mult * 2.0 - 0.1).toFixed(2);  // El Niño — crece
+  const sA = Math.max(0.03, 0.80 - mult * 1.1).toFixed(2); // SEC — se debilita
 
   const hC = `rgba(40,160,240,${hA})`;
   const nC = `rgba(255,85,10,${nA})`;
