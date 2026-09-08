@@ -739,46 +739,74 @@ El resultado muestra cuántas de esas diez señales coinciden en cada departamen
     <style>
       /* Metodología en tono neutro para diferenciarla de las herramientas cian */
       .met-card{ background:#fff; border: 1px solid #dadada; }
-
-      /* Botón que abre la metodología */
-      .met-open{ display:inline-flex; align-items:center; gap:14px; cursor:pointer;
-        background:#fff; border:1px solid #f2f2f2; border-radius:44px;
-        padding:12px 28px 12px 12px; 
-        font-family:'Monoglyphic Bold',Poppins,system-ui,sans-serif; font-size:1rem; color:#111;
-        transition:box-shadow .18s ease, transform .18s ease; }
-      .met-open:hover{  transform:translateY(-1px); }
-      .met-open:focus-visible{ outline:3px solid #111; outline-offset:3px; }
-      .met-open-ic{ display:inline-flex; align-items:center; justify-content:center;
-        width:56px; height:56px; border-radius:50%; background:#f2f2f2; flex:0 0 auto; }
-      .met-open-ic img{ width:34px; height:34px; display:block; }
-
-      /* Modal emergente */
-      .met-modal{ position:fixed; inset:0; z-index:99999; display:flex; align-items:center; justify-content:center; padding:24px; }
-      .met-modal[hidden]{ display:none; }
-      .met-modal-backdrop{ position:absolute; inset:0; background:rgba(10,10,15,.62); }
-      .met-modal-box{ position:relative; background:#fff; border-radius:18px; max-width:760px; width:100%;
-        max-height:88vh; display:flex; flex-direction:column; box-shadow:0 30px 80px rgba(0,0,0,.45);
-        overflow:hidden; animation:metIn .22s ease; }
-      @keyframes metIn{ from{opacity:0; transform:translateY(16px) scale(.98);} to{opacity:1; transform:none;} }
-      .met-modal-close{ position:absolute; top:14px; right:16px; z-index:2; width:42px; height:42px; border:none;
-        border-radius:50%; background:#f0f0f0; color:#222; font-size:1.7rem; line-height:1; cursor:pointer;
-        display:flex; align-items:center; justify-content:center; transition:background .15s; }
-      .met-modal-close:hover{ background:#e2e2e2; }
-      .met-modal-scroll{ overflow-y:auto; padding:54px 56px 48px; -webkit-overflow-scrolling:touch; }
-      .met-modal-scroll .met-title{ text-align:center; }
-      .met-body-modal{ margin-top:26px; padding-top:24px; border-top:1px solid #ececec; }
-      @media (max-width:640px){
-        .met-open{ font-size:1.05rem; padding:10px 20px 10px 10px; gap:11px; }
-        .met-open-ic{ width:46px; height:46px; } .met-open-ic img{ width:28px; height:28px; }
-        .met-modal{ padding:12px; }
-        .met-modal-scroll{ padding:44px 22px 32px; }
-      }
     </style>
     <div class="main-metodologia">
-      <button class="met-open" id="met-open" type="button" aria-haspopup="dialog" aria-controls="met-modal">
-        <span class="met-open-ic"><img src="img/icon-metodologia.png" alt="" aria-hidden="true"></span>
-        <span class="met-open-tx">Cómo hicimos este especial</span>
-      </button>
+      <div class="met-card">
+        <div class="met-inner">
+          <h2 class="met-title">Cómo hicimos este especial</h2>
+
+          <p class="met-lede">Este especial combina reportería, análisis de datos, procesamiento de lenguaje natural y herramientas interactivas construidas a partir de fuentes oficiales, documentos técnicos y el archivo histórico de El Comercio.</p>
+
+          <details class="met-details">
+            <summary class="met-toggle">
+              <span>Ver metodología completa</span>
+              <svg class="met-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </summary>
+
+            <div class="met-body">
+              <section class="met-sec">
+                <p>
+                  Cada módulo utiliza una metodología propia, pero comparte los mismos criterios: selección y trazabilidad de fuentes, definición editorial de las variables, revisión de los resultados y diferenciación entre datos observados, escenarios y proyecciones. Cuando utilizamos inteligencia artificial, fue como herramienta de apoyo para procesar y sistematizar información, nunca como fuente ni como sustituto de la verificación periodística.
+                </p>
+              </section>
+
+              <section class="met-sec">
+                <h3>1. El Niño hoy</h3>
+                <p>Reunimos indicadores oceanográficos y climáticos para seguir la evolución del fenómeno y diferenciar el Niño Costero, asociado principalmente a la región Niño 1+2, del El Niño global, monitoreado en el Pacífico ecuatorial central.</p>
+                <p>Las visualizaciones muestran la información y proyecciones disponibles más recientes y señalan su fecha de actualización. Estos indicadores permiten observar la evolución del fenómeno, pero no predicen por sí solos cuánto lloverá ni qué impactos ocurrirán en una localidad determinada.</p>
+                <p class="met-src"><strong>Fuentes:</strong> ENFEN, IMARPE, Senamhi y organismos meteorológicos y oceanográficos internacionales utilizados en cada visualización.</p>
+              </section>
+
+              <section class="met-sec">
+                <h3>2. ¿Cómo me afecta a mí?</h3>
+                <p>La herramienta reúne información oficial sobre emergencias, salud, agricultura, infraestructura, producción y clima para identificar cómo los efectos asociados a El Niño pueden manifestarse de manera diferente según el territorio, la ocupación y la edad.</p>
+                <p>Para comparar departamentos utilizamos 10 señales, entre ellas recurrencia de emergencias, daños en años de El Niño, dengue, infraestructura crítica y exposición agrícola. Cuando fue necesario comparar cantidades entre territorios de distinto tamaño, utilizamos tasas por cada 100 mil habitantes.</p>
+                <p>El resultado muestra niveles de exposición y posibles cadenas de impacto. No constituye una predicción individual ni implica relaciones de causalidad cuando los datos no permiten demostrarlas.</p>
+                <p class="met-src"><strong>Fuentes:</strong> INDECI, Cenepred, INEI, Minsa/CDC Perú, Senamhi, IMARPE, IGP, ENFEN, ANA, Produce, BCRP y otras fuentes oficiales. Para los casos internacionales se utilizaron, entre otros, Banco Mundial, FAO, OIT, NASA, NOAA y WMO.</p>
+              </section>
+
+              <section class="met-sec">
+                <h3>3. ¿Qué hemos aprendido en 40 años?</h3>
+                <p>Analizamos 4.439 publicaciones de El Comercio correspondientes a cinco períodos entre 1982 y 2026 para identificar cómo evolucionaron los impactos registrados y qué riesgos habían sido advertidos antes de cada episodio.</p>
+                <p>Primero limpiamos y normalizamos el archivo y aplicamos técnicas de ciencia de datos y procesamiento de lenguaje natural para estudiar patrones, territorios y evolución temporal. En una segunda etapa utilizamos inteligencia artificial para apoyar la identificación y clasificación de 566 advertencias presentes en 532 publicaciones.</p>
+                <p>Las categorías y criterios fueron definidos editorialmente, los casos ambiguos fueron revisados y las comparaciones consideran que los períodos no tienen el mismo volumen de información disponible.</p>
+                <p class="met-src"><strong>Fuente:</strong> Archivo Histórico de El Comercio, 1982-2026.</p>
+              </section>
+
+              <section class="met-sec">
+                <h3>4. ¿Qué puedes hacer?</h3>
+                <p>Para la herramienta de participación ciudadana construimos un indicador regional a partir de información pública sobre emergencias, salud, agricultura, infraestructura, servicios y ejecución presupuestal.</p>
+                <p>Los datos fueron organizados mediante un flujo automatizado que permite identificar la región del usuario, mostrarle información relacionada con su nivel de vulnerabilidad y facilitar el envío de una comunicación editable a las autoridades correspondientes.</p>
+                <p>El procesamiento de documentos y la sistematización de información se apoyaron en herramientas de inteligencia artificial y automatización. Ningún dato ni texto fue publicado automáticamente: los indicadores y contenidos fueron contrastados con sus fuentes originales y revisados editorialmente.</p>
+                <p class="met-src"><strong>Fuentes:</strong> Cenepred, INDECI, MEF, Senamhi, BCRP, Minam, Mincetur, MIMP y otras bases y documentos oficiales utilizados en la herramienta.</p>
+              </section>
+
+              <hr class="met-hr">
+
+              <section class="met-sec">
+                <h3>Sobre el uso de inteligencia artificial</h3>
+                <p>Utilizamos inteligencia artificial en tareas específicas de procesamiento de grandes volúmenes de información: extracción y estructuración de datos, identificación de fragmentos relevantes, clasificación y apoyo a la normalización de contenidos.</p>
+                <p>Los modelos trabajaron sobre fuentes previamente seleccionadas y con criterios definidos por el equipo. Los resultados fueron sometidos a controles de consistencia y revisión editorial. La inteligencia artificial no fue utilizada como fuente de información ni para determinar de manera autónoma las conclusiones del especial.</p>
+              </section>
+
+              <section class="met-sec">
+                <h3>Fuentes y actualización</h3>
+                <p>El especial utiliza fuentes públicas, documentos técnicos, bases oficiales, organismos científicos nacionales e internacionales y el Archivo Histórico de El Comercio. Cada gráfico o herramienta identifica además su fuente específica y, cuando corresponde, la fecha de actualización de los datos.</p>
+              </section>
+            </div>
+          </details>
+        </div>
+      </div>
     </div>
     </div><!-- /#railWrap -->
 
@@ -886,82 +914,5 @@ El resultado muestra cuántas de esas diez señales coinciden en cada departamen
   document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeAll(null); });
 })();
 </script>
-
-  <!-- ===== MODAL METODOLOGÍA ===== -->
-  <div class="met-modal" id="met-modal" hidden>
-    <div class="met-modal-backdrop" data-met-close></div>
-    <div class="met-modal-box" role="dialog" aria-modal="true" aria-labelledby="met-modal-title">
-      <button class="met-modal-close" data-met-close type="button" aria-label="Cerrar">&times;</button>
-      <div class="met-modal-scroll">
-        <h2 class="met-title" id="met-modal-title">Cómo hicimos este especial</h2>
-        <p class="met-lede">Este especial combina reportería, análisis de datos, procesamiento de lenguaje natural y herramientas interactivas construidas a partir de fuentes oficiales, documentos técnicos y el archivo histórico de El Comercio.</p>
-        <div class="met-body-modal">
-              <section class="met-sec">
-                <p>
-                  Cada módulo utiliza una metodología propia, pero comparte los mismos criterios: selección y trazabilidad de fuentes, definición editorial de las variables, revisión de los resultados y diferenciación entre datos observados, escenarios y proyecciones. Cuando utilizamos inteligencia artificial, fue como herramienta de apoyo para procesar y sistematizar información, nunca como fuente ni como sustituto de la verificación periodística.
-                </p>
-              </section>
-
-              <section class="met-sec">
-                <h3>1. El Niño hoy</h3>
-                <p>Reunimos indicadores oceanográficos y climáticos para seguir la evolución del fenómeno y diferenciar el Niño Costero, asociado principalmente a la región Niño 1+2, del El Niño global, monitoreado en el Pacífico ecuatorial central.</p>
-                <p>Las visualizaciones muestran la información y proyecciones disponibles más recientes y señalan su fecha de actualización. Estos indicadores permiten observar la evolución del fenómeno, pero no predicen por sí solos cuánto lloverá ni qué impactos ocurrirán en una localidad determinada.</p>
-                <p class="met-src"><strong>Fuentes:</strong> ENFEN, IMARPE, Senamhi y organismos meteorológicos y oceanográficos internacionales utilizados en cada visualización.</p>
-              </section>
-
-              <section class="met-sec">
-                <h3>2. ¿Cómo me afecta a mí?</h3>
-                <p>La herramienta reúne información oficial sobre emergencias, salud, agricultura, infraestructura, producción y clima para identificar cómo los efectos asociados a El Niño pueden manifestarse de manera diferente según el territorio, la ocupación y la edad.</p>
-                <p>Para comparar departamentos utilizamos 10 señales, entre ellas recurrencia de emergencias, daños en años de El Niño, dengue, infraestructura crítica y exposición agrícola. Cuando fue necesario comparar cantidades entre territorios de distinto tamaño, utilizamos tasas por cada 100 mil habitantes.</p>
-                <p>El resultado muestra niveles de exposición y posibles cadenas de impacto. No constituye una predicción individual ni implica relaciones de causalidad cuando los datos no permiten demostrarlas.</p>
-                <p class="met-src"><strong>Fuentes:</strong> INDECI, Cenepred, INEI, Minsa/CDC Perú, Senamhi, IMARPE, IGP, ENFEN, ANA, Produce, BCRP y otras fuentes oficiales. Para los casos internacionales se utilizaron, entre otros, Banco Mundial, FAO, OIT, NASA, NOAA y WMO.</p>
-              </section>
-
-              <section class="met-sec">
-                <h3>3. ¿Qué hemos aprendido en 40 años?</h3>
-                <p>Analizamos 4.439 publicaciones de El Comercio correspondientes a cinco períodos entre 1982 y 2026 para identificar cómo evolucionaron los impactos registrados y qué riesgos habían sido advertidos antes de cada episodio.</p>
-                <p>Primero limpiamos y normalizamos el archivo y aplicamos técnicas de ciencia de datos y procesamiento de lenguaje natural para estudiar patrones, territorios y evolución temporal. En una segunda etapa utilizamos inteligencia artificial para apoyar la identificación y clasificación de 566 advertencias presentes en 532 publicaciones.</p>
-                <p>Las categorías y criterios fueron definidos editorialmente, los casos ambiguos fueron revisados y las comparaciones consideran que los períodos no tienen el mismo volumen de información disponible.</p>
-                <p class="met-src"><strong>Fuente:</strong> Archivo Histórico de El Comercio, 1982-2026.</p>
-              </section>
-
-              <section class="met-sec">
-                <h3>4. ¿Qué puedes hacer?</h3>
-                <p>Para la herramienta de participación ciudadana construimos un indicador regional a partir de información pública sobre emergencias, salud, agricultura, infraestructura, servicios y ejecución presupuestal.</p>
-                <p>Los datos fueron organizados mediante un flujo automatizado que permite identificar la región del usuario, mostrarle información relacionada con su nivel de vulnerabilidad y facilitar el envío de una comunicación editable a las autoridades correspondientes.</p>
-                <p>El procesamiento de documentos y la sistematización de información se apoyaron en herramientas de inteligencia artificial y automatización. Ningún dato ni texto fue publicado automáticamente: los indicadores y contenidos fueron contrastados con sus fuentes originales y revisados editorialmente.</p>
-                <p class="met-src"><strong>Fuentes:</strong> Cenepred, INDECI, MEF, Senamhi, BCRP, Minam, Mincetur, MIMP y otras bases y documentos oficiales utilizados en la herramienta.</p>
-              </section>
-
-              <hr class="met-hr">
-
-              <section class="met-sec">
-                <h3>Sobre el uso de inteligencia artificial</h3>
-                <p>Utilizamos inteligencia artificial en tareas específicas de procesamiento de grandes volúmenes de información: extracción y estructuración de datos, identificación de fragmentos relevantes, clasificación y apoyo a la normalización de contenidos.</p>
-                <p>Los modelos trabajaron sobre fuentes previamente seleccionadas y con criterios definidos por el equipo. Los resultados fueron sometidos a controles de consistencia y revisión editorial. La inteligencia artificial no fue utilizada como fuente de información ni para determinar de manera autónoma las conclusiones del especial.</p>
-              </section>
-
-              <section class="met-sec">
-                <h3>Fuentes y actualización</h3>
-                <p>El especial utiliza fuentes públicas, documentos técnicos, bases oficiales, organismos científicos nacionales e internacionales y el Archivo Histórico de El Comercio. Cada gráfico o herramienta identifica además su fuente específica y, cuando corresponde, la fecha de actualización de los datos.</p>
-              </section>
-            </div>
-      </div>
-    </div>
-  </div>
-  <script>
-  (function(){
-    var openBtn=document.getElementById('met-open');
-    var modal=document.getElementById('met-modal');
-    if(!openBtn||!modal) return;
-    var lastFocus=null;
-    function open(){ lastFocus=document.activeElement; modal.hidden=false; document.body.style.overflow='hidden';
-      var c=modal.querySelector('.met-modal-close'); if(c) c.focus(); }
-    function close(){ modal.hidden=true; document.body.style.overflow=''; if(lastFocus&&lastFocus.focus) lastFocus.focus(); }
-    openBtn.addEventListener('click', open);
-    modal.addEventListener('click', function(e){ if(e.target.hasAttribute('data-met-close')) close(); });
-    document.addEventListener('keydown', function(e){ if(e.key==='Escape' && !modal.hidden) close(); });
-  })();
-  </script>
 </body>
 </html>
