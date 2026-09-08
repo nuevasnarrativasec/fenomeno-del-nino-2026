@@ -89,7 +89,18 @@
           #652300 45%, #4D1B00 56%, #401701 67%, #290D01 77%, #110600 92%, #000000 100%); }
       /* Franjas numeradas del cierre */
       #stageM .stm-band{ position:absolute; left:0; width:390px; box-sizing:border-box; z-index:1;
-        border-bottom:1px solid rgba(255,255,255,.06); }
+       /* border-bottom:1px solid rgba(255,255,255,.06);*/ }
+
+      /* Un degradé distinto por franja (móvil) — escala de calor de arriba (naranja) a abajo (negro) */
+      #stageM .stm-b1{ background:linear-gradient(180deg,#FF7A1A 0%,#FF5800 100%); }
+      #stageM .stm-b2{ background:linear-gradient(180deg,#d74a02 0%,#E24A02 100%); }
+      #stageM .stm-b3{ background:linear-gradient(180deg,#b43e01 0%,#C24001 100%); }
+      #stageM .stm-b4{ background:linear-gradient(180deg,#993501 0%,#A03501 100%); }
+      #stageM .stm-b5{ background:linear-gradient(180deg,#652300 0%,#7E2A00 100%); }
+      #stageM .stm-b6{ background:linear-gradient(180deg,#4d1b00 0%,#5E1F00 100%); }
+      #stageM .stm-b7{ background:linear-gradient(180deg,#411700 0%,#431500 100%); }
+      #stageM .stm-b8{ background:linear-gradient(180deg,#290d01 0%,#2A0C00 100%); }
+      #stageM .stm-b9{ background:linear-gradient(180deg,#110600 0%,#120500 100%); }
       #stageM .stm-bnum{ position:absolute; left:32px; top:50%; transform:translateY(-50%);
         font:800 2.4rem/1 'Monoglyphic Bold',Poppins,system-ui,-apple-system,sans-serif; color:#fff; }
       #stageM .stm-blbl{ position:absolute; left:82px; top:50%; transform:translateY(-50%); width:168px;
@@ -126,7 +137,7 @@
       #stageM .fig-lbl{ position:absolute; transform:translateX(-50%); text-align:center; width:190px;
         color:#c9c0b4; font-family:Poppins,system-ui,-apple-system,sans-serif; font-size:.8rem; line-height:1.2; }
       #stageM .stm-final{ position:absolute; transform:translateX(-50%); text-align:center; width:340px;
-        color:#fff; font:700 1.4rem/1.25 'Monoglyphic Bold',Poppins,system-ui,-apple-system,sans-serif; }
+        color:#fff; font:700 1.4rem/1.25 Poppins, system-ui, -apple-system, sans-serif;}
       /* Popup del botón "›" (dato extra) */
       #stmPop{ position:fixed; inset:0; z-index:120; display:flex; align-items:flex-end; justify-content:center;
         background:rgba(0,0,0,.55); opacity:0; transition:opacity .2s ease; }

@@ -874,7 +874,7 @@
     var bandEls=[];
     for(var bi=0; bi<9; bi++){
       var r=ROW[bi];
-      var band=el('div','stm-band reveal',
+      var band=el('div','stm-band reveal stm-b'+(bi+1),
         '<div class="stm-bnum">'+(bi+1)+'</div>'+
         '<div class="stm-blbl">'+r.lbl+'</div>'+
         '<div class="stm-bfig"><img src="'+IMG_BASE+r.img+'" alt=""></div>');
