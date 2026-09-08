@@ -927,6 +927,9 @@ span.separador-logo {
         #impactFrame{
           height: 175vh;
         }
+        #cartaBox h3{
+          font-size: 3rem;
+        }
 
       }
 
