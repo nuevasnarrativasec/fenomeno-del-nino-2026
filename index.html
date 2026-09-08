@@ -183,6 +183,61 @@
 
   <div class="topbar">Para ver más información presiona el botón <span class="chev">›</span> sobre cada persona</div>
 
+  <!-- ===== Menú de navegación (hamburguesa, esquina superior derecha) =====
+       Aparece al entrar a la sección del stage (cuando los personajes empiezan
+       a acomodarse) y lleva a cada sección con scroll suave. -->
+  <style>
+    #navFab{ position:fixed; top:16px; right:16px; z-index:200; width:60px; height:60px; border-radius:50%;
+      background:#f4efe7; border:2px solid #111; box-shadow:0 5px 20px rgba(0,0,0,.4); cursor:pointer;
+      display:grid; place-items:center; padding:0; -webkit-tap-highlight-color:transparent;
+      opacity:0; transform:translateY(-10px); pointer-events:none;
+      transition:opacity .38s ease, transform .38s ease, background .2s ease; }
+    #navFab.show{ opacity:1; transform:none; pointer-events:auto; }
+    #navFab:hover{ background:#fff; }
+    #navFab .nf-bars{ position:relative; width:24px; height:16px; }
+    #navFab .nf-bars span{ position:absolute; left:0; width:100%; height:2.6px; border-radius:2px; background:#111;
+      transition:transform .3s ease, opacity .2s ease, top .3s ease; }
+    #navFab .nf-bars span:nth-child(1){ top:0; }
+    #navFab .nf-bars span:nth-child(2){ top:6.7px; }
+    #navFab .nf-bars span:nth-child(3){ top:13.4px; }
+    #navFab.open .nf-bars span:nth-child(1){ top:6.7px; transform:rotate(45deg); }
+    #navFab.open .nf-bars span:nth-child(2){ opacity:0; }
+    #navFab.open .nf-bars span:nth-child(3){ top:6.7px; transform:rotate(-45deg); }
+
+    #navMenu{ position:fixed; inset:0; z-index:199; background:rgba(5,5,5,.94);
+      -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      opacity:0; visibility:hidden; transition:opacity .3s ease, visibility .3s ease; }
+    #navMenu.open{ opacity:1; visibility:visible; }
+    #navMenu[hidden]{ display:none !important; }
+    #navMenu nav{ display:flex; flex-direction:column; gap:2px; width:min(560px,86vw); }
+    #navMenu a{ display:flex; align-items:baseline; gap:16px; text-decoration:none; color:#f4efe7;
+      font-family:'Monoglyphic Bold',Poppins,system-ui,-apple-system,sans-serif; font-weight:800;
+      text-transform:uppercase; letter-spacing:.03em; font-size:1.55rem; line-height:1.15;
+      padding:18px 4px; border-bottom:1px solid rgba(255,255,255,.1);
+      transform:translateX(0); transition:color .2s ease, transform .2s ease; }
+    #navMenu a .nm-idx{ font-size:.8rem; color:#FF5800; min-width:26px; letter-spacing:.05em; }
+    #navMenu a:hover, #navMenu a:focus-visible{ color:#FF5800; transform:translateX(8px); outline:none; }
+    @media (max-width:820px){
+      #navFab{ top:12px; right:12px; width:52px; height:52px; }
+      #navFab .nf-bars{ width:22px; height:15px; }
+      #navMenu a{ font-size:1.2rem; padding:15px 4px; }
+    }
+  </style>
+
+  <button id="navFab" type="button" aria-label="Abrir menú de navegación" aria-expanded="false" aria-controls="navMenu">
+    <span class="nf-bars" aria-hidden="true"><span></span><span></span><span></span></span>
+  </button>
+  <div id="navMenu" role="dialog" aria-modal="true" aria-label="Navegación del especial" hidden>
+    <nav>
+      <a href="#sec-nino-hoy"><span class="nm-idx">01</span>El Niño hoy</a>
+      <a href="#impactBox"><span class="nm-idx">02</span>Calculadora de desastres</a>
+      <a href="#galeria"><span class="nm-idx">03</span>40 años en el archivo</a>
+      <a href="#taBox"><span class="nm-idx">04</span>Advertencias</a>
+      <a href="#cartaBox"><span class="nm-idx">05</span>Consúltale a tu autoridad</a>
+    </nav>
+  </div>
+
   <!-- (la portada "Todo está conectado" ahora vive dentro del #stage) -->
 
     <div id="stageWrap">
@@ -222,7 +277,7 @@
     <!-- Corte de sección: negro (empalma con el hero-main) → blanco, con muesca en punta -->
     <div class="section-cut" aria-hidden="true"></div>
 
-    <div class="main-contenido">
+    <div class="main-contenido" id="sec-nino-hoy">
         <h2>
           el niño hoy
         </h2>
@@ -914,6 +969,66 @@
        ============================================================ -->
 
   <script src="./js/main.js"></script>
+
+  <!-- ===== Menú hamburguesa: apertura, cierre y scroll suave ===== -->
+  <script>
+  (function(){
+    var fab  = document.getElementById('navFab');
+    var menu = document.getElementById('navMenu');
+    if(!fab || !menu) return;
+    var links = menu.querySelectorAll('a');
+
+    function openMenu(){
+      menu.hidden = false;
+      requestAnimationFrame(function(){ menu.classList.add('open'); });
+      fab.classList.add('open');
+      fab.setAttribute('aria-expanded','true');
+      fab.setAttribute('aria-label','Cerrar menú de navegación');
+      document.body.style.overflow='hidden';
+    }
+    function closeMenu(){
+      menu.classList.remove('open');
+      fab.classList.remove('open');
+      fab.setAttribute('aria-expanded','false');
+      fab.setAttribute('aria-label','Abrir menú de navegación');
+      document.body.style.overflow='';
+      setTimeout(function(){ if(!menu.classList.contains('open')) menu.hidden = true; }, 320);
+    }
+    function toggleMenu(){ fab.classList.contains('open') ? closeMenu() : openMenu(); }
+
+    fab.addEventListener('click', toggleMenu);
+    // Cerrar al hacer clic fuera de la lista (en el fondo del overlay)
+    menu.addEventListener('click', function(e){ if(e.target === menu) closeMenu(); });
+    // Cerrar con Escape
+    document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && fab.classList.contains('open')) closeMenu(); });
+
+    // Navegación con scroll suave
+    links.forEach(function(a){
+      a.addEventListener('click', function(e){
+        var id = a.getAttribute('href');
+        var target = id && document.querySelector(id);
+        if(!target) return;
+        e.preventDefault();
+        closeMenu();
+        setTimeout(function(){
+          target.scrollIntoView({ behavior:'smooth', block:'start' });
+        }, 120);
+      });
+    });
+
+    // Aparición del botón: recién al entrar a la sección del stage de personajes
+    // (cuando empiezan a acomodarse), y se mantiene visible el resto de la página.
+    // Umbral = ~55% del alto de la ventana desde el inicio (ajustable).
+    function onScroll(){
+      var trigger = window.innerHeight * 0.55;
+      if(window.scrollY > trigger) fab.classList.add('show');
+      else if(!fab.classList.contains('open')) fab.classList.remove('show');
+    }
+    window.addEventListener('scroll', onScroll, { passive:true });
+    window.addEventListener('resize', onScroll, { passive:true });
+    onScroll();
+  })();
+  </script>
 <script id="src-tip-js">
 (function(){
   function closeAll(except){
