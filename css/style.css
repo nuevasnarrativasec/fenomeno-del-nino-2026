@@ -744,7 +744,7 @@
   .decor{ position:absolute; z-index:2; pointer-events:none; }
   .decor-sun{
     border-radius:50%;
-    background: url('../img/sol.png') no-repeat center center/cover;
+    background: url('../img/rayos.png') no-repeat center center/cover;
   }
   .decor-cloud{
     background: url('../img/lluvia.png') no-repeat center center/cover;

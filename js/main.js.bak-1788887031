@@ -482,10 +482,10 @@
     d.style.width = w+'px'; d.style.height = h+'px';
     stage.appendChild(d); return d;
   }
-  const sunEl   = decor('decor-sun','',    -100,           STATIONS[0].cy,       300, 300);
+  const sunEl   = decor('decor-sun','',    -150,           STATIONS[0].cy,       600, 600);
   const rainEl  = decor('decor-cloud', '', STAGE_W - 16, STATIONS[2].cy + 150, 450, 400);   // lluvia.png (desde CSS .decor-cloud)
   const stormEl = decor('decor-cloud', '', 60,           STATIONS[6].cy + -10,  436, 400);
-  stormEl.style.background = "url('img/sol.png') no-repeat center center/cover";   // rayos.png
+  stormEl.style.background = "url('img/rayos.png') no-repeat center center/cover";   // rayos.png
 
   // 3) Fila inferior: figuras con los pies sobre la línea + etiquetas
   //    escalonadas (dos niveles alternados) para que no se amontonen.
@@ -780,119 +780,100 @@
 
 
 // ============================================================
-// 2b) STAGE MÓVIL (<=820px). Grilla 3×3 en SERPIENTE (fila0 →, baja der.,
-//     fila1 ←, baja izq., fila2 →) con flechas + conector vertical que
-//     aparecen con fade -> bajada+indicador -> ESTACIONES círculo+tarjeta
-//     LADO A LADO alternando, con línea punteada ORTOGONAL (puntos redondos)
-//     -> CIERRE con fondo en degradé, figuras (ROW) apareciendo una tras otra
-//     + pregunta. Layout por medición (layout()). Reutiliza STATIONS/ROW.
+// 2b) STAGE MÓVIL — zig-zag con vuelo (FLIP) adaptado a móvil (<=820px).
+//     Grilla 3×3 -> cada personaje vuela a un zig-zag angosto -> cierre
+//     vertical. Reutiliza STATIONS/YO_STATION/ROW + clases del desktop.
 // ============================================================
   if(IS_MOBILE_STAGE) (function(){
     var host = document.getElementById('stageWrap');
     if(!host || document.getElementById('stageM')) return;
     var NS='http://www.w3.org/2000/svg';
     function el(tag,cls,html){ var e=document.createElement(tag); if(cls)e.className=cls; if(html!=null)e.innerHTML=html; return e; }
-    function px(n){ return n+'px'; }
 
-    var SW=390, CR=38, D=76;                 // ancho de diseño, radio y diámetro del círculo
+    var SW=390, CR=38;                         // ancho de diseño y radio de círculo
     var wrap=el('div'); wrap.id='stageWrapM';
     var stage=el('div'); stage.id='stageM';
     wrap.appendChild(stage);
     host.parentNode.insertBefore(wrap, host);
 
-    // Fondo en degradé del cierre (se dimensiona en layout())
-    var closeBg=el('div','stm-closebg'); stage.appendChild(closeBg);
-
     var svg=document.createElementNS(NS,'svg'); svg.id='connectorM';
     svg.setAttribute('preserveAspectRatio','none'); svg.setAttribute('aria-hidden','true');
     stage.appendChild(svg);
 
-    // ---------- Cabecera: el título va arriba ----------
-    var title=el('div','stm-title','Todo está conectado'); title.style.top='10px'; stage.appendChild(title);
-
-    // ---------- Grilla 3×3 en serpiente ----------
-    // Boustrophedon: filas pares izq→der, impares der→izq.
-    var COLX=[78,195,312], ROWGAP=196;
-    function snakeCol(i){ var row=(i/3)|0, p=i%3; return (row%2===0)? p : (2-p); }
-    var GY=[0,0,0];
-    var gridLabels=[], arrowEls=[], vlineEls=[];
-
-    STATIONS.forEach(function(s,i){
-      s._col=snakeCol(i); s._row=(i/3)|0; s._gx=COLX[s._col];
-      var c=el('div','circle','<img src="'+IMG_BASE+'personaje-'+(i+1)+'.png" alt="'+s.role+'">');
-      stage.appendChild(c); s._circle=c;
-      var lbl=el('div','stm-glbl','<div class="stm-gname">'+s.name+'</div><div class="stm-greg">'+s.region+'</div>');
-      stage.appendChild(lbl); s._glbl=lbl; gridLabels.push(lbl);
-    });
-
-    // Flechas horizontales según el flujo (fila0 →, fila1 ←, fila2 →)
-    var hArrows=[
-      {row:0,a:0,b:1,dir:'right'}, {row:0,a:1,b:2,dir:'right'},
-      {row:1,a:2,b:1,dir:'left'},  {row:1,a:1,b:0,dir:'left'},
-      {row:2,a:0,b:1,dir:'right'}, {row:2,a:1,b:2,dir:'right'}
-    ];
-    hArrows.forEach(function(d){
-      var ar=el('div','stm-arrow '+d.dir); ar._x=(COLX[d.a]+COLX[d.b])/2; ar._row=d.row;
-      stage.appendChild(ar); arrowEls.push(ar);
-    });
-    // Conectores verticales: derecha (fila0→1, col2) e izquierda (fila1→2, col0)
-    var vDefs=[ {col:2,from:0}, {col:0,from:1} ];
-    vDefs.forEach(function(d){
-      var ln=el('div','stm-vline'); var av=el('div','stm-arrow down');
-      stage.appendChild(ln); stage.appendChild(av);
-      vlineEls.push({line:ln, arrow:av, col:d.col, from:d.from});
-    });
-
-    // ---------- Bajada + indicador (debajo de la grilla) ----------
-    var baja=el('div','stm-baja','<b>Nueve historias,</b> distintos departamentos y diez señales de alerta que, aunque parecen aisladas, se entrelazan en la realidad peruana.');
-    stage.appendChild(baja);
-    var cta=el('div','stm-cta','Descubre cómo se conectan<span class="cta-arrow">↓</span>');
+    // ---- Cabecera ----
+    var title=el('div','stm-title','Todo está conectado'); title.style.top='46px'; stage.appendChild(title);
+    var baja=el('div','stm-baja','Nueve personas. Historias que representan situaciones en distintos departamentos del país. Diez señales aparentemente desconectadas.');
+    baja.style.top='104px'; stage.appendChild(baja);
+    var cta=el('div','stm-cta','Scroll para interactuar<span class="cta-arrow">↓</span>');
+    cta.style.top='205px';
     cta.addEventListener('click', function(){ window.scrollTo({ top: Math.round(window.innerHeight*0.9), behavior:'smooth' }); });
     stage.appendChild(cta);
 
-    // ---------- Estaciones: círculo + tarjeta LADO A LADO (alterna) ----------
-    var M=36, GAPCC=28, CARD_W=SW-M-D-GAPCC-M;   // 214 (más aire círculo↔tarjeta)
+    // ---- Grilla 3x3 (intro): etiquetas + flechas ----
+    var COLX=[80,195,310], GY=[345,515,685];
+    var introEls=[];
     STATIONS.forEach(function(s,i){
-      var left=(i%2===0);                        // par: círculo a la izquierda
-      s._cleft=left;
-      s._scx = left ? (M+D/2) : (SW-M-D/2);
-      s._cardX = left ? (M+D+GAPCC) : M;
-      var nw=el('div','namewrap reveal','<div class="nm">'+s.name+'</div><div class="nm-age">('+s.age+')</div><div class="role">'+s.role+'</div>');
-      stage.appendChild(nw); s._nw=nw;
+      var gx=COLX[i%3], gy=GY[(i/3)|0];
+      s._gx=gx; s._gy=gy;
+      var lbl=el('div','stm-glbl','<div class="stm-gname">'+s.name+'</div><div class="stm-greg">'+s.region+'</div>');
+      lbl.style.left=gx+'px'; lbl.style.top=(gy-CR-8)+'px';
+      stage.appendChild(lbl); introEls.push(lbl);
+    });
+    [[0,1],[1,2]].forEach(function(pr){ GY.forEach(function(gy){
+      var ar=el('div','stm-arrow'); ar.style.left=((COLX[pr[0]]+COLX[pr[1]])/2)+'px'; ar.style.top=gy+'px';
+      stage.appendChild(ar); introEls.push(ar);
+    });});
+    introEls.push(title, baja, cta);
+
+    // ---- Estaciones: el círculo vuela de la grilla a su sitio ----
+    var ST0=810, SGAP=540, INFO_W=330, IBX=(SW-INFO_W)/2;
+    STATIONS.forEach(function(s,i){
+      var sy=ST0+i*SGAP, scx=(i%2===0)?135:255;
+      s._sx=scx; s._sy=sy;
+      var c=el('div','circle','<img src="'+IMG_BASE+'personaje-'+(i+1)+'.png" alt="'+s.role+'">');
+      c.style.left=s._gx+'px'; c.style.top=s._gy+'px'; stage.appendChild(c); s._circle=c;
+      var nw=el('div','namewrap reveal','<div class="nm">'+s.name+' ('+s.age+')</div><div class="role">'+s.role+'</div>');
+      nw.style.left=scx+'px'; nw.style.top=(sy+CR+12)+'px'; stage.appendChild(nw); s._nw=nw;
       var ib=el('div','infobox reveal','<span class="region">'+s.region+'.</span> '+s.info);
-      ib.style.width=CARD_W+'px'; stage.appendChild(ib); s._ib=ib;
-      var btn=el('button','infobtn reveal','›'); btn.dataset.idx=i; stage.appendChild(btn); s._btn=btn;
+      ib.style.width=INFO_W+'px'; ib.style.left=IBX+'px'; ib.style.top=(sy+CR+52)+'px'; stage.appendChild(ib); s._ib=ib;
+      var btn=el('button','infobtn reveal','›'); btn.dataset.idx=i;
+      btn.style.left=(IBX+INFO_W)+'px'; btn.style.top=(sy+CR+52)+'px'; stage.appendChild(btn); s._btn=btn;
+      // cuadro naranja (móvil): la ÚLTIMA estación (Cecilia) ya NO lleva naranja
       var ob=null;
       if(i < STATIONS.length-1){
         ob=el('div','orangebox reveal','<span class="q" style="margin-top:0">'+s.q+'</span>');
-        ob.style.width='300px'; stage.appendChild(ob);
+        ob.style.width='300px'; ob.style.left=(SW/2)+'px'; ob.style.top=(sy+330)+'px'; ob.style.transform='translateX(-50%)';
+        stage.appendChild(ob);
       }
       s._ob=ob;
     });
 
-    // ---------- Cierre: 9 franjas numeradas sobre degradé + finale "Yo" ----------
-    var bandEls=[];
-    for(var bi=0; bi<9; bi++){
-      var r=ROW[bi];
-      var band=el('div','stm-band reveal',
-        '<div class="stm-bnum">'+(bi+1)+'</div>'+
-        '<div class="stm-blbl">'+r.lbl+'</div>'+
-        '<div class="stm-bfig"><img src="'+IMG_BASE+r.img+'" alt=""></div>');
-      stage.appendChild(band); bandEls.push(band);
-    }
-    var yoR=ROW[9];   // silueta "Yo"
-    var yoWrap=el('div','stm-yo reveal',
-      '<div class="stm-yo-line"></div>'+
-      '<div class="stm-yo-label">Yo</div>'+
-      '<div class="stm-yo-circle"><img src="'+IMG_BASE+yoR.img+'" alt="Yo"></div>'+
-      '<div class="stm-yo-line"></div>');
-    stage.appendChild(yoWrap);
-    var yq=el('div','stm-final reveal','¿Y si la siguiente historia fuera la tuya?'); stage.appendChild(yq);
+    // ---- Cierre VERTICAL: figuras (ROW) una debajo de otra + "¿Y tú?" ----
+    var FY0=ST0+(STATIONS.length-1)*SGAP+SGAP, FGAP=132;
+    ROW.forEach(function(r,i){
+      var fy=FY0+i*FGAP;
+      var f=el('div','fig'+(r.me?' me':'')+' reveal','<img src="'+IMG_BASE+r.img+'" alt="'+r.lbl+'">');
+      f.style.left=(SW/2)+'px'; f.style.top=fy+'px'; f.style.transform='translateX(-50%)'; stage.appendChild(f);
+      if(!r.me){
+        var num=el('div','fig-num reveal', String(i+1));
+        num.style.left=(SW/2+52)+'px'; num.style.top=(fy+34)+'px'; stage.appendChild(num);
+        var lb=el('div','fig-lbl reveal', r.lbl);
+        lb.style.left=(SW/2)+'px'; lb.style.top=(fy+78)+'px'; stage.appendChild(lb);
+      }
+    });
+    var lastFy=FY0+(ROW.length-1)*FGAP;
+    var yq=el('div','stm-final reveal','¿Y si la siguiente historia fuera la tuya?');
+    yq.style.left=(SW/2)+'px'; yq.style.top=(lastFy+140)+'px'; stage.appendChild(yq);
+    var STAGE_H=lastFy+280;
 
-    // Path de la línea punteada (se arma en layout())
-    var pth=document.createElementNS(NS,'path'); pth.setAttribute('class','dotted'); svg.appendChild(pth);
+    // ---- Línea punteada por los círculos de estación + bajada al cierre ----
+    var pts=STATIONS.map(function(s){ return [s._sx,s._sy]; });
+    pts.push([SW/2, FY0]); pts.push([SW/2, lastFy]);
+    var pth=document.createElementNS(NS,'path');
+    pth.setAttribute('d','M '+pts.map(function(p){return p.join(' ');}).join(' L '));
+    pth.setAttribute('class','dotted'); svg.appendChild(pth);
 
-    // ---------- Popup del botón "›" ----------
+    // ---- Popup del botón "›" (dato extra: popE/popT/popB) ----
     var pop=el('div'); pop.id='stmPop'; pop.hidden=true;
     pop.innerHTML='<div class="stm-pop-card"><button class="stm-pop-x" aria-label="Cerrar">×</button>'+
       '<div class="stm-pop-e"></div><div class="stm-pop-t"></div><div class="stm-pop-b"></div></div>';
@@ -907,96 +888,8 @@
     pop.addEventListener('click', function(e){ if(e.target===pop || e.target.closest('.stm-pop-x')) closePop(); });
     stage.addEventListener('click', function(e){ var b=e.target.closest('.infobtn'); if(!b) return; openPop(STATIONS[+b.dataset.idx]); });
 
-    // ---------- LAYOUT: calcula todas las Y (mide alturas variables) ----------
-    var STAGE_H=3000, closeTop=0, scaleM=1, NAMEH=60, LBLH=52;
-    function layout(){
-      var tH=title.offsetHeight||60;
-      var gridTop = 40 + tH + 34;              // centro de la fila 0
-      GY=[gridTop, gridTop+ROWGAP, gridTop+2*ROWGAP];
-      STATIONS.forEach(function(s){
-        s._gy=GY[s._row];
-        s._circle.style.left=px(s._gx); s._circle.style.top=px(s._gy);
-        s._glbl.style.left=px(s._gx);  s._glbl.style.top=px(s._gy+CR+10);
-      });
-      arrowEls.forEach(function(ar){ ar.style.left=px(ar._x); ar.style.top=px(GY[ar._row]); });
-      vlineEls.forEach(function(v){
-        var x=COLX[v.col];
-        var y1=GY[v.from]+CR+10+LBLH+2;         // debajo del badge de arriba
-        var y2=GY[v.from+1]-CR-6;               // encima del círculo de abajo
-        v.line.style.left=px(x); v.line.style.top=px(y1); v.line.style.height=px(Math.max(10,y2-y1));
-        v.arrow.style.left=px(x); v.arrow.style.top=px(y2);
-      });
-      var gridBottom = GY[2]+CR+10+LBLH;
-      baja.style.top=px(gridBottom+40);
-      var bH=baja.offsetHeight||120;
-      cta.style.top=px(gridBottom+40+bH+26);
-      var cH=cta.offsetHeight||46;
-      var y = gridBottom+40+bH+26+cH+78;        // top del bloque de la 1ª estación
-
-      STATIONS.forEach(function(s,i){
-        var cardTop=y;
-        var cy = y + D/2 + 4;
-        s._sx=s._scx; s._sy=cy;
-        s._ib.style.left=px(s._cardX); s._ib.style.top=px(cardTop);
-        var cardH=s._ib.offsetHeight||150;
-        var bx = s._cleft ? (s._cardX+CARD_W) : s._cardX;   // esquina superior externa (anclaje centro)
-        s._btn.style.left=px(bx); s._btn.style.top=px(cardTop);
-        var nameCx = Math.max(58, Math.min(SW-58, s._scx));   // mantiene el nombre en su carril
-        s._nw.style.left=px(nameCx); s._nw.style.top=px(cy+CR+10);
-        var rowBottom = Math.max(cardTop+cardH, cy+CR+10+NAMEH);
-        var obBottom=rowBottom;
-        if(s._ob){
-          var obTop=rowBottom+42;
-          s._ob.style.left=px(SW/2); s._ob.style.top=px(obTop);
-          obBottom=obTop+(s._ob.offsetHeight||120);
-        }
-        s._botY=obBottom;
-        y = obBottom + 82;
-      });
-
-      // ---------- Línea punteada ortogonal por las estaciones ----------
-      var last=STATIONS.length-1, pts=[];
-      closeTop = STATIONS[last]._botY + 60;   // top del bloque de degradé (para conectar la última estación)
-      STATIONS.forEach(function(s,i){
-        var exitY = s._sy + CR + 10 + NAMEH + 10;
-        pts.push([s._scx, exitY]);
-        if(s._ob){
-          var obTop=parseFloat(s._ob.style.top), obH=s._ob.offsetHeight||120, obBot=obTop+obH;
-          var midY=(exitY+obTop)/2;
-          pts.push([s._scx,midY],[SW/2,midY],[SW/2,obTop-2]);
-          if(i<last){
-            var ent=STATIONS[i+1]._sy-CR-2, nx=STATIONS[i+1]._scx, midY2=(obBot+ent)/2;
-            pts.push([SW/2,obBot+2],[SW/2,midY2],[nx,midY2],[nx,ent]);
-          } else { pts.push([SW/2,obBot+2]); }
-        } else if(i<last){
-          var ent2=STATIONS[i+1]._sy-CR-2, nx2=STATIONS[i+1]._scx, midY3=(exitY+ent2)/2;
-          pts.push([s._scx,midY3],[nx2,midY3],[nx2,ent2]);
-        } else {
-          // Última estación (Cecilia): baja, va al centro y CONECTA con el bloque de degradé
-          var midYc=(exitY+closeTop)/2;
-          pts.push([s._scx,midYc],[SW/2,midYc],[SW/2,closeTop]);
-        }
-      });
-      pth.setAttribute('d','M '+pts.map(function(p){return p[0]+' '+p[1];}).join(' L '));
-
-      // ---------- Cierre: 9 franjas sobre el degradé + finale "Yo" ----------
-      var ROWH=150;
-      closeTop = STATIONS[last]._botY + 60;
-      var by = closeTop;
-      bandEls.forEach(function(band){
-        band.style.left='0px'; band.style.top=px(by); band.style.width=px(SW); band.style.height=px(ROWH);
-        by += ROWH;
-      });
-      var bandsBottom = by;
-      closeBg.style.top=px(closeTop); closeBg.style.height=px(bandsBottom-closeTop);   // degradé solo sobre las franjas
-      var yoTop = bandsBottom + 44;
-      yoWrap.style.left='0px'; yoWrap.style.top=px(yoTop); yoWrap.style.width=px(SW);
-      var yoH = yoWrap.offsetHeight || 320;
-      yq.style.left=px(SW/2); yq.style.top=px(yoTop+yoH+26);
-      STAGE_H = yoTop+yoH+26 + (yq.offsetHeight||90) + 46;
-      fitM();
-    }
-
+    // ---- fit(): escala el lienzo al ancho del viewport ----
+    var scaleM=1;
     function fitM(){
       var avail=Math.min(window.innerWidth-8, SW*1.18);
       scaleM=avail/SW;
@@ -1006,14 +899,12 @@
       svg.setAttribute('width',SW); svg.setAttribute('height',STAGE_H);
       if(window.ScrollTrigger) ScrollTrigger.refresh();
     }
+    window.addEventListener('resize', fitM); fitM();
 
-    // ---------- Animaciones ----------
-    var introEls=[title, baja, cta].concat(gridLabels);
+    // ---- Animación: vuelo (FLIP) + apariciones por scroll ----
     function showAll(){ stage.querySelectorAll('.reveal').forEach(function(n){ n.style.opacity=1; }); }
-    function setupAnims(){
-      if(!(window.gsap && window.ScrollTrigger)){ showAll(); return; }
+    if(window.gsap && window.ScrollTrigger){
       gsap.registerPlugin(ScrollTrigger);
-      // Vuelo FLIP + apariciones de cada estación
       STATIONS.forEach(function(s){
         gsap.fromTo(s._circle, { left:s._gx, top:s._gy },
           { left:s._sx, top:s._sy, ease:'power2.out',
@@ -1024,39 +915,17 @@
             scrollTrigger:{ trigger:s._ib, start:(k>=2?'top 58%':'top 72%'), toggleActions:'play none none reverse' }});
         });
       });
-      // Flechas de la grilla: fade escalonado
-      gsap.set(arrowEls,{opacity:0});
-      gsap.to(arrowEls,{opacity:1,duration:.45,stagger:.12,ease:'power2.out',
-        scrollTrigger:{ trigger:wrap, start:'top 82%' }});
-      // Conectores verticales: la línea se "forma" (scaleY) y la flecha aparece
-      vlineEls.forEach(function(v,idx){
-        gsap.set(v.line,{opacity:0, scaleY:0, transformOrigin:'top center'});
-        gsap.set(v.arrow,{opacity:0});
-        var st={ trigger:wrap, start:'top 82%' };
-        gsap.to(v.line,{opacity:1, scaleY:1, duration:.6, ease:'power2.out', delay:.35+idx*0.15, scrollTrigger:st});
-        gsap.to(v.arrow,{opacity:1, duration:.4, ease:'power2.out', delay:.85+idx*0.15, scrollTrigger:st});
-      });
-      // Intro se desvanece al bajar
+      // Intro se desvanece al empezar a bajar
       gsap.to(introEls,{opacity:0,ease:'none',
-        scrollTrigger:{ trigger:wrap, start:'top top', end:'+=420', scrub:true }});
-      // Cierre: franjas apareciendo una tras otra + finale "Yo"
-      bandEls.forEach(function(band){
-        gsap.set(band,{opacity:0});
-        gsap.to(band,{opacity:1,duration:.55,ease:'power2.out',
-          scrollTrigger:{ trigger:band, start:'top 90%', toggleActions:'play none none reverse' }});
-      });
-      [yoWrap, yq].forEach(function(n){
+        scrollTrigger:{ trigger:wrap, start:'top top', end:'+=380', scrub:true }});
+      // Cierre vertical
+      stage.querySelectorAll('.fig, .fig-num, .fig-lbl, .stm-final').forEach(function(n){
         gsap.set(n,{opacity:0});
-        gsap.to(n,{opacity:1,duration:.7,ease:'power2.out',
+        gsap.to(n,{opacity:1,duration:.5,ease:'power2.out',
           scrollTrigger:{ trigger:n, start:'top 90%', toggleActions:'play none none reverse' }});
       });
       ScrollTrigger.refresh();
-    }
-
-    window.addEventListener('resize', fitM);
-    layout();
-    if(document.fonts && document.fonts.ready){ document.fonts.ready.then(function(){ layout(); setupAnims(); }); }
-    else { setupAnims(); }
+    } else { showAll(); }
   })();
 
 
