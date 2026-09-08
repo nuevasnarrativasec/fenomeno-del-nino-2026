@@ -366,7 +366,7 @@ El resultado muestra cuántas de esas diez señales coinciden en cada departamen
       <style>
         .galeria{ position:relative; background:#fff; color:#000; }
         .gal-track{ height:640vh; }                 /* ~80vh de scroll por foto (8 fotos) */
-        .gal-sticky{ position:sticky; top:0; height:100vh; display:flex; flex-direction:column; overflow:hidden; }
+        .gal-sticky{ position:sticky; top:0; height:95vh; display:flex; flex-direction:column; overflow:hidden; }
         .gal-header{ flex:0 0 auto; text-align:center; padding:46px 20px 6px; }
         .gal-title{ font-family: 'Monoglyphic Extra Light';
     font-size: 6rem;
@@ -387,26 +387,23 @@ El resultado muestra cuántas de esas diez señales coinciden en cada departamen
         .gal-slide:first-child{ opacity:1; }
         .gal-slide img{ display:block; width:auto; height:auto; max-width:min(1120px,100%);
           max-height:calc(100% - 44px); object-fit:contain; box-shadow:0 10px 40px rgba(0,0,0,.5); }
-        .gal-slide figcaption{ margin-top:14px; font-family:Poppins,system-ui,-apple-system,Arial,sans-serif;
-          font-size:.78rem; letter-spacing:.05em; color:#b8b8b8; text-align:center; }
+        .gal-slide figcaption{ margin-top:14px; align-self:flex-end; font-family:Poppins,system-ui,-apple-system,Arial,sans-serif;
+          font-size:.78rem; letter-spacing:.05em; color:#b8b8b8; text-align:right; }
         /* Set MÓVIL (fotos img/galeria, fade simple). Oculto salvo en modo fade/static. */
         .gal-slide-m{ position:absolute; inset:0; display:none; align-items:center; justify-content:center;
-          opacity:0; will-change:opacity; pointer-events:none; z-index:2; }
-        .gal-slide-m img{ display:block; width:100%; height:100%; object-fit:contain; }
-        .gal-slide-m figcaption{     position: absolute;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        text-align: center;
-        font-family: Poppins, system-ui, -apple-system, Arial, sans-serif;
-        font-size: .74rem;
-        letter-spacing: .04em;
-        color: #f2f2f2;
-        background-color: #000;
-        padding: 10px;
-        max-width: 1093px;
-        margin: 0 auto;
-  }
+          padding:6px 10px 12px; opacity:0; will-change:opacity; pointer-events:none; z-index:2; }
+        /* Envoltorio que se ajusta al ancho real de la foto: así el crédito termina en el borde de la foto */
+        .gal-m-in{ height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+        .gal-slide-m img{ display:block; width:auto; height:auto; max-width:100%; max-height:calc(100% - 40px); object-fit:contain; }
+        .gal-slide-m figcaption{
+          align-self:stretch;
+          margin-top:12px;
+          font-family: Poppins, system-ui, -apple-system, Arial, sans-serif;
+          font-size:.9rem;
+          font-weight:400;
+          color:#000;
+          text-align:right;
+        }
 
         /* Modo glitch (desktop): el canvas pinta las fotos y la transición; las <img> se ocultan
            pero siguen cargando para alimentar el canvas. Los créditos quedan por encima. */
@@ -429,8 +426,9 @@ El resultado muestra cuántas de esas diez señales coinciden en cada departamen
         .galeria[data-gmode="static"] .gal-slide{ display:none !important; }
         .galeria[data-gmode="static"] .gal-slide-m{ position:static; inset:auto; display:flex !important; opacity:1 !important;
           padding:0 0 30px; pointer-events:auto; max-width:1000px; margin:0 auto; }
+        .galeria[data-gmode="static"] .gal-m-in{ height:auto; width:100%; display:block; }
         .galeria[data-gmode="static"] .gal-slide-m img{ width:100%; height:auto; object-fit:contain; box-shadow:0 8px 26px rgba(0,0,0,.5); }
-        .galeria[data-gmode="static"] .gal-slide-m figcaption{ position:static; margin-top:10px; text-shadow:none; color:#b8b8b8; }
+        .galeria[data-gmode="static"] .gal-slide-m figcaption{ position:static; margin-top:10px; text-shadow:none; color:#000; font-weight:700; text-align:right; }
 
         @media (max-width:720px){
           .gal-header{ padding:30px 16px 12px; }
@@ -484,34 +482,34 @@ El resultado muestra cuántas de esas diez señales coinciden en cada departamen
           </figure>
 
           <!-- Set MÓVIL: fotos de img/galeria (sin editar) con fade simple, sin glitch -->
-          <figure class="gal-slide-m">
+          <figure class="gal-slide-m"><div class="gal-m-in">
             <img src="img/galeria/bg-galeria-1.jpg" alt="Archivo histórico del Fenómeno del Niño — foto 1" loading="lazy" />
             <figcaption>17 de abril de 1983. Foto: Archivo El Comercio</figcaption>
-          </figure>
-          <figure class="gal-slide-m">
+          </div></figure>
+          <figure class="gal-slide-m"><div class="gal-m-in">
             <img src="img/galeria/bg-galeria-2.jpg" alt="Archivo histórico del Fenómeno del Niño — foto 2" loading="lazy" />
             <figcaption>Carretera Central 1998. Foto: Verónica Salem</figcaption>
-          </figure>
-          <figure class="gal-slide-m">
+          </div></figure>
+          <figure class="gal-slide-m"><div class="gal-m-in">
             <img src="img/galeria/bg-galeria-3.jpg" alt="Archivo histórico del Fenómeno del Niño — foto 3" loading="lazy" />
             <figcaption>1998. Foto: Yayo López</figcaption>
-          </figure>
-          <figure class="gal-slide-m">
+          </div></figure>
+          <figure class="gal-slide-m"><div class="gal-m-in">
             <img src="img/galeria/bg-galeria-4.jpg" alt="Archivo histórico del Fenómeno del Niño — foto 4" loading="lazy" />
             <figcaption>2017 Evangelina Chamorro. Foto: Christian Hidalgo</figcaption>
-          </figure>
-          <figure class="gal-slide-m">
+          </div></figure>
+          <figure class="gal-slide-m"><div class="gal-m-in">
             <img src="img/galeria/bg-galeria-5.jpg" alt="Archivo histórico del Fenómeno del Niño — foto 5" loading="lazy" />
             <figcaption>2017. Foto: Rolly Reyna</figcaption>
-          </figure>
-          <figure class="gal-slide-m">
+          </div></figure>
+          <figure class="gal-slide-m"><div class="gal-m-in">
             <img src="img/galeria/bg-galeria-6.jpg" alt="Archivo histórico del Fenómeno del Niño — foto 6" loading="lazy" />
             <figcaption>Pedregal, 2017. Foto: Lino Chipana</figcaption>
-          </figure>
-          <figure class="gal-slide-m">
+          </div></figure>
+          <figure class="gal-slide-m"><div class="gal-m-in">
             <img src="img/galeria/bg-galeria-7.jpg" alt="Archivo histórico del Fenómeno del Niño — foto 7" loading="lazy" />
             <figcaption>Yaku, 2023. Foto: ANDINA</figcaption>
-          </figure>
+          </div></figure>
           </div>
         </div>
       </div>
