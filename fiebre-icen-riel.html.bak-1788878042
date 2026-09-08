@@ -15,22 +15,12 @@
   .yr{ position:absolute; left:3px; font:700 11px 'Monoglyphic Bold', Poppins,system-ui, sans-serif;
        letter-spacing:.03em; color:#fff; background:#111; padding:3px 8px; border-radius:4px; white-space:nowrap; }
   /* años-pico con desglose */
-  .pk-block{ position:absolute; left:65px; width:128px; transform:translateY(-50%); }
+  .pk-block{ position:absolute; left:56px; width:128px; transform:translateY(-50%); }
   .pk-yr{ display:inline-block; font:700 15px 'Monoglyphic Bold', Poppins,system-ui, sans-serif;
           color:#fff; background:#111; padding:3px 11px; border-radius:5px; letter-spacing:.02em; }
   .pk-desc{ margin-top:6px; }
   .pk-desc .m{ display:block; font:700 10.5px 'Monoglyphic Bold', Poppins,system-ui, sans-serif; color:#c0281b; }
   .pk-desc .d{ display:block; margin-top:2px; font:400 10px Poppins,system-ui, -apple-system, sans-serif; color:#565656; line-height:1.35; }
-
-  /* indicador de inicio: qué muestra la fiebre */
-  .fever-key{ position:absolute; left:32px; top:34px; width:150px; z-index:5; pointer-events:none; }
-  .fever-key .fk-title{ font:700 12px 'Monoglyphic Bold', Poppins,system-ui,sans-serif; color:#111; line-height:1.22; letter-spacing:.01em; }
-  .fever-key .fk-sub{ display:block; margin-top:2px; font:600 8.5px Poppins,system-ui,sans-serif; color:#9a9a9a; letter-spacing:.05em; }
-  .fever-key .fk-row{ display:flex; align-items:center; gap:6px; margin-top:6px; font:500 9.5px Poppins,system-ui,sans-serif; color:#3a3a3a; }
-  .fever-key .fk-sw{ width:16px; height:9px; border-radius:2px; flex:0 0 auto; }
-  .fever-key .fk-sw.c{ background:linear-gradient(90deg,#2a97d4,#7cc4ea); }
-  .fever-key .fk-sw.w{ background:linear-gradient(90deg,#f2705c,#cf1206); }
-  .fever-key .fk-row b{ font-weight:700; color:#111; }
 </style>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -39,13 +29,6 @@
 <body>
   <div id="stage">
     <svg id="rib" preserveAspectRatio="none" aria-hidden="true"></svg>
-    <div class="fever-key" aria-hidden="true">
-      <span class="fk-title">Variación de la temperatura del mar
-        <span class="fk-sub">1980 – 2026</span>
-      </span>
-      <div class="fk-row"><span class="fk-sw c"></span><b>Frío</b>&nbsp;−1,7 °C a 0</div>
-      <div class="fk-row"><span class="fk-sw w"></span><b>Cálido</b>&nbsp;0 a +4,3 °C</div>
-    </div>
   </div>
 <script>
 const ICEN = [

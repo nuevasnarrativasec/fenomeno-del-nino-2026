@@ -2301,67 +2301,19 @@ function updateRegionsLayer() {
   if (!showRegions) closeRegionPopup();
 }
 
-// Referencia a los datos de corriente activos (three-globe escribe el objeto
-// THREE creado en d.__threeObj, que usamos para forzar su visibilidad).
-let currentArcData = [];
-
-// Los arcos de globe.gl nacen y mueren SOBRE la superficie (altitud 0 en los
-// extremos), justo donde se pinta la textura de temperatura (SST). Eso provoca
-// z-fighting en la costa y la corriente "desaparece" bajo el mar cálido. Con
-// polygonOffset empujamos el arco hacia la cámara en el z-buffer para que gane
-// SIEMPRE contra la superficie coplanar, sin desactivar depthTest (así los
-// arcos del lado opuesto siguen ocultos por el globo, sin traspasarlo).
-function setArcOverlayMaterial(o) {
-  if (o && o.material) {
-    const mats = Array.isArray(o.material) ? o.material : [o.material];
-    mats.forEach(m => {
-      m.depthWrite = false;
-      m.polygonOffset = true;
-      m.polygonOffsetFactor = -8;
-      m.polygonOffsetUnits = -8;
-      m.needsUpdate = true;
-    });
-    o.renderOrder = 12;
-  }
-}
-function applyArcDepthFix() {
-  if (!world) return;
-  // Recorremos la escena y detectamos los objetos de arco por la forma de su
-  // dato (startLat). Es independiente del nombre interno que use three-globe
-  // para enganchar el objeto THREE al dato (varía entre versiones).
-  world.scene().traverse(o => {
-    const d = o.__data;
-    if (d && typeof d.startLat === 'number') {
-      if (typeof o.traverse === 'function') o.traverse(setArcOverlayMaterial);
-      else setArcOverlayMaterial(o);
-    }
-  });
-}
-// three-globe puede (re)crear los objetos de arco de forma diferida durante su
-// transición; reaplicamos el arreglo varias veces para asegurar que quede fijo.
-function scheduleArcDepthFix() {
-  requestAnimationFrame(() => requestAnimationFrame(applyArcDepthFix));
-  [120, 350, 700, 1200].forEach(t => setTimeout(applyArcDepthFix, t));
-}
-
 function updateCurrentsLayer() {
   if (!world) return;
   if (showCurrents) {
-    currentArcData = getOceanArcs(multiplier);
     world
-      .arcsData(currentArcData)
+      .arcsData(getOceanArcs(multiplier))
       .arcColor('color')
       .arcDashLength(0.38)
       .arcDashGap(0.16)
       .arcDashAnimateTime(d => d.animateTime)
       .arcStroke(d => d.stroke)
-      .arcAltitude(0.035)
-      .arcAltitudeAutoScale(false)
-      .arcsTransitionDuration(0);
-    // Tras (re)construir los arcos, forzar que se dibujen sobre la temperatura.
-    scheduleArcDepthFix();
+      .arcAltitude(0.025)
+      .arcAltitudeAutoScale(false);
   } else {
-    currentArcData = [];
     world.arcsData([]);
   }
 }
@@ -2444,9 +2396,8 @@ function initGlobeInner(data) {
     .arcDashGap(0.16)
     .arcDashAnimateTime(d => d.animateTime || 2000)
     .arcStroke(d => d.stroke || 1.2)
-    .arcAltitude(0.035)
+    .arcAltitude(0.025)
     .arcAltitudeAutoScale(false)
-    .arcsTransitionDuration(0)
     // Capa regiones Niño (contornos + etiquetas) — inicialmente vacía
     .pathsData([])
     .pathPoints(d => d.points)

@@ -263,8 +263,7 @@
     <section class="mapa-fen" id="mapaFen">
     <style>
       .mp-indicators{ margin-top:16px; padding-top:14px; border-top:1px solid #ece7de; }
-      .mpi-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:8px; }
-      .mpi-title{     font-family: 'Monoglyphic Bold', Poppins,system-ui, sans-serif;font-weight:800; font-size:1rem; text-transform:uppercase; letter-spacing:.09em; color:#8a7f70; margin-bottom:0; }
+      .mpi-title{     font-family: 'Monoglyphic Bold', Poppins,system-ui, sans-serif;font-weight:800; font-size:1rem; text-transform:uppercase; letter-spacing:.09em; color:#8a7f70; margin-bottom:8px; }
       .mpi-grid{ display:grid; grid-template-columns:1fr 1fr; column-gap:16px; row-gap:1px; }
       .mpi-item{ position:relative; display:flex; align-items:center; gap:8px; padding:5px 0; border-bottom:1px solid #ececec; }
       .mpi-ico{ width:20px; height:20px; object-fit:contain; flex:0 0 auto; transition:opacity .18s ease, filter .18s ease; }
@@ -320,15 +319,13 @@
             <div class="mp-card">
               <div class="mp-head">
                 <span class="mp-name" id="mpName">—</span>
+                <span class="mp-badge" id="mpBadge">—</span>
               </div>
               <div class="mp-pop" id="mpPop"></div>
               <p class="mp-explic" id="mpExplic"></p>
 
               <div class="mp-indicators">
-                <div class="mpi-head">
-                  <div class="mpi-title">Señales de alerta</div>
-                  <span class="mp-badge" id="mpBadge">—</span>
-                </div>
+                <div class="mpi-title">Señales de alerta</div>
                 <div class="mpi-grid" id="mpIndicators"></div>
               </div>
             </div>
@@ -786,7 +783,7 @@
     </div>
     </div><!-- /#railWrap -->
 
-    <div class="main-footer" style="position:relative; z-index:30;">
+    <div class="main-footer">
       <div class="footer-content">
             <img src="https://nuevasnarrativasec.github.io/conclave/img/logo-comercio.png" alt="El Comercio" width="100%" class="logo-comercio-footer">
             <ul>
