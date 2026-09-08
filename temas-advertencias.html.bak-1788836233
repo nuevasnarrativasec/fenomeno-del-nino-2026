@@ -1203,46 +1203,38 @@ function reg(el){charts.push(el);}
   });
 })();
 
-/* 2.4b INSTITUTIONS bubble chart (fila HTML: control exacto de separación) */
+/* 2.4b INSTITUTIONS bubble chart */
 (function(){
-  // Mayor a menor: el de mayor radio va al inicio de la fila
+  // x,y: posiciones empaquetadas (tangentes) y centradas en el bounding box
   const items=[
-    {n:'SENAMHI',v:55,c:'#e8955f',lc:'#3a1e0e'},
-    {n:'ENFEN',v:34,c:'#4fb6a4',lc:'#0c2b26'},
-    {n:'INDECI',v:15,c:'#4d9fd6',lc:'#0a2233'},
-    {n:'Presidencia',v:11,c:'#e8c24a',lc:'#3a2f0a'},
-    {n:'CENEPRED',v:8,c:'#b98cc9',lc:'#2a1836'}
+    {n:'SENAMHI',v:55,c:'#e8955f',lc:'#3a1e0e',x:-52.5,y:-3.85},
+    {n:'ENFEN',v:34,c:'#4fb6a4',lc:'#0c2b26',x:66.75,y:-3.85},
+    {n:'INDECI',v:15,c:'#4d9fd6',lc:'#0a2233',x:18.4,y:-76.65},
+    {n:'Presidencia',full:'Presidencia de la República',v:11,c:'#e8c24a',lc:'#3a2f0a',x:17.8,y:62.45},
+    {n:'CENEPRED',v:8,c:'#b98cc9',lc:'#2a1836',x:-32.2,y:86.05}
   ];
-  const el=document.getElementById('c_inst'); if(!el) return;
-  const GAP=14; // separación entre círculos (px) — pegados
-  const sumSqrt=items.reduce((a,o)=>a+Math.sqrt(o.v),0);
-  function render(){
-    const W=el.clientWidth||600;
-    let K=(W<=520)?12:18;                 // diámetro = sqrt(valor)*K
-    const avail=W-8;
-    const need=sumSqrt*K+GAP*(items.length-1);
-    if(need>avail) K=Math.max(6,(avail-GAP*(items.length-1))/sumSqrt);
-    el.innerHTML='';
-    const row=document.createElement('div');
-    row.style.cssText='display:flex;align-items:center;justify-content:center;gap:'+GAP+'px;height:100%;flex-wrap:nowrap;';
-    items.forEach(o=>{
-      const s=Math.sqrt(o.v), d=Math.round(s*K);
-      const circ=document.createElement('div');
-      circ.style.cssText='flex:0 0 auto;width:'+d+'px;height:'+d+'px;border-radius:50%;background:'+o.c+';display:flex;flex-direction:column;align-items:center;justify-content:center;color:'+o.lc+';text-align:center;line-height:1;';
-      const nm=document.createElement('div');
-      nm.textContent=o.n;
-      nm.style.cssText="font-family:'Monoglyphic Regular',Helvetica Neue,Arial,sans-serif;font-weight:700;font-size:"+Math.max(9,Math.round(s*1.7))+"px;";
-      const vl=document.createElement('div');
-      vl.textContent=o.v;
-      vl.style.cssText="font-family:'Monoglyphic Bold',Helvetica Neue,Arial,sans-serif;font-weight:700;font-size:"+Math.max(11,Math.round(s*2.6))+"px;margin-top:"+Math.max(1,Math.round(s*0.6))+"px;";
-      circ.appendChild(nm); circ.appendChild(vl);
-      row.appendChild(circ);
-    });
-    el.appendChild(row);
-  }
-  render();
-  window.addEventListener('resize', render);
-  if(window.ResizeObserver){ new ResizeObserver(render).observe(el); }
+  const _instEl=document.getElementById('c_inst');
+  const K=(_instEl&&_instEl.clientWidth&&_instEl.clientWidth<=520)?11:18; // diámetro ∝ sqrt(valor); menor en móvil
+  const c=echarts.init(document.getElementById('c_inst'));reg(c);
+  c.setOption({
+    tooltip:{...tt,formatter:p=>`<b>${p.data.full||p.data.name}</b><br/>${p.value} advertencias`},
+    series:[{
+      type:'graph', layout:'none', roam:false, draggable:true,
+      emphasis:{scale:1.05, focus:'none'},
+      data:items.map(o=>{
+        const s=Math.sqrt(o.v);
+        return {name:o.n, full:o.full, value:o.v, x:o.x, y:o.y, symbolSize:s*K,
+          itemStyle:{color:o.c, shadowBlur:20, shadowColor:'rgba(0,0,0,.4)', borderColor:'rgba(255,255,255,.12)', borderWidth:1},
+          label:{show:true, position:'inside', align:'center', verticalAlign:'middle', color:o.lc, fontFamily:'Monoglyphic Regular, Helvetica Neue, Arial, sans-serif',
+            formatter:`{n|${o.n}}\n{v|${o.v}}`,
+            rich:{
+              n:{fontSize:Math.max(9,Math.round(s*1.7)), fontWeight:700, color:o.lc, lineHeight:Math.max(14,Math.round(s*2.3)), align:'center', fontFamily:'Monoglyphic Regular, Helvetica Neue, Arial, sans-serif'},
+              v:{fontSize:Math.max(11,Math.round(s*2.6)), fontWeight:700, color:o.lc, align:'center', fontFamily:'Monoglyphic Bold, Helvetica Neue, Arial, sans-serif'}
+            }}};
+      }),
+      edges:[]
+    }]
+  });
 })();
 
 /* 2.5 QUALITATIVE quotes */
