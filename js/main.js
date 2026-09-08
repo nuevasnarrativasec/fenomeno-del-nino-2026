@@ -882,12 +882,11 @@
     }
     var yoR=ROW[9];   // silueta "Yo"
     var yoWrap=el('div','stm-yo reveal',
-      '<div class="stm-yo-line"></div>'+
-      '<div class="stm-yo-label">Yo</div>'+
-      '<div class="stm-yo-circle"><img src="'+IMG_BASE+yoR.img+'" alt="Yo"></div>'+
-      '<div class="stm-yo-line"></div>');
+      '<div class="stm-yo-tri"></div>'+
+      '<div class="stm-yo-fig"><img src="'+IMG_BASE+yoR.img+'" alt="Yo"></div>');
     stage.appendChild(yoWrap);
     var yq=el('div','stm-final reveal','¿Y si la siguiente historia fuera la tuya?'); stage.appendChild(yq);
+    var yoTail=el('div','stm-yo-tail reveal'); stage.appendChild(yoTail);
 
     // Path de la línea punteada (se arma en layout())
     var pth=document.createElementNS(NS,'path'); pth.setAttribute('class','dotted'); svg.appendChild(pth);
@@ -992,8 +991,12 @@
       var yoTop = bandsBottom + 44;
       yoWrap.style.left='0px'; yoWrap.style.top=px(yoTop); yoWrap.style.width=px(SW);
       var yoH = yoWrap.offsetHeight || 320;
-      yq.style.left=px(SW/2); yq.style.top=px(yoTop+yoH+26);
-      STAGE_H = yoTop+yoH+26 + (yq.offsetHeight||90) + 46;
+      var yqTop = yoTop+yoH+26;
+      yq.style.left=px(SW/2); yq.style.top=px(yqTop);
+      var qH = yq.offsetHeight||90;
+      var tailTop = yqTop + qH + 26, tailH = 150;
+      yoTail.style.left=px(SW/2); yoTail.style.top=px(tailTop); yoTail.style.height=px(tailH);
+      STAGE_H = tailTop + tailH + 30;
       fitM();
     }
 
@@ -1045,7 +1048,7 @@
         gsap.to(band,{opacity:1,duration:.55,ease:'power2.out',
           scrollTrigger:{ trigger:band, start:'top 90%', toggleActions:'play none none reverse' }});
       });
-      [yoWrap, yq].forEach(function(n){
+      [yoWrap, yq, yoTail].forEach(function(n){
         gsap.set(n,{opacity:0});
         gsap.to(n,{opacity:1,duration:.7,ease:'power2.out',
           scrollTrigger:{ trigger:n, start:'top 90%', toggleActions:'play none none reverse' }});

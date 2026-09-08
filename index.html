@@ -109,12 +109,15 @@
       #stageM .stm-bfig img{ display:block; height:116px; width:auto; }
       /* Finale "Yo" (sobre negro) */
       #stageM .stm-yo{ position:absolute; left:0; width:390px; z-index:1; text-align:center; }
-      #stageM .stm-yo-line{ width:2px; height:52px; margin:0 auto;
+      /* Triángulo ▼ que apunta al personaje */
+      #stageM .stm-yo-tri{ width:0; height:0; margin:0 auto 18px;
+        border-left:24px solid transparent; border-right:24px solid transparent; border-top:30px solid #fff; }
+      /* Figura completa (sin círculo): deja ver la grilla detrás */
+      #stageM .stm-yo-fig{ margin:0 auto; }
+      #stageM .stm-yo-fig img{ height:172px; width:auto; display:block; margin:0 auto; }
+      /* Línea punteada que baja debajo de la pregunta */
+      #stageM .stm-yo-tail{ position:absolute; width:2px; z-index:1; transform:translateX(-50%);
         background:repeating-linear-gradient(to bottom, rgba(255,255,255,.55) 0 2px, transparent 2px 9px); }
-      #stageM .stm-yo-label{ font:400 1.7rem/1 Poppins,system-ui,-apple-system,sans-serif; color:#f2ece1; margin:16px 0 10px; }
-      #stageM .stm-yo-circle{ width:120px; height:120px; border-radius:50%; border:2px solid #f4efe7; background:#050505;
-        margin:0 auto 16px; display:flex; align-items:flex-end; justify-content:center; overflow:hidden; }
-      #stageM .stm-yo-circle img{ height:90%; width:auto; display:block; }
       /* Círculo móvil (más chico) */
       #stageM .circle{ width:76px; height:76px; z-index:4; }
       /* Overrides de las cajas para móvil */
