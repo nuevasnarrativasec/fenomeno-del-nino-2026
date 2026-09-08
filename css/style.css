@@ -928,7 +928,7 @@ span.separador-logo {
           height: 175vh;
         }
         #cartaBox h3{
-          font-size: 3rem;
+          font-size: 3rem !important;
         }
 
       }
