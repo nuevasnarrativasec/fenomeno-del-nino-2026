@@ -482,7 +482,7 @@
     d.style.width = w+'px'; d.style.height = h+'px';
     stage.appendChild(d); return d;
   }
-  const sunEl   = decor('decor-sun','',    -100,           STATIONS[0].cy,       300, 300);
+  const sunEl   = decor('decor-sun','',    -100,           STATIONS[0].cy,       200, 200);
   const rainEl  = decor('decor-cloud', '', STAGE_W - 16, STATIONS[2].cy + 150, 450, 400);   // lluvia.png (desde CSS .decor-cloud)
   const stormEl = decor('decor-cloud', '', 60,           STATIONS[6].cy + -10,  436, 400);
   stormEl.style.background = "url('img/sol.png') no-repeat center center/cover";   // rayos.png
@@ -815,7 +815,7 @@
     var COLX=[78,195,312], ROWGAP=196;
     function snakeCol(i){ var row=(i/3)|0, p=i%3; return (row%2===0)? p : (2-p); }
     var GY=[0,0,0];
-    var gridLabels=[], arrowEls=[], vlineEls=[];
+    var gridLabels=[], arrowEls=[], vlineEls=[], hlineEls=[];
 
     STATIONS.forEach(function(s,i){
       s._col=snakeCol(i); s._row=(i/3)|0; s._gx=COLX[s._col];
@@ -832,7 +832,9 @@
       {row:2,a:0,b:1,dir:'right'}, {row:2,a:1,b:2,dir:'right'}
     ];
     hArrows.forEach(function(d){
-      var ar=el('div','stm-arrow '+d.dir); ar._x=(COLX[d.a]+COLX[d.b])/2; ar._row=d.row;
+      var ln=el('div','stm-hline'); stage.appendChild(ln); hlineEls.push(ln);
+      var ar=el('div','stm-arrow '+d.dir);
+      ar._row=d.row; ar._a=d.a; ar._b=d.b; ar._dir=d.dir; ar._line=ln;
       stage.appendChild(ar); arrowEls.push(ar);
     });
     // Conectores verticales: derecha (fila0→1, col2) e izquierda (fila1→2, col0)
@@ -917,7 +919,17 @@
         s._circle.style.left=px(s._gx); s._circle.style.top=px(s._gy);
         s._glbl.style.left=px(s._gx);  s._glbl.style.top=px(s._gy+CR+10);
       });
-      arrowEls.forEach(function(ar){ ar.style.left=px(ar._x); ar.style.top=px(GY[ar._row]); });
+      arrowEls.forEach(function(ar){
+        var y=GY[ar._row], lo=Math.min(COLX[ar._a],COLX[ar._b]), hi=Math.max(COLX[ar._a],COLX[ar._b]);
+        var xs=lo+CR+4, xe=hi-CR-4, w=Math.max(6,xe-xs-8);       // línea entre los bordes de los círculos
+        if(ar._dir==='right'){
+          ar.style.left=px(xe); ar.style.top=px(y);              // punta junto al círculo receptor (derecha)
+          ar._line.style.left=px(xs); ar._line.style.top=px(y); ar._line.style.width=px(w);
+        } else {
+          ar.style.left=px(xs); ar.style.top=px(y);              // punta junto al círculo receptor (izquierda)
+          ar._line.style.left=px(xs+8); ar._line.style.top=px(y); ar._line.style.width=px(w);
+        }
+      });
       vlineEls.forEach(function(v){
         var x=COLX[v.col];
         var y1=GY[v.from]+CR+10+LBLH+2;         // debajo del badge de arriba
@@ -1030,6 +1042,9 @@
       // Flechas de la grilla: fade escalonado
       gsap.set(arrowEls,{opacity:0});
       gsap.to(arrowEls,{opacity:1,duration:.45,stagger:.12,ease:'power2.out',
+        scrollTrigger:{ trigger:wrap, start:'top 82%' }});
+      gsap.set(hlineEls,{opacity:0});
+      gsap.to(hlineEls,{opacity:1,duration:.45,stagger:.12,ease:'power2.out',
         scrollTrigger:{ trigger:wrap, start:'top 82%' }});
       // Conectores verticales: la línea se "forma" (scaleY) y la flecha aparece
       vlineEls.forEach(function(v,idx){
