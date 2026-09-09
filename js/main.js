@@ -132,7 +132,7 @@
       }
 
       buildIndicators();
-      fetch('./img/peru.svg')
+      fetch('https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/peru.svg')
         .then(r => { if(!r.ok) throw new Error('HTTP '+r.status); return r.text(); })
         .then(txt => {
           holder.innerHTML = txt;
