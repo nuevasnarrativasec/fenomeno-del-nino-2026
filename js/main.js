@@ -276,12 +276,12 @@
     {lbl:"Rendimiento de mango", img:"https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/personaje-5.png"},
     {lbl:"Cosecha de concha de abanico", img:"https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/personaje-6.png"},
     {lbl:"Sequías históricas", img:"https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/personaje-7.png"},
-    {lbl:"Leishmaniasis", img:"https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/personaje-8.png"},
-    {lbl:"Emergencias en años de El Niño vs. resto", img:"https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/personaje-9.png"},
-    {lbl:"Yo", me:true, img:"https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/personaje-yo.png"}
+    {lbl:"Leishmaniasis", img:"./img/personaje-8.png"},
+    {lbl:"Emergencias en años de El Niño vs. resto", img:"./img/personaje-9.png"},
+    {lbl:"Yo", me:true, img:"./img/personaje-yo.png"}
   ];
 
-  const IMG_BASE = "https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/personajes/";   // carpeta de ilustraciones
+  const IMG_BASE = "./img/personajes/";   // carpeta de ilustraciones
 
   const YO_STATION = {
     region:"LIMA METROPOLITANA", role:"Yo",
