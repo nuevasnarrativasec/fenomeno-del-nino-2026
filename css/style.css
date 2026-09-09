@@ -360,10 +360,10 @@
     position:fixed; inset:0; z-index:100;
     background:rgba(3,3,3,.72); backdrop-filter:blur(3px);
     display:flex; align-items:center; justify-content:center;
-    padding:24px; opacity:0; pointer-events:none;
-    transition:opacity .22s ease;
+    padding:24px; opacity:0; visibility:hidden; pointer-events:none;
+    transition:opacity .22s ease, visibility 0s linear .22s;
   }
-  .modal-backdrop.open{ opacity:1; pointer-events:auto; }
+  .modal-backdrop.open{ opacity:1; visibility:visible; pointer-events:auto; transition:opacity .22s ease, visibility 0s; }
   .modal{
     position:relative; width:430px; max-width:100%;
     background:#0d0d0f; border:1px solid #2a2118;

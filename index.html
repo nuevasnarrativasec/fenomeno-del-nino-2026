@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Fenómeno del Niño 2026 — ¿Y tú?</title>
-<link rel="stylesheet" href="https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/css/style.css?v7">
+<link rel="stylesheet" href="./css/style.css?v9">
 
 
 <style>
@@ -111,6 +111,17 @@
     @media (max-width:720px){ .grid-overlay{ background-size:90px 90px; } }
   </style>
   <div class="grid-overlay" aria-hidden="true"></div>
+
+  <!-- iOS Safari no deja pasar el toque a un IFRAME cuando encima hay una capa
+       con pointer-events:none (la rejilla, o el backdrop del modal cerrado).
+       Elevamos cada herramienta por encima de la rejilla (z-index:90) para que
+       el toque siempre llegue al iframe. El modal ABIERTO (z-index:100) y los
+       popups (>=120) siguen quedando por encima. -->
+  <style>
+    #globeFrame, #impactFrame, #triFrame, #graficoFrame, #taFrame, #cartaFrame{
+      position:relative; z-index:91;
+    }
+  </style>
 
   <!-- ============================================================
        Stage MÓVIL — zig-zag con vuelo (<=820px). #stageWrapM/#stageM los crea
@@ -288,7 +299,7 @@
     #navMenu a .nm-idx{ font-size:.8rem; color:#FF5800; min-width:26px; letter-spacing:.05em; }
     #navMenu a:hover, #navMenu a:focus-visible{ color:#FF5800; transform:translateX(8px); outline:none; }
     @media (max-width:820px){
-      #navFab{ top:12px; right:12px; width:52px; height:52px; }
+      #navFab{ top:80px; right:12px; width:52px; height:52px; }
       #navFab .nf-bars{ width:22px; height:15px; }
       #navMenu a{ font-size:1.2rem; padding:15px 4px; }
     }
@@ -1038,7 +1049,7 @@
        2) No mostrar ningún elemento del #stageWrap hasta el primer scroll
        ============================================================ -->
 
-  <script src="https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/js/main.js?v7"></script>
+  <script src="./js/main.js?v8"></script>
 
   <!-- ===== Menú hamburguesa: apertura, cierre y scroll suave ===== -->
   <script>
