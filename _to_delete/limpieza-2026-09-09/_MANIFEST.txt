@@ -1,0 +1,22 @@
+Limpieza automatica 2026-09-09 — archivos NO referenciados por la landing viva (index.html + sub-paginas).
+Reversible: para restaurar, mueve el archivo de vuelta a su ruta original.
+
+BACKUP  index.html.bak-1788828763
+BACKUP  index.html.bak-1788881322
+BACKUP  index.html.bak-1788887031
+BACKUP  mvp-acto2-threejs-mar.html.bak-1788881690
+BACKUP  mvp-acto2-threejs-mar.html.bak2-1788883232
+BACKUP  temas-advertencias.html.bak-1788836233
+BACKUP  temas-advertencias.html.bak2-1788836420
+BACKUP  grafico-triangulacion-cajamarca.html.bak-1788837253
+BACKUP  grafico-triangulacion-cajamarca.html.bak-1788881278
+BACKUP  fiebre-icen-riel.html.bak-1788878042
+BACKUP  js/main.js.bak-1788887031
+BACKUP  manda-tu-carta/index.html.bak-1788827230
+PROTOTIPO  explorador-icen-v0.html
+PROTOTIPO  fiebre-icen-vertical.html
+PROTOTIPO  hallazgos-visuales-fen.html
+PROTOTIPO  hallazgos-visuales-fen-fondo-blanco.html
+PROTOTIPO  mvp-acto2-globe.html
+PROTOTIPO  mvp-acto2-threejs.html
+PROTOTIPO  mvp-acto2.html
