@@ -34,16 +34,16 @@
       function textOn(color){ const [r,g,b]=hx(color); return (0.299*r+0.587*g+0.114*b) > 150 ? '#141414' : '#ffffff'; }
       // ── Indicadores (10 señales) — panel lateral ──
       const INDICATORS = [
-        {k:'rec',label:'Recurrencia',    file:'icon-recurrencia.png',    desc:'Mayor impacto acumulado en 2017 y 2023.'},
-        {k:'lei',label:'Leishmaniasis',  file:'icon-leishmaniasis.png',  desc:'Crecen casos de uta.'},
-        {k:'eme',label:'Emergencias',    file:'icon-emergencias.png',    desc:'Disparo anormal de desastres en años Niño.'},
-        {k:'viv',label:'Viviendas',      file:'icon-viviendas.png',      desc:'Más casas destruidas vs. año normal.'},
-        {k:'agr',label:'Agricultura',    file:'icon-agricultura.png',    desc:'Cultivos que dependen solo de lluvia.'},
-        {k:'fal',label:'Fallecidos',     file:'icon-fallecidos.png',     desc:'Víctimas en años Niño.'},
-        {k:'pre',label:'Prevención',     file:'icon-prevencion.png',     desc:'Obras de mitigación frenadas o en abandono.'},
-        {k:'glp',label:'GLP',            file:'icon-glp.png',            desc:'Riesgo de desabastecimiento de gas.'},
-        {k:'den',label:'Dengue',         file:'icon-dengue.png',         desc:'Aumento de brotes tras lluvias.'},
-        {k:'inf',label:'Infraestructura',file:'icon-infraestructura.png',desc:'Daños severos en puentes, vías, postas y aulas.'},
+        {k:'rec',label:'Recurrencia',    file:'https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/iconos-senales/icon-recurrencia.png',    desc:'Mayor impacto acumulado en 2017 y 2023.'},
+        {k:'lei',label:'Leishmaniasis',  file:'https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/iconos-senales/icon-leishmaniasis.png',  desc:'Crecen casos de uta.'},
+        {k:'eme',label:'Emergencias',    file:'https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/iconos-senales/icon-emergencias.png',    desc:'Disparo anormal de desastres en años Niño.'},
+        {k:'viv',label:'Viviendas',      file:'https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/iconos-senales/icon-viviendas.png',      desc:'Más casas destruidas vs. año normal.'},
+        {k:'agr',label:'Agricultura',    file:'https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/iconos-senales/icon-agricultura.png',    desc:'Cultivos que dependen solo de lluvia.'},
+        {k:'fal',label:'Fallecidos',     file:'https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/iconos-senales/icon-fallecidos.png',     desc:'Víctimas en años Niño.'},
+        {k:'pre',label:'Prevención',     file:'https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/iconos-senales/icon-prevencion.png',     desc:'Obras de mitigación frenadas o en abandono.'},
+        {k:'glp',label:'GLP',            file:'https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/iconos-senales/icon-glp.png',            desc:'Riesgo de desabastecimiento de gas.'},
+        {k:'den',label:'Dengue',         file:'https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/iconos-senales/icon-dengue.png',         desc:'Aumento de brotes tras lluvias.'},
+        {k:'inf',label:'Infraestructura',file:'https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/iconos-senales/icon-infraestructura.png',desc:'Daños severos en puentes, vías, postas y aulas.'},
       ];
       // Señales activas por región (matriz maestra, columnas A–J). p = parcial (media señal).
       const SIGNALS = {
@@ -83,7 +83,7 @@
           const item = document.createElement('div');
           item.className = 'mpi-item is-off';
           item.innerHTML =
-            '<img class="mpi-ico" src="./img/iconos-senales/'+ind.file+'" alt="" />' +
+            '<img class="mpi-ico" src="https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/iconos-senales/'+ind.file+'" alt="" />' +
             '<span class="mpi-lbl">'+ind.label+'</span>' +
             '<span class="mpi-tip" role="tooltip">'+ind.desc+'</span>';
           host.appendChild(item);
