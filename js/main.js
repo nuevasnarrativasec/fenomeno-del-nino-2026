@@ -590,10 +590,10 @@
   // imgW → ancho de la imagen de ESE popup (editable de forma independiente
   //        por tarjeta). Acepta cualquier valor CSS: "42%", "220px", etc.
   const POPUPS = {
-    0:  { img:"https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/personajes/popups/bg-popup-1.jpg",  imgW:"25%", layout:"img-top", chart:DENGUE_BARS,
+    0:  { img:"./img/personajes/popups/bg-popup-1.jpg",  imgW:"25%", layout:"img-top", chart:DENGUE_BARS,
           html:'Los casos de <span class="hl">dengue</span> en Piura casi se multiplicaron por 7 en 2023.',
           source:"Minsa" },
-    1:  { img:"https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/personajes/popups/bg-popup-2.jpg",  imgW:"62%", layout:"img-top",
+    1:  { img:"./img/personajes/popups/bg-popup-2.jpg",  imgW:"62%", layout:"img-top",
           html:'Áncash es el segundo departamento del país con carreteras y puentes destruidos por El Niño: <span class="hl">casi 21 km por cada 100 mil habitantes.</span>',
           source:"Indeci + INEI" },
     2:  { img:"https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/personajes/popups/bg-popup-3.jpg",  imgW:"80%", layout:"img-bottom",
