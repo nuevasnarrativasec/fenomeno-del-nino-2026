@@ -281,7 +281,7 @@
     {lbl:"Yo", me:true, img:"./img/personaje-yo.png"}
   ];
 
-  const IMG_BASE = "./img/personajes/";   // carpeta de ilustraciones
+  const IMG_BASE = "https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/personajes/";   // carpeta de ilustraciones
 
   const YO_STATION = {
     region:"LIMA METROPOLITANA", role:"Yo",
