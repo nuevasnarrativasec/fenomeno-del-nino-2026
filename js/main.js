@@ -269,19 +269,19 @@
   /* Fila horizontal de la parte inferior (izq. a der.).
      El elemento central 'me' es la silueta blanca "Yo". */
   const ROW = [
-    {lbl:"Dengue", img:"personaje-1.png"},
-    {lbl:"Infraestructura crítica", img:"personaje-2.png"},
-    {lbl:"Fallecidos El Niño (anteriores)", img:"personaje-3.png"},
-    {lbl:"Recurrencia eventos", img:"personaje-4.png"},
-    {lbl:"Rendimiento de mango", img:"personaje-5.png"},
-    {lbl:"Cosecha de concha de abanico", img:"personaje-6.png"},
-    {lbl:"Sequías históricas", img:"personaje-7.png"},
-    {lbl:"Leishmaniasis", img:"personaje-8.png"},
-    {lbl:"Emergencias en años de El Niño vs. resto", img:"personaje-9.png"},
-    {lbl:"Yo", me:true, img:"personaje-yo.png"}
+    {lbl:"Dengue", img:"https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/personaje-1.png"},
+    {lbl:"Infraestructura crítica", img:"https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/personaje-2.png"},
+    {lbl:"Fallecidos El Niño (anteriores)", img:"https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/personaje-3.png"},
+    {lbl:"Recurrencia eventos", img:"https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/personaje-4.png"},
+    {lbl:"Rendimiento de mango", img:"https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/personaje-5.png"},
+    {lbl:"Cosecha de concha de abanico", img:"https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/personaje-6.png"},
+    {lbl:"Sequías históricas", img:"https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/personaje-7.png"},
+    {lbl:"Leishmaniasis", img:"https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/personaje-8.png"},
+    {lbl:"Emergencias en años de El Niño vs. resto", img:"https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/personaje-9.png"},
+    {lbl:"Yo", me:true, img:"https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/personaje-yo.png"}
   ];
 
-  const IMG_BASE = "img/personajes/";   // carpeta de ilustraciones
+  const IMG_BASE = "https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/personajes/";   // carpeta de ilustraciones
 
   const YO_STATION = {
     region:"LIMA METROPOLITANA", role:"Yo",
@@ -576,7 +576,7 @@
   //   chart  : (opcional) gráfico HTML extra — solo el de dengue no viene en la imagen
   //   source : texto de la línea "FUENTE:"
   // ============================================================
-  const POP_BASE = "img/personajes/popups/";
+  const POP_BASE = "https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/personajes/popups/";
   const DENGUE_BARS =
     '<div class="pop-bars">' +
       '<div class="pb-row"><span class="pb-label">Antes</span>' +
@@ -590,34 +590,34 @@
   // imgW → ancho de la imagen de ESE popup (editable de forma independiente
   //        por tarjeta). Acepta cualquier valor CSS: "42%", "220px", etc.
   const POPUPS = {
-    0:  { img:"bg-popup-1.jpg",  imgW:"25%", layout:"img-top", chart:DENGUE_BARS,
+    0:  { img:"https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/personajes/popups/bg-popup-1.jpg",  imgW:"25%", layout:"img-top", chart:DENGUE_BARS,
           html:'Los casos de <span class="hl">dengue</span> en Piura casi se multiplicaron por 7 en 2023.',
           source:"Minsa" },
-    1:  { img:"bg-popup-2.jpg",  imgW:"62%", layout:"img-top",
+    1:  { img:"https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/personajes/popups/bg-popup-2.jpg",  imgW:"62%", layout:"img-top",
           html:'Áncash es el segundo departamento del país con carreteras y puentes destruidos por El Niño: <span class="hl">casi 21 km por cada 100 mil habitantes.</span>',
           source:"Indeci + INEI" },
-    2:  { img:"bg-popup-3.jpg",  imgW:"80%", layout:"img-bottom",
+    2:  { img:"https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/personajes/popups/bg-popup-3.jpg",  imgW:"80%", layout:"img-bottom",
           html:'En años <span class="hl">El Niño, en Lambayeque mueren 47 veces más personas por desastres</span> (inundaciones, huaicos, derrumbes) que en un año normal – la cifra más alta de todo el país.',
           source:"Indeci + INEI" },
-    3:  { img:"bg-popup-4.jpg",  imgW:"42%", layout:"img-top",
+    3:  { img:"https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/personajes/popups/bg-popup-4.jpg",  imgW:"42%", layout:"img-top",
           html:'“En 2023, Cajamarca <span class="hl">tuvo 55 emergencias por lluvia</span> por cada 100 mil habitantes, la tasa más alta de todo el país”',
           source:"Indeci + INEI" },
-    4:  { img:"bg-popup-5.jpg",  imgW:"74%", layout:"img-top",
+    4:  { img:"https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/personajes/popups/bg-popup-5.jpg",  imgW:"74%", layout:"img-top",
           html:'El único cultivo de los nueve medidos con <span class="hl">caída repetida</span> en los dos años de El Niño.',
           source:"IPE (Instituto peruano de Economía)" },
-    5:  { img:"bg-popup-6.jpg",  imgW:"68%", layout:"img-top",
+    5:  { img:"https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/personajes/popups/bg-popup-6.jpg",  imgW:"68%", layout:"img-top",
           html:'La cosecha de conchas de abanico en Sechura <span class="hl">se redujo a menos de la octava parte en un solo año.</span>',
           source:"PRODUCE" },
-    6:  { img:"bg-popup-7.jpg",  imgW:"36%", layout:"img-top",
+    6:  { img:"https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/personajes/popups/bg-popup-7.jpg",  imgW:"36%", layout:"img-top",
           html:'En Puno, <span class="hl">prácticamente 19 de cada 20 chacras dependen solo de la lluvia</span> para regarse, sin ninguna otra fuente de agua. En el verano de 1983, categoría ‘extremadamente seco’.',
           source:"IPE + Senamhi" },
-    7:  { img:"bg-popup-8.jpg",  imgW:"34%", layout:"img-bottom",
+    7:  { img:"https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/personajes/popups/bg-popup-8.jpg",  imgW:"34%", layout:"img-bottom",
           html:'Los casos de <span class="hl">leishmaniasis</span> en Ayacucho subieron más de un tercio en un año.',
           source:"Minsa" },
-    8:  { img:"bg-popup-9.jpg",  imgW:"32%", layout:"img-bottom",
+    8:  { img:"https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/personajes/popups/bg-popup-9.jpg",  imgW:"32%", layout:"img-bottom",
           html:'En los años de El Niño, <span class="hl">Lima Provincias tuvo casi 12 veces más emergencias</span> que en un año normal — la cifra más alta de todo el país',
           source:"Indeci + INEI" },
-    yo: { img:"bg-popup-10.jpg", imgW:"36%", layout:"img-top",
+    yo: { img:"https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/personajes/popups/bg-popup-10.jpg", imgW:"36%", layout:"img-top",
           html:'<span class="hl">Más de la mitad</span> de los proyectos para prevenir desastres en Lima Metropolitana están abandonados o paralizados.',
           source:"IPE (Instituto peruano de Economía)" }
   };
