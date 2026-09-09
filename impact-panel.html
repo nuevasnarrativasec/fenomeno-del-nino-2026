@@ -271,6 +271,29 @@
           line-height: 1.4;
         }
     }
+    /* Botón sutil "Metodología" — esquina inferior izquierda de la herramienta */
+    .calc-metodo{
+      position:absolute; left:22px; bottom:20px; z-index:3;
+      display:inline-flex; align-items:center; gap:7px;
+      padding:7px 14px 7px 11px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.24);
+      border-radius:999px;
+      color:rgba(255,255,255,.7);
+      font-family:'Monoglyphic Semi Bold', Poppins, system-ui, sans-serif;
+      font-size:.7rem; letter-spacing:.06em; text-transform:uppercase;
+      cursor:pointer; -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px);
+      transition:background .18s ease, border-color .18s ease, color .18s ease, transform .18s ease;
+    }
+    .calc-metodo:hover, .calc-metodo:focus-visible{
+      background:rgba(255,255,255,.13); border-color:rgba(255,255,255,.45);
+      color:#fff; transform:translateY(-1px); outline:none;
+    }
+    .calc-metodo:focus-visible{ box-shadow:0 0 0 3px rgba(41,171,226,.45); }
+    .calc-metodo svg{ width:14px; height:14px; flex:0 0 auto; }
+    @media (max-width:720px){
+      .calc-metodo{ left:16px; bottom:14px; font-size:.64rem; padding:6px 12px 6px 9px; }
+    }
   </style>
 </head>
 <body>
@@ -346,9 +369,16 @@
       </div>
 
     </div>
+
+    <button type="button" class="calc-metodo" onclick="goMetodologia()" aria-label="Ver la metodología de esta herramienta">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"></circle><line x1="12" y1="11" x2="12" y2="16.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></line><circle cx="12" cy="7.6" r="1.35" fill="currentColor"></circle></svg>
+      ¿Cómo se hizo?
+    </button>
   </section>
 
 <script>
+function goMetodologia(){ try{ window.parent.postMessage({ type:'scrollToMetodologia' }, '*'); }catch(e){} }
+
 // ─────────────────────────────────────────────
 // PANEL: ¿CÓMO TE AFECTA EL NIÑO?  (independiente)
 // ─────────────────────────────────────────────

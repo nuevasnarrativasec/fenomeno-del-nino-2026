@@ -152,6 +152,30 @@ b,strong,.b{font-family:var(--font-bold);font-weight:normal;}
   .tool-title{font-size:1.4rem;padding-top:2rem;}
   .editor-foot{flex-direction:column;}
 }
+/* ── Botón sutil "Metodología" — esquina inferior izquierda de la herramienta ── */
+.widget{padding-bottom:46px;}
+.carta-metodo{
+  position:absolute; left:20px; bottom:16px; z-index:4;
+  display:inline-flex; align-items:center; gap:7px;
+  padding:7px 14px 7px 11px;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.24);
+  border-radius:999px;
+  color:rgba(255,255,255,.72);
+  font-family:var(--font-bold);
+  font-size:.7rem; letter-spacing:.06em; text-transform:uppercase;
+  cursor:pointer; -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px);
+  transition:background .18s ease, border-color .18s ease, color .18s ease, transform .18s ease;
+}
+.carta-metodo:hover, .carta-metodo:focus-visible{
+  background:rgba(255,255,255,.13); border-color:rgba(255,255,255,.45);
+  color:#fff; transform:translateY(-1px); outline:none;
+}
+.carta-metodo:focus-visible{ box-shadow:0 0 0 3px rgba(255,106,26,.5); }
+.carta-metodo svg{ width:14px; height:14px; flex:0 0 auto; }
+@media (max-width:640px){
+  .carta-metodo{ left:14px; bottom:12px; font-size:.64rem; padding:6px 12px 6px 9px; }
+}
 </style>
 </head>
 <body>
@@ -272,9 +296,16 @@ b,strong,.b{font-family:var(--font-bold);font-weight:normal;}
       <button class="btn btn-primary" onclick="reiniciar()">Enviar otra solicitud</button>
     </div>
   </div>
+
+  <button type="button" class="carta-metodo" onclick="goMetodologia()" aria-label="Ver la metodología de esta herramienta">
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"></circle><line x1="12" y1="11" x2="12" y2="16.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></line><circle cx="12" cy="7.6" r="1.35" fill="currentColor"></circle></svg>
+    ¿Cómo se hizo?
+  </button>
 </div>
 
 <script>
+function goMetodologia(){ try{ window.parent.postMessage({ type:'scrollToMetodologia' }, '*'); }catch(e){} }
+
 const N8N_WEBHOOK = 'https://labec.app.n8n.cloud/webhook/fen-correo-ciudadano';
 
 // ── DIRECTORIO REAL (del Excel curado) ───────────────────────
