@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Fenómeno del Niño 2026 — ¿Y tú?</title>
-<link rel="stylesheet" href="./css/style.css?v9">
+<link rel="stylesheet" href="https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/css/style.css?v11">
 
 
 <style>
@@ -121,6 +121,7 @@
     #globeFrame, #impactFrame, #triFrame, #graficoFrame, #taFrame, #cartaFrame{
       position:relative; z-index:91;
     }
+    #cartaFrame{ transition:height .28s ease; }
   </style>
 
   <!-- ============================================================
@@ -913,6 +914,117 @@
               title="Manda tu carta — Exige acción a tu autoridad regional"
               loading="lazy"
               style="width:100%; height:946px; border:0; display:block;" scrolling="no"></iframe>
+
+      <!-- ===================================================================
+           CONTADORES  ·  solicitudes enviadas  vs  respuestas recibidas
+           Para actualizar los numeros: cambia el valor de data-target.
+           El texto .cc-intro es un PLACEHOLDER: reemplaza por la copia final.
+      ==================================================================== -->
+      <style>
+        #carta-contadores{ text-align:center; }
+        #carta-contadores .cc-arrow{
+          width:0; height:0; margin:0 auto 30px;
+          border-left:20px solid transparent; border-right:20px solid transparent;
+          border-top:22px solid #000;
+        }
+        #carta-contadores .cc-intro{
+          font-family:Poppins,system-ui,-apple-system,sans-serif;
+          font-size:1.35rem; line-height:1.5; color:#1a1a1a; font-weight:300;
+          max-width:620px; margin:0 auto 42px;
+        }
+        #carta-contadores .cc-intro b{ font-weight:700; color:#000; }
+
+        #carta-contadores .cc-cards{
+          display:flex; align-items:stretch; justify-content:center; flex-wrap:wrap;
+        }
+        #carta-contadores .cc-group{ display:flex; align-items:stretch; }
+        #carta-contadores .cc-label{
+          display:flex; align-items:center;
+          font-family:'Monoglyphic Regular',Poppins,system-ui,sans-serif;
+          font-weight:800; font-size:1.12rem; line-height:1.16; color:#fff;
+          text-align:left; padding:26px 30px; max-width:210px; border-radius:16px;
+        }
+        #carta-contadores .cc-label--orange{ background:#E96A28; }
+        #carta-contadores .cc-label--red{ background:#E5342B; }
+        #carta-contadores .cc-num{
+          display:flex; align-items:center; justify-content:center;
+          min-width:124px; padding:0 24px;
+          background:#E4E4E4; color:#111; border-radius:16px;
+          font-family:'Monoglyphic Extra Bold','Monoglyphic Bold',Poppins,sans-serif;
+          font-weight:800; font-size:4.4rem; line-height:1;
+          position:relative; z-index:2; font-variant-numeric:tabular-nums;
+        }
+        #carta-contadores .cc-group--left  .cc-num{ margin-left:-16px; }
+        #carta-contadores .cc-group--right .cc-num{ margin-right:-16px; }
+        #carta-contadores .cc-divider{
+          width:0; align-self:stretch; margin:0 36px; border-left:2px dotted #b8b8b8;
+        }
+        @media (max-width:720px){
+          #carta-contadores .cc-cards{ flex-direction:column; align-items:center; gap:18px; }
+          #carta-contadores .cc-divider{ display:none; }
+          #carta-contadores .cc-group{ width:100%; max-width:430px; }
+          #carta-contadores .cc-label{ flex:1; max-width:none; }
+          #carta-contadores .cc-num{ font-size:3.4rem; min-width:100px; }
+          #carta-contadores .cc-intro{ font-size:1.12rem; }
+        }
+      </style>
+
+      <div id="carta-contadores" style="max-width:1040px; margin:0 auto; padding:44px 24px 64px;">
+        <div class="cc-arrow" aria-hidden="true"></div>
+
+        <!-- PLACEHOLDER: reemplazar por la copia real -->
+        <p class="cc-intro">
+          <b>Lorem ipsum dolor sit amet,</b> consectetur adipiscing elit,
+          sed do eiusmod tempor incididunt ut labore et dolore.
+        </p>
+
+        <div class="cc-cards">
+          <div class="cc-group cc-group--left">
+            <div class="cc-label cc-label--orange">Solicitudes enviadas a las autoridades.</div>
+            <div class="cc-num" data-target="25">0</div>
+          </div>
+
+          <div class="cc-divider" aria-hidden="true"></div>
+
+          <div class="cc-group cc-group--right">
+            <div class="cc-num" data-target="0">0</div>
+            <div class="cc-label cc-label--red">Respuestas recibidas de autoridades.</div>
+          </div>
+        </div>
+      </div>
+
+      <script>
+      (function(){
+        var box = document.getElementById('carta-contadores');
+        if(!box) return;
+        var nums = box.querySelectorAll('.cc-num');
+        function animate(el){
+          var target = parseInt(el.getAttribute('data-target'),10) || 0;
+          if(target <= 0){ el.textContent = '0'; return; }
+          var start = null, dur = 1400;
+          function step(ts){
+            if(!start) start = ts;
+            var p = Math.min((ts-start)/dur, 1);
+            var eased = 1 - Math.pow(1-p, 3);
+            el.textContent = Math.round(eased*target);
+            if(p<1) requestAnimationFrame(step);
+          }
+          requestAnimationFrame(step);
+        }
+        var done = false;
+        if('IntersectionObserver' in window){
+          var io = new IntersectionObserver(function(entries){
+            entries.forEach(function(e){
+              if(e.isIntersecting && !done){ done = true; nums.forEach(animate); io.disconnect(); }
+            });
+          }, { threshold:0.4 });
+          io.observe(box);
+        } else {
+          nums.forEach(animate);
+        }
+      })();
+      </script>
+
     </div>
 
   
@@ -1049,7 +1161,7 @@
        2) No mostrar ningún elemento del #stageWrap hasta el primer scroll
        ============================================================ -->
 
-  <script src="./js/main.js?v8"></script>
+  <script src="https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/js/main.js?v11"></script>
 
   <!-- ===== Menú hamburguesa: apertura, cierre y scroll suave ===== -->
   <script>
@@ -1132,11 +1244,19 @@
   <!-- Scroll a metodología solicitado por las herramientas incrustadas (iframes) -->
   <script id="tool-metodo-js">
   (function(){
+    var _cartaFrameEl = null;
     window.addEventListener('message', function(e){
       var d = e.data;
       if (d && (d === 'scrollToMetodologia' || d.type === 'scrollToMetodologia')){
         var t = document.getElementById('metodologiaBox') || document.querySelector('.main-metodologia');
         if (t) t.scrollIntoView({ behavior:'smooth', block:'start' });
+      } else if (d && d.type === 'cartaHeight' && typeof d.height === 'number'){
+        // Ajusta la altura del iframe de "Consúltale a tu autoridad" a su contenido real
+        _cartaFrameEl = _cartaFrameEl || document.getElementById('cartaFrame');
+        if (_cartaFrameEl && e.source === _cartaFrameEl.contentWindow){
+          var hh = Math.round(d.height);
+          if (hh > 200 && hh < 6000){ _cartaFrameEl.style.height = hh + 'px'; }
+        }
       }
     });
   })();

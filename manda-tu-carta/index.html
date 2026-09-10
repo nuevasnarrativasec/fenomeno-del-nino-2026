@@ -574,5 +574,27 @@ function reiniciar(){
   tryPlay();
 })();
 </script>
+
+<!-- Avisa la altura real al contenedor (padre) para que el iframe se ajuste y no deje espacio en blanco -->
+<script>
+(function(){
+  function sendHeight(){
+    var h = Math.max(
+      document.body ? document.body.scrollHeight : 0,
+      document.documentElement ? document.documentElement.scrollHeight : 0
+    );
+    try{ window.parent.postMessage({ type:'cartaHeight', height: h }, '*'); }catch(e){}
+  }
+  window.addEventListener('load', sendHeight);
+  window.addEventListener('resize', sendHeight);
+  document.addEventListener('DOMContentLoaded', sendHeight);
+  if('ResizeObserver' in window){
+    try{ new ResizeObserver(sendHeight).observe(document.body); }catch(e){}
+  }
+  // reintentos iniciales por si cambian fuentes/imagenes/video
+  var n=0, iv=setInterval(function(){ sendHeight(); if(++n>12) clearInterval(iv); }, 400);
+  sendHeight();
+})();
+</script>
 </body>
 </html>
