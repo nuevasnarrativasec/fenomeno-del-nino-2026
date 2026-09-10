@@ -311,7 +311,7 @@
     #navMenu a:hover, #navMenu a:focus-visible{ color:#FF5800; transform:translateX(8px); outline:none; }
     @media (max-width:820px){
       #navFab{ top:80px; right:12px; width:52px; height:52px; }
-      #navHint{ top:80px; right:74px; height:52px; padding:0 12px; font-size:.64rem; }
+      #navHint{ top:80px; right:74px; height:52px; padding:0 12px; font-size:.64rem; display: none;}
       #navFab .nf-bars{ width:22px; height:15px; }
       #navMenu a{ font-size:1.2rem; padding:15px 4px; }
     }
@@ -919,6 +919,20 @@
           <br>
           Completa el formulario y generaremos una solicitud para pedir información sobre su plan de prevención ante El Niño, las medidas previstas y su estado de avance. La solicitud llegará lista para que la envíes desde tu correo.
           <b style="font-weight: 600;">La autoridad deberá responder dentro del plazo legal aplicable.</b>
+          <div id="carta-contadores" style="max-width:1040px; margin:0 auto; padding:44px 24px 64px;">
+            <div class="cc-cards">
+              <div class="cc-group cc-group--left">
+                <div class="cc-label cc-label--orange">
+                  <p>
+                    <b>Ciudadanos </b> de todo el país ya le escribieron a su gobernador regional. <b>Súmate</b>
+                  </p>                  
+                </div>
+                <div class="cc-num" data-target="25">
+                  <span>0</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </p>
       </div>
       <iframe id="cartaFrame"
@@ -949,14 +963,16 @@
         #carta-contadores .cc-cards{
           display:flex; align-items:stretch; justify-content:center; flex-wrap:wrap;
         }
-        #carta-contadores .cc-group{ display:flex; align-items:stretch; }
+        #carta-contadores .cc-group{ display:flex; align-items:stretch; flex-direction: row-reverse;}
         #carta-contadores .cc-label{
           display:flex; align-items:center;
           font-family:'Monoglyphic Regular',Poppins,system-ui,sans-serif;
           font-weight:800; font-size:1.12rem; line-height:1.16; color:#fff;
-          text-align:left; padding:26px 30px; max-width:210px; border-radius:16px;
+          text-align:left; padding: 26px 25px 26px 40px; max-width:285px; border-radius:16px;
         }
-        #carta-contadores .cc-label--orange{ background:#E96A28; }
+          #carta-contadores .cc-label p{ margin:0; font-family: Poppins, system-ui, sans-serif; line-height: 1.4;}
+          #carta-contadores .cc-label b{ font-weight:900; color:#fff; }
+        #carta-contadores .cc-label--orange{ background:#054d9f; }
         #carta-contadores .cc-label--red{ background:#E5342B; }
         #carta-contadores .cc-num{
           display:flex; align-items:center; justify-content:center;
@@ -966,10 +982,21 @@
           font-weight:800; font-size:4.4rem; line-height:1;
           position:relative; z-index:2; font-variant-numeric:tabular-nums;
         }
-        #carta-contadores .cc-group--left  .cc-num{ margin-left:-16px; }
+        #carta-contadores .cc-group--left  .cc-num{ margin-right:-20px; }
         #carta-contadores .cc-group--right .cc-num{ margin-right:-16px; }
         #carta-contadores .cc-divider{
           width:0; align-self:stretch; margin:0 36px; border-left:2px dotted #b8b8b8;
+        }
+        .pulse {
+          animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+          0% {
+            box-shadow: 0 0 0 0px rgba(0, 0, 0, 0.2);
+          }
+          100% {
+            box-shadow: 0 0 0 20px rgba(0, 0, 0, 0);
+          }
         }
         @media (max-width:720px){
           #carta-contadores .cc-cards{ flex-direction:column; align-items:center; gap:18px; }
@@ -984,29 +1011,7 @@
         }
       </style>
 
-      <div id="carta-contadores" style="max-width:1040px; margin:0 auto; padding:44px 24px 64px;">
-        <div class="cc-arrow" aria-hidden="true"></div>
-
-        <!-- PLACEHOLDER: reemplazar por la copia real -->
-        <p class="cc-intro">
-          <b>Lorem ipsum dolor sit amet,</b> consectetur adipiscing elit,
-          sed do eiusmod tempor incididunt ut labore et dolore.
-        </p>
-
-        <div class="cc-cards">
-          <div class="cc-group cc-group--left">
-            <div class="cc-label cc-label--orange">Solicitudes enviadas a las autoridades.</div>
-            <div class="cc-num" data-target="25">0</div>
-          </div>
-
-          <div class="cc-divider" aria-hidden="true"></div>
-
-          <div class="cc-group cc-group--right">
-            <div class="cc-num" data-target="0">0</div>
-            <div class="cc-label cc-label--red">Respuestas recibidas de autoridades.</div>
-          </div>
-        </div>
-      </div>
+      
 
       <script>
       (function(){
@@ -1110,9 +1115,15 @@
                     </p>
                 </li>
                 <li>
+                    <h4>¿Dónde puede golpear más fuerte El Niño?</h4>
+                    <p>
+                      Metodología, cruce de variables y triangulación de datos: Lorena Obregón
+                    </p>
+                </li>
+                <li>
                     <h4>¿Cómo me afecta a mí?</h4>
                     <p>
-                      Análisis y definición de variables: Mayté Ciriaco y Lorena Obregón
+                      Extracción y estructuración de datos de documentos oficiales: Mayté Ciriaco y Lorena Obregón
                     </p>
                     <p>
                       Desarrollo de la herramienta: Armando Scargglioni C.
@@ -1128,7 +1139,7 @@
                 </li>    
                 <li>
                     <h4>Ilustraciones</h4>
-                    <p>Kyomi Kanashiro</p>
+                    <p>Kiomy Kanashiro</p>
                 </li> 
                 <li>
                     <h4>Diseño</h4>
