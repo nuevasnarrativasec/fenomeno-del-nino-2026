@@ -1,12 +1,28 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banner · El Niño 2026</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
+        @font-face{
+            font-family:'Monoglyphic Bold';
+            src:url('https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/fonts/Monoglyphic-Bold.woff2') format('woff2'),
+                url('https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/fonts/Monoglyphic-Bold.woff') format('woff');
+            font-display:swap;
+        }
+        @font-face{
+            font-family:'Monoglyphic Extra Bold';
+            src:url('https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/fonts/Monoglyphic-ExtraBold.woff2') format('woff2'),
+                url('https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/fonts/Monoglyphic-ExtraBold.woff') format('woff');
+            font-display:swap;
+        }
+
         * {
-            box-sizing: border-box;    
+            box-sizing: border-box;
             font-style: normal;
             font-weight: normal;
             margin: 0;
@@ -14,19 +30,174 @@
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
+
         .main-banner{
+            position: relative;
             height: 395px;
-            margin: 0 auto;
             width: 1290px;
+            max-width: 100%;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+        .main-banner > video{
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
+        }
+        .bnr-video--movil{ display: none; }
+
+        /* Capa de texto sobre el video */
+        .banner-overlay{
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            display: grid;
+            grid-template-columns: 41% 31% 28%;
+            align-items: center;
+            color: #fff;
+        }
+        .bo-col{ padding: 0 34px; }
+        .bo-col--center{ text-align: center; }
+        .bo-col--main{ text-align: center; }
+
+        /* Columna 1 · título principal */
+        .bo-col--main .bo-title{
+            font-family:'Monoglyphic Extra Bold','Monoglyphic Bold',Poppins,system-ui,sans-serif;
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 2.55rem;
+            line-height: 1.02;
+            color: #fff;
+            margin-bottom: 20px;
+        }
+        .bo-col--main .bo-title .rojo{ color:#EA3A2D; }
+
+        /* Columnas 2 y 3 · preguntas */
+        .bo-col--center .bo-title{
+            font-family:'Monoglyphic Extra Bold','Monoglyphic Bold',Poppins,system-ui,sans-serif;
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 2rem;
+            line-height: 1.05;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+        .bo-sub{
+            font-family:Poppins,system-ui,-apple-system,sans-serif;
+            font-weight: 400;
+            font-size: 1.18rem;
+            line-height: 1.35;
+            color: #fff;
+            margin-bottom: 26px;
+        }
+
+        /* Botones */
+        .bo-btn{
+            display: inline-block;
+            font-family:'Monoglyphic Bold',Poppins,system-ui,sans-serif;
+            font-weight: 700;
+            font-size: 1.02rem;
+            line-height: 1;
+            text-decoration: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            transition: transform .15s ease, filter .15s ease;
+        }
+        .bo-btn:hover{ transform: translateY(-1px); filter: brightness(1.05); }
+        .bo-btn--orange{ background:#E96A28; color:#fff; }
+        .bo-btn--light{ background:#fff; color:#161616; }
+
+        /* Firma inferior izquierda */
+        .bo-firma{
+            position: absolute;
+            left: 34px;
+            bottom: 20px;
+            z-index: 3;
+            font-family:'Monoglyphic Bold',Poppins,system-ui,sans-serif;
+            font-weight: 700;
+            font-size: .82rem;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+            color: #fff;
+        }
+
+        /* Escritorio angosto: mantiene proporción del banner horizontal */
+        @media (max-width: 1310px) and (min-width: 769px){
+            .main-banner{ width: 100%; height: auto; aspect-ratio: 1290 / 395; }
+        }
+
+        /* ===================== VERSIÓN MÓVIL (video vertical) ===================== */
+        @media (max-width: 768px){
+            .bnr-video--desktop{ display: none; }
+            .bnr-video--movil{ display: block; }
+
+            .main-banner{ width: 100%; height: auto; aspect-ratio: 440 / 852; }
+
+            .banner-overlay{
+                grid-template-columns: 1fr;
+                grid-template-rows: repeat(3, 1fr);
+                place-items: center;
+                text-align: center;
+            }
+            .bo-col{ padding: 0 8vw; width: 100%; }
+
+            .bo-col--main .bo-title{
+                font-size: 8.6vw;
+                line-height: 1.04;
+                margin-bottom: 5.5vw;
+            }
+            .bo-col--center .bo-title{
+                font-size: 7.8vw;
+                line-height: 1.06;
+                margin-bottom: 3.5vw;
+            }
+            .bo-sub{
+                font-size: 4.5vw;
+                line-height: 1.35;
+                margin-bottom: 6vw;
+            }
+            .bo-btn{
+                font-size: 4.4vw;
+                padding: 3.4vw 6vw;
+                border-radius: 2.6vw;
+            }
+            .bo-firma{ display: none; }
         }
     </style>
 </head>
 <body>
 
-
     <div class="main-banner">
+        <video class="bnr-video--desktop" src="./video/fondo-banner-desktop.mp4" autoplay muted loop playsinline></video>
+        <video class="bnr-video--movil"   src="./video/fondo-banner-movil.mp4"   autoplay muted loop playsinline></video>
 
+        <div class="banner-overlay">
+            <!-- Sección 1 -->
+            <div class="bo-col bo-col--main">
+                <h2 class="bo-title"><span class="rojo">El Niño:</span><br>Todo está<br>conectado</h2>
+                <a href="https://elcomercio.pe/lima/fenomeno-el-nino-peru/fenomeno el-nino-peru-narp-especdis-noticia/" class="bo-btn bo-btn--orange">Ver especial</a>
+            </div>
+
+            <!-- Sección 2 -->
+            <div class="bo-col bo-col--center">
+                <h2 class="bo-title">¿Cómo me<br>afecta a mí?</h2>
+                <p class="bo-sub">Consulta los riesgos<br>de tu región</p>
+                <a href="https://elcomercio.pe/lima/fenomeno-el-nino-peru/fenomeno el-nino-peru-narp-especdis-noticia/#impactBox" class="bo-btn bo-btn--light">Ver mi exposición</a>
+            </div>
+
+            <!-- Sección 3 -->
+            <div class="bo-col bo-col--center">
+                <h2 class="bo-title">¿Qué puedo<br>hacer?</h2>
+                <p class="bo-sub">Pide a tu autoridad<br>su plan de prevención.</p>
+                <a href="https://elcomercio.pe/lima/fenomeno-el-nino-peru/fenomeno el-nino-peru-narp-especdis-noticia/#cartaBox" class="bo-btn bo-btn--light">Consultar a mi autoridad</a>
+            </div>
+        </div>
+
+        <span class="bo-firma">Nuevas narrativas</span>
     </div>
-    
+
 </body>
 </html>
