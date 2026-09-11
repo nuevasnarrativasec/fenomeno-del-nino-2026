@@ -380,6 +380,17 @@
   //  sobre la línea zig-zag, en la posición del antiguo cuadro naranja de Cecilia.)
 
   // 2) Estaciones (círculo + botón + nombre + cuadro blanco + cuadro naranja)
+  // Color de fondo distinto por cada cuadro naranja (versión desktop / #stageWrap).
+  // Progresión cálida → roja que acompaña la intensificación de la cadena de impactos.
+  const OB_COLORS = ['#ea6429','#c45421','#a4461a','#8c3c15','#5d270a','#461e06','#3a1904','#250f02','#0f0601'];
+  // Oscurece un HEX un porcentaje dado (0–1) para el segundo tono del degradé.
+  const obDarken = (hex, amt=0.32)=>{
+    const n=parseInt(hex.slice(1),16), f=1-amt;
+    const r=Math.round(((n>>16)&255)*f), g=Math.round(((n>>8)&255)*f), b=Math.round((n&255)*f);
+    return `rgb(${r},${g},${b})`;
+  };
+  // Degradé vertical por cuadro: color base (arriba) → tono más oscuro (abajo).
+  const OB_GRADS = OB_COLORS.map(c => `linear-gradient(180deg, ${c} 0%, ${obDarken(c)} 100%)`);
   STATIONS.forEach((s, i)=>{
     const node = el('div','node');
 
@@ -428,6 +439,7 @@
     let ob = null;
     if (i < STATIONS.length - 1) {
       ob = el('div','orangebox reveal', `<span class="q" style="margin-top:0">${s.q}</span>`);
+      ob.style.background = OB_GRADS[i % OB_GRADS.length];
       ob.style.left = s.orange.tox+'px';
       ob.style.top  = s.orange.toy+'px';
       ob.style.transform = 'translate(-50%,-50%)';
