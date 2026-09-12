@@ -292,6 +292,18 @@
   .orangebox .stmt{ color:#ffe9df; }
   .orangebox .q{ display:block; margin-top:7px; font-weight:800; color:#fff; font-size: 1rem;}
 
+  /* ── Color de fondo por cuadro naranja (desktop / #stageWrap) ──────────
+     Una regla por estación (ob-1 … ob-8). Edita aquí los degradés:
+     linear-gradient(180deg, <color arriba> 0%, <color abajo> 100%). */
+  #stage .ob-1{ background: linear-gradient(180deg, #FF7A1A 0%, #FF5800 100%); }
+  #stage .ob-2{ background: linear-gradient(180deg, #d74a02 0%, #E24A02 100%); }
+  #stage .ob-3{ background: linear-gradient(180deg, #b43e01 0%, #C24001 100%); }
+  #stage .ob-4{ background: linear-gradient(180deg, #993501 0%, #A03501 100%); }
+  #stage .ob-5{ background: linear-gradient(180deg, #652300 0%, #7E2A00 100%); }
+  #stage .ob-6{ background: linear-gradient(180deg, #4d1b00 0%, #5E1F00 100%); }
+  #stage .ob-7{ background: linear-gradient(180deg, #411700 0%, #431500 100%); }
+  #stage .ob-8{ background: linear-gradient(180deg, #290d01 0%, #2A0C00 100%); }
+
   /* Caja roja final del "Yo" (el dato) */
   .orangebox.final{ text-align:center; padding:18px 22px; border-radius:14px;
     background:#e5271b; box-shadow:0 12px 30px rgba(0,0,0,.55); }
