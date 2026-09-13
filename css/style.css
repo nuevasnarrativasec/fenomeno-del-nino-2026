@@ -295,14 +295,14 @@
   /* ── Color de fondo por cuadro naranja (desktop / #stageWrap) ──────────
      Una regla por estación (ob-1 … ob-8). Edita aquí los degradés:
      linear-gradient(180deg, <color arriba> 0%, <color abajo> 100%). */
-  #stage .ob-1{ background: linear-gradient(180deg, #FF7A1A 0%, #FF5800 100%); }
-  #stage .ob-2{ background: linear-gradient(180deg, #d74a02 0%, #E24A02 100%); }
-  #stage .ob-3{ background: linear-gradient(180deg, #b43e01 0%, #C24001 100%); }
-  #stage .ob-4{ background: linear-gradient(180deg, #993501 0%, #A03501 100%); }
-  #stage .ob-5{ background: linear-gradient(180deg, #652300 0%, #7E2A00 100%); }
-  #stage .ob-6{ background: linear-gradient(180deg, #4d1b00 0%, #5E1F00 100%); }
-  #stage .ob-7{ background: linear-gradient(180deg, #411700 0%, #431500 100%); }
-  #stage .ob-8{ background: linear-gradient(180deg, #290d01 0%, #2A0C00 100%); }
+  #stage .ob-1, #stageM .ob-1{ background: linear-gradient(180deg, #FF7A1A 0%, #FF5800 100%); }
+  #stage .ob-2, #stageM .ob-2{ background: linear-gradient(180deg, #d74a02 0%, #E24A02 100%); }
+  #stage .ob-3, #stageM .ob-3{ background: linear-gradient(180deg, #b43e01 0%, #C24001 100%); }
+  #stage .ob-4, #stageM .ob-4{ background: linear-gradient(180deg, #993501 0%, #A03501 100%); }
+  #stage .ob-5, #stageM .ob-5{ background: linear-gradient(180deg, #652300 0%, #7E2A00 100%); }
+  #stage .ob-6, #stageM .ob-6{ background: linear-gradient(180deg, #4d1b00 0%, #5E1F00 100%); }
+  #stage .ob-7, #stageM .ob-7{ background: linear-gradient(180deg, #411700 0%, #431500 100%); }
+  #stage .ob-8, #stageM .ob-8{ background: linear-gradient(180deg, #290d01 0%, #2A0C00 100%); }
 
   /* Caja roja final del "Yo" (el dato) */
   .orangebox.final{ text-align:center; padding:18px 22px; border-radius:14px;

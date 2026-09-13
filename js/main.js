@@ -868,7 +868,7 @@
       var btn=el('button','infobtn reveal','›'); btn.dataset.idx=i; stage.appendChild(btn); s._btn=btn;
       var ob=null;
       if(i < STATIONS.length-1){
-        ob=el('div','orangebox reveal','<span class="q" style="margin-top:0">'+s.q+'</span>');
+        ob=el('div','orangebox reveal ob-'+(i+1),'<span class="q" style="margin-top:0">'+s.q+'</span>');
         ob.style.width='300px'; stage.appendChild(ob);
       }
       s._ob=ob;
@@ -898,9 +898,21 @@
     // ---------- Popup del botón "›" ----------
     var pop=el('div'); pop.id='stmPop'; pop.hidden=true;
     pop.innerHTML='<div class="stm-pop-card"><button class="stm-pop-x" aria-label="Cerrar">×</button>'+
+      '<div class="stm-pop-fig" hidden></div>'+
       '<div class="stm-pop-e"></div><div class="stm-pop-t"></div><div class="stm-pop-b"></div></div>';
     document.body.appendChild(pop);
-    function openPop(s){
+    function openPop(s, idx){
+      var conf = (idx!=null && typeof POPUPS!=='undefined' && POPUPS[idx]) ? POPUPS[idx] : null;
+      var card = pop.querySelector('.stm-pop-card');
+      var fig  = pop.querySelector('.stm-pop-fig');
+      if(conf && conf.img){
+        var w = conf.imgW ? (' style="width:'+conf.imgW+'"') : '';
+        fig.innerHTML = '<img'+w+' src="'+POP_BASE+conf.img+'" alt="">';
+        fig.hidden = false;
+        card.classList.toggle('img-bottom', conf.layout==='img-bottom');
+      } else {
+        fig.innerHTML=''; fig.hidden=true; card.classList.remove('img-bottom');
+      }
       pop.querySelector('.stm-pop-e').textContent=s.popE||'';
       pop.querySelector('.stm-pop-t').textContent=s.popT||'';
       pop.querySelector('.stm-pop-b').textContent=s.popB||'';
@@ -908,7 +920,7 @@
     }
     function closePop(){ pop.classList.remove('on'); setTimeout(function(){ pop.hidden=true; }, 220); }
     pop.addEventListener('click', function(e){ if(e.target===pop || e.target.closest('.stm-pop-x')) closePop(); });
-    stage.addEventListener('click', function(e){ var b=e.target.closest('.infobtn'); if(!b) return; openPop(STATIONS[+b.dataset.idx]); });
+    stage.addEventListener('click', function(e){ var b=e.target.closest('.infobtn'); if(!b) return; openPop(STATIONS[+b.dataset.idx], +b.dataset.idx); });
 
     // ---------- LAYOUT: calcula todas las Y (mide alturas variables) ----------
     var STAGE_H=3000, closeTop=0, scaleM=1, NAMEH=60, LBLH=52;
