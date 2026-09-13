@@ -616,7 +616,8 @@ function generatePersonalImpact({ name, ageRange, profession, region }) {
   const rd       = getRegionData(region);
   const profText = getProfImpact(profession, rd.tipo);
   const ageText  = getAgeNote(ageRange);
-  return { saludo: `${name}, tu panorama:`, context: rd.contexto, profText, ageText };
+  const nameCap = name ? name.charAt(0).toUpperCase() + name.slice(1) : name;
+  return { saludo: `${nameCap}, tu panorama:`, context: rd.contexto, profText, ageText };
 }
 
 // ─── INICIALIZAR PANEL ───────────────────────────────────────────────────────
