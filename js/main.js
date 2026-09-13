@@ -1037,7 +1037,7 @@
     }
 
     // ---------- Animaciones ----------
-    var introEls=[title, baja, cta].concat(gridLabels);
+    var introEls=[title, cta].concat(gridLabels);
     function showAll(){ stage.querySelectorAll('.reveal').forEach(function(n){ n.style.opacity=1; }); }
     function setupAnims(){
       if(!(window.gsap && window.ScrollTrigger)){ showAll(); return; }
@@ -1071,6 +1071,9 @@
       // Intro se desvanece al bajar
       gsap.to(introEls,{opacity:0,ease:'none',
         scrollTrigger:{ trigger:wrap, start:'top top', end:'+=420', scrub:true }});
+      // La bajada ('stm-baja') tarda un poco mas en desaparecer
+      gsap.to(baja,{opacity:0,ease:'none',
+        scrollTrigger:{ trigger:wrap, start:'top top', end:'+=680', scrub:true }});
       // Cierre: franjas apareciendo una tras otra + finale "Yo"
       bandEls.forEach(function(band){
         gsap.set(band,{opacity:0});
