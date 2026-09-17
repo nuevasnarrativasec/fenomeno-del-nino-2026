@@ -939,6 +939,7 @@
                 <div class="cc-num" data-target="10">
                   <span>0</span>
                 </div>
+                <span id="contador-envios">—</span>
               </div>
             </div>
           </div>
@@ -1373,5 +1374,19 @@
     document.addEventListener('keydown', function(e){ if(e.key==='Escape' && !modal.hidden) close(); });
   })();
   </script>
+
+  <script>
+    async function cargarContador() {
+      try {
+        const res = await fetch('https://labec.app.n8n.cloud/webhook/fen-contador');
+        const data = await res.json();
+        document.getElementById('contador-envios').textContent = data.total;
+      } catch(e) {
+        document.getElementById('contador-envios').textContent = '—';
+      }
+    }
+    cargarContador();
+  </script>
+
 </body>
 </html>
