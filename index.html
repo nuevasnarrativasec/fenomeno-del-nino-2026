@@ -936,10 +936,13 @@
                     <b>Ciudadanos </b> de todo el país ya le escribieron a su gobernador regional. <b>Súmate</b>
                   </p>                  
                 </div>
-                <div class="cc-num" data-target="40">
+                <!--<div class="cc-num" data-target="40">
                   <span>0</span>
+                </div>-->
+                <div class="cc-contador">
+                  <span id="contador-envios" class="">—</span>
                 </div>
-                <span id="contador-envios">—</span>
+                
               </div>
             </div>
           </div>
@@ -980,11 +983,15 @@
           font-weight:800; font-size:1.12rem; line-height:1.16; color:#fff;
           text-align:left; padding: 26px 25px 26px 40px; max-width:285px; border-radius:16px;
         }
+        .cc-contador{
+          margin-right:-20px;
+        }
           #carta-contadores .cc-label p{ margin:0; font-family: Poppins, system-ui, sans-serif; line-height: 1.4;}
           #carta-contadores .cc-label b{ font-weight:900; color:#fff; }
         #carta-contadores .cc-label--orange{ background:#054d9f; }
         #carta-contadores .cc-label--red{ background:#E5342B; }
-        #carta-contadores .cc-num{
+        #carta-contadores .cc-num,
+        #carta-contadores .cc-contador{
           display:flex; align-items:center; justify-content:center;
           min-width:124px; padding:0 24px;
           background:#E4E4E4; color:#111; border-radius:16px;
