@@ -487,7 +487,7 @@
   const sunEl   = decor('decor-sun','',    -100,           STATIONS[0].cy,       200, 200);
   const rainEl  = decor('decor-cloud', '', STAGE_W - 16, STATIONS[2].cy + 150, 450, 400);   // lluvia.png (desde CSS .decor-cloud)
   const stormEl = decor('decor-cloud', '', 60,           STATIONS[6].cy + -10,  436, 400);
-  stormEl.style.background = "url('img/sol.png') no-repeat center center/cover";   // rayos.png
+  stormEl.style.background = "url('https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/sol.png') no-repeat center center/cover";   // rayos.png
 
   // 3) Fila inferior: figuras con los pies sobre la línea + etiquetas
   //    escalonadas (dos niveles alternados) para que no se amontonen.
