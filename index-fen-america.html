@@ -72,12 +72,12 @@
         }
 
     /* ---------- BANNER ---------- */
-    .banner{ padding:clamp(40px,6vw,80px) 20px 0; }
+    .banner{ padding:clamp(40px,6vw,40px) 20px 0; }
     .banner a{ display:block; width:min(735px,100%); margin:0 auto; }
     .banner img{ width:100%; }
 
     /* ---------- NÚMEROS DE AYUDA ---------- */
-    .help{ padding:clamp(36px,5vw,64px) 20px 0; text-align:center; }
+    .help{ padding: 30px 0 0; text-align:center; }
     .help__title{
         font-weight:700; text-transform:uppercase; font-size:clamp(1.3rem,3vw,1.75rem); letter-spacing:.01em;
     }
@@ -102,6 +102,39 @@
     .card--phone{ display:inline-flex; margin-top:24px; padding:22px 44px 20px; }
     .card--phone .card__num{ font-size:clamp(1.5rem,3.2vw,2rem); }
 
+    .box-iniciativa{
+        margin-top: 50px;
+    }
+        .box-iniciativa h5{
+            font-size: 1.5rem;
+            text-align: center;
+            text-transform: uppercase;
+        }
+        .box-iniciativa ul{
+            list-style: none;
+            margin: 10px auto;
+            padding: 0;
+            text-align: center;
+        }  
+            .box-iniciativa ul li{
+                display: inline-block;
+                margin: 5px;
+                vertical-align: middle;
+            }
+                .box-iniciativa ul li img{
+                    display: inline-block;
+                    max-width: 75px;
+                    vertical-align: top;
+                }
+    .box-dona-peru{
+        margin-top: 30px;
+    }
+        .box-dona-peru img{
+            display: block;
+            margin: 10px auto;
+            max-width: 200px;
+        }
+
     /* ---------- RESPONSIVE ---------- */
     @media (max-width:720px){
         .cards{ grid-template-columns:repeat(2,1fr); }
@@ -120,7 +153,6 @@
     </a>
 
     <h1 class="hero__title">El Fenómeno<br>de El Niño</h1>
-    <p class="hero__sub">Todo lo que tienes que saber</p>
 
     <!-- PLACEHOLDER VIDEO: colocar aquí el iframe o <video> dentro de .video-slot (reemplazando el SVG) -->
     <div class="video-slot" id="videoSlot" aria-label="Espacio reservado para el video">
@@ -130,12 +162,39 @@
     <p class="hero__text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
 </header>
 
+<div class="box-iniciativa">
+    <h5>Una iniciativa de:</h5>
+    <ul>
+        <li>
+            <img src="./img/logo-comercio-negro.png" alt="" width="100%">
+        </li>
+        <li>
+            <img src="./img/logo-trome-gris.jpg" alt="" width="100%">
+        </li>
+        <li>
+            <img src="./img/logo-gestion-gris.png" alt="" width="100%">
+        </li>
+        <li>
+            <img src="./img/logo-america-gris.png" alt="" width="100%">
+        </li>
+        <li>
+            <img src="./img/logo-canal-n.png" alt="" width="100%">
+        </li>
+    </ul>
+</div>
+
 <!-- BANNER ESPECIAL -->
 <section class="banner">
     <a href="https://elcomercio.pe/lima/fenomeno-el-nino-peru-narp-especdis-noticia/" target="_blank" rel="noopener">
         <img src="https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/landing-fen-america/banner-enlace.jpg" alt="El Niño: todo está conectado. Ver especial" width="1024" height="150">
     </a>
 </section>
+
+<div class="box-dona-peru">
+    <a href="https://dona.org.pe/index.html" target="_blank">
+        <img src="./img/logo-dona-peru.png" alt="" width="100%">
+    </a>    
+</div>
 
 <!-- NÚMEROS DE AYUDA -->
 <section class="help">
