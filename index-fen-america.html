@@ -72,7 +72,7 @@
         }
 
     /* ---------- BANNER ---------- */
-    .banner{ padding:clamp(40px,6vw,40px) 20px 0; }
+    .banner{ padding:0 0 60px; }
     .banner a{ display:block; width:min(735px,100%); margin:0 auto; }
     .banner img{ width:100%; }
 
@@ -126,13 +126,26 @@
                     max-width: 75px;
                     vertical-align: top;
                 }
+                .box-iniciativa ul li:nth-child(1) img,
+                .box-iniciativa ul li:nth-child(2) img,
+                .box-iniciativa ul li:nth-child(3) img{
+                    max-width: 120px;
+                }
     .box-dona-peru{
-        margin-top: 30px;
+        margin-top: 50px;
     }
         .box-dona-peru img{
             display: block;
             margin: 10px auto;
             max-width: 200px;
+        }
+    .box-notas{
+
+    }
+        .box-notas img{
+            display: block;
+            margin: 0 auto;
+            max-width: 800px;
         }
 
     /* ---------- RESPONSIVE ---------- */
@@ -186,12 +199,7 @@
     </ul>
 </div>
 
-<!-- BANNER ESPECIAL -->
-<section class="banner">
-    <a href="https://elcomercio.pe/lima/fenomeno-el-nino-peru-narp-especdis-noticia/" target="_blank" rel="noopener">
-        <img src="https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/landing-fen-america/banner-enlace.jpg" alt="El Niño: todo está conectado. Ver especial" width="1024" height="150">
-    </a>
-</section>
+
 
 <div class="box-dona-peru">
     <a href="https://dona.org.pe/index.html" target="_blank">
@@ -218,6 +226,17 @@
         <span class="card__num">(01) 311-5100</span><span class="card__name">Llámanos para colaborar</span>
     </a>
 </section>
+
+<!-- BANNER ESPECIAL -->
+<section class="banner">
+    <a href="https://elcomercio.pe/lima/fenomeno-el-nino-peru-narp-especdis-noticia/" target="_blank" rel="noopener">
+        <img src="https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/img/landing-fen-america/banner-enlace.jpg" alt="El Niño: todo está conectado. Ver especial" width="1024" height="150">
+    </a>
+</section>
+
+<div class="box-notas">
+    <img src="./img/bg-notas.jpg" alt="" width="100%">
+</div>
 
 </body>
 </html>
