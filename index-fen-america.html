@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@200..900&display=swap" rel="stylesheet">
+
 <style>
     @font-face{ font-family:'Monoglyphic'; font-weight:300; font-style:normal; font-display:swap;
     src:url('https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/fonts/Monoglyphic-Light.woff2') format('woff2'), url('https://nuevasnarrativasec.github.io/fenomeno-del-nino-2026/fonts/Monoglyphic-Light.woff') format('woff'); }
@@ -132,30 +136,109 @@
                     max-width: 120px;
                 }
     .box-dona-peru{
-        margin-top: 50px;
+        background-color: #000;
+        border-radius: 20px;
+        margin: 50px auto 0;
+        padding: 20px;
+        max-width: 300px;
+        width: fit-content;
     }
         .box-dona-peru img{
             display: block;
             margin: 0 auto;
-            max-width: 200px;
+            max-width: 150px;
         }
         .box-dona-peru a{
-            display: block;
-            width: fit-content;
-            margin: 0 auto;
+
         }
         .box-dona-peru p{
+            color: #fff;
             margin: 0 auto;
             max-width: 180px;
             text-align: center;
         }
+            .box-dona-peru p span{
+                color: #f4c13c;
+                text-decoration: underline;
+            }
     .box-notas{
 
     }
         .box-notas img{
             display: block;
-            margin: 0 auto;
+            margin: 0;
             max-width: 800px;
+        }
+    .link-peru-pendiente{
+        text-decoration: none;
+        display: block;
+        width: fit-content;
+        margin: 0 auto;
+    }
+    .box-notas h4{
+        font-size: 1.4rem;
+        font-weight: 400;
+        text-align: center;
+        text-transform: uppercase;
+    }
+    .box-notas{
+        padding: 60px 20px clamp(40px,6vw,70px);
+    }
+        .box-notas h4{
+            margin-bottom: clamp(24px,4vw,36px);
+        }
+
+    /* ---------- NOTAS POR MARCA ---------- */
+    .notas-marca{
+        max-width: 1100px; 
+        margin: 0 auto; 
+        padding: 0 0 40px 0;
+    }
+        .notas-marca__head{
+            display:flex; align-items:center; justify-content:space-between; gap:16px;
+            margin-bottom: clamp(18px,3vw,28px);
+        }
+        .notas-marca__logo{ max-height: 40px; width:auto; }
+        .notas-marca__logos{ display:flex; align-items:center; gap:14px; }
+        .notas-marca__logos img{ max-height: 40px; width:auto; }
+        .notas-marca__vermas{
+            font-weight:700; font-size:.85rem; text-transform:uppercase; letter-spacing:.02em;
+            color:var(--ink); text-decoration:none; white-space:nowrap;
+        }
+    .notas-sep{ 
+        max-width:1100px;
+        margin:0 auto; 
+        border:none; border-top:1px solid #d9d9d9; 
+        margin-bottom: 30px;
+    }
+
+    .notas-grid{
+        display:grid; grid-template-columns:repeat(4,1fr); gap:0;
+            column-gap: 20px;
+    }
+        .nota{ display:flex; flex-direction:column; padding:0 0; }
+        .nota:first-child{ padding-left:0; }
+        .nota:last-child{ padding-right:0; }
+        .nota:not(:first-child){  }
+
+        /* PLACEHOLDER IMAGEN: reemplazar el <div class="nota__img"> por <a><img ...></a> con la foto real */
+        .nota__img{
+            display:block; width:100%; aspect-ratio:4/3; background:#ececec; margin-bottom:14px; overflow:hidden;
+        }
+        .nota__img img{ width:100%; height:100%; object-fit:cover; }
+
+        .nota__cat{ font-size:.85rem; color:#777; margin-bottom:8px; }
+        .nota__title{
+            font-weight:800; font-size:1rem; line-height:1.35; margin-bottom:18px; flex-grow:1;
+            font-family: "Noto Serif KR", serif;
+        }
+        .nota__btn{
+            display:inline-block; width:fit-content; background:var(--ink); color:#fff;
+            text-decoration:none; font-size:.8rem; font-weight:600; text-transform:uppercase;
+            padding:10px 18px; letter-spacing:.02em;
+        }
+        .nota img{
+            margin-bottom: 20px;
         }
 
     /* ---------- RESPONSIVE ---------- */
@@ -164,9 +247,16 @@
         .box-iniciativa ul li{
             margin: 20px;
         }
+        .notas-grid{ grid-template-columns:repeat(2,1fr); row-gap:28px; }
+        .nota{ border-left:none; padding:0 10px; }
+        .nota:nth-child(odd){ padding-left:0; border-right:1px solid #e3e3e3; }
+        .nota:nth-child(even){ padding-right:0; }
     }
     @media (max-width:380px){
         .cards{ grid-template-columns:1fr; }
+        .notas-grid{ grid-template-columns:1fr; }
+        .nota{ padding:0 !important; border:none !important; }
+        .notas-marca__head{ flex-direction:column; align-items:flex-start; gap:10px; }
     }
 </style>
 </head>
@@ -210,14 +300,12 @@
 </div>
 
 
-
-<div class="box-dona-peru">
-    <p>Haz tus donaciones con Perú pendiente</p>
-    <a href="https://www.perupendiente.org/" target="_blank">
-        <img src="./img/logo-peru-pendiente.png" alt="" width="100%">
-    </a>    
-</div>
-
+<a href="https://www.perupendiente.org/" target="_blank" class="link-peru-pendiente">
+    <div class="box-dona-peru">
+        <p>Haz tus <span>donaciones</span> con Perú Pendiente</p>    
+        <img src="./img/logo-peru-pendiente-blanco.png" alt="" width="100%">        
+    </div>
+</a>
 <!-- NÚMEROS DE AYUDA -->
 <section class="help">
     <h2 class="help__title">Números de ayuda</h2>
@@ -246,7 +334,116 @@
 </section>
 
 <div class="box-notas">
-    <img src="./img/bg-notas.jpg" alt="" width="100%">
+    <h4>notas relacionadas</h4>
+
+    <!-- EL COMERCIO -->
+    <div class="notas-marca">
+        <div class="notas-marca__head">
+            <img class="notas-marca__logo" src="./img/logo-comercio-negro.png" alt="El Comercio">
+            <a class="notas-marca__vermas" href="#" target="_blank">Ver más</a>
+        </div>
+        <div class="notas-grid">
+            <article class="nota">
+                <img src="./img/bg-nota.jpg" alt="" width="100%">
+                <span class="nota__cat">Lorem ipsum</span>
+                <h5 class="nota__title">El mundo después del 11-S: 25 cambios que transformaron nuestras vidas</h5>
+                <a class="nota__btn" href="#" target="_blank">Ver artículo</a>
+            </article>
+            <article class="nota">
+                <img src="./img/bg-nota.jpg" alt="" width="100%">
+                <span class="nota__cat">Lorem ipsum</span>
+                <h5 class="nota__title">El mundo después del 11-S: 25 cambios que transformaron nuestras vidas</h5>
+                <a class="nota__btn" href="#" target="_blank">Ver artículo</a>
+            </article>
+            <article class="nota">
+                <img src="./img/bg-nota.jpg" alt="" width="100%">
+                <span class="nota__cat">Lorem ipsum</span>
+                <h5 class="nota__title">El mundo después del 11-S: 25 cambios que transformaron nuestras vidas</h5>
+                <a class="nota__btn" href="#" target="_blank">Ver artículo</a>
+            </article>
+            <article class="nota">
+                <img src="./img/bg-nota.jpg" alt="" width="100%">
+                <span class="nota__cat">Lorem ipsum</span>
+                <h5 class="nota__title">El mundo después del 11-S: 25 cambios que transformaron nuestras vidas</h5>
+                <a class="nota__btn" href="#" target="_blank">Ver artículo</a>
+            </article>
+        </div>
+    </div>
+
+    <hr class="notas-sep">
+
+    <!-- GESTIÓN -->
+    <div class="notas-marca">
+        <div class="notas-marca__head">
+            <img class="notas-marca__logo" src="./img/logo-gestion-gris.png" alt="Gestión">
+            <a class="notas-marca__vermas" href="#" target="_blank">Ver más</a>
+        </div>
+        <div class="notas-grid">
+            <article class="nota">
+                <img src="./img/bg-nota.jpg" alt="" width="100%">
+                <span class="nota__cat">Lorem ipsum</span>
+                <h5 class="nota__title">El mundo después del 11-S: 25 cambios que transformaron nuestras vidas</h5>
+                <a class="nota__btn" href="#" target="_blank">Ver artículo</a>
+            </article>
+            <article class="nota">
+                <img src="./img/bg-nota.jpg" alt="" width="100%">
+                <span class="nota__cat">Lorem ipsum</span>
+                <h5 class="nota__title">El mundo después del 11-S: 25 cambios que transformaron nuestras vidas</h5>
+                <a class="nota__btn" href="#" target="_blank">Ver artículo</a>
+            </article>
+            <article class="nota">
+                <img src="./img/bg-nota.jpg" alt="" width="100%">
+                <span class="nota__cat">Lorem ipsum</span>
+                <h5 class="nota__title">El mundo después del 11-S: 25 cambios que transformaron nuestras vidas</h5>
+                <a class="nota__btn" href="#" target="_blank">Ver artículo</a>
+            </article>
+            <article class="nota">
+                <img src="./img/bg-nota.jpg" alt="" width="100%">
+                <span class="nota__cat">Lorem ipsum</span>
+                <h5 class="nota__title">El mundo después del 11-S: 25 cambios que transformaron nuestras vidas</h5>
+                <a class="nota__btn" href="#" target="_blank">Ver artículo</a>
+            </article>
+        </div>
+    </div>
+
+    <hr class="notas-sep">
+
+    <!-- CANAL N / AMÉRICA -->
+    <div class="notas-marca">
+        <div class="notas-marca__head">
+            <div class="notas-marca__logos">
+                <img src="./img/logo-canal-n.png" alt="Canal N">
+                <img src="./img/logo-america-gris.png" alt="América">
+            </div>
+            <a class="notas-marca__vermas" href="#" target="_blank">Ver más</a>
+        </div>
+        <div class="notas-grid">
+            <article class="nota">
+                <img src="./img/bg-nota.jpg" alt="" width="100%">
+                <span class="nota__cat">Lorem ipsum</span>
+                <h5 class="nota__title">El mundo después del 11-S: 25 cambios que transformaron nuestras vidas</h5>
+                <a class="nota__btn" href="#" target="_blank">Ver artículo</a>
+            </article>
+            <article class="nota">
+                <img src="./img/bg-nota.jpg" alt="" width="100%">
+                <span class="nota__cat">Lorem ipsum</span>
+                <h5 class="nota__title">El mundo después del 11-S: 25 cambios que transformaron nuestras vidas</h5>
+                <a class="nota__btn" href="#" target="_blank">Ver artículo</a>
+            </article>
+            <article class="nota">
+                <img src="./img/bg-nota.jpg" alt="" width="100%">
+                <span class="nota__cat">Lorem ipsum</span>
+                <h5 class="nota__title">El mundo después del 11-S: 25 cambios que transformaron nuestras vidas</h5>
+                <a class="nota__btn" href="#" target="_blank">Ver artículo</a>
+            </article>
+            <article class="nota">
+                <img src="./img/bg-nota.jpg" alt="" width="100%">
+                <span class="nota__cat">Lorem ipsum</span>
+                <h5 class="nota__title">El mundo después del 11-S: 25 cambios que transformaron nuestras vidas</h5>
+                <a class="nota__btn" href="#" target="_blank">Ver artículo</a>
+            </article>
+        </div>
+    </div>
 </div>
 
 </body>
